@@ -1,0 +1,23 @@
+{
+  "name": "geobarista",
+  "version": "1.0.0",
+  "description": "This README would normally document whatever steps are necessary to get your application up and running.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://jmc27@bitbucket.org/jmc27/geobarista.git"
+  },
+  "devDependencies": {
+    "electron": "^6.0.0"
+  },
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/jmc27/geobarista#readme",
+  "dependencies": {
+    "leaflet": "^1.6.0"
+  }
+}
