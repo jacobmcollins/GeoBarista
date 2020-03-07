@@ -15,6 +15,31 @@ class MapView {
                 defaultLayer 
             ]
         }).fitWorld();
+
+        // map event handlers
+
+        // gets lat lng on mouse move
+        this.map.on("mousemove", function(event) {
+            var lat = event.latlng.lat;
+            var lng = event.latlng.lng;
+            console.log("lat :" + lat + " lng : " + lng);
+
+        });
+        
+
+        //gets the zoom scale
+        var scale = this.map.getZoom()
+        console.log(scale);
+
+        this.map.on("zoomend", function(event){
+            // 
+            //console.log(event.getZoom());
+            //console.log(this.map.getZoom());
+            console.log(this.getZoom());
+            
+
+        });
+
     }
 };
 
