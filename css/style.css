@@ -3,20 +3,82 @@ body {
     padding: 0;
 }
 
-#map {
-    height:100%;
-    width:100%;
-    float:left;
+#main {
+    transition: margin-right .5s;
 }
+
+#map {
+    border-right: 1px solid lightgray;
+    height: 100%;
+    width: 100%;
+    /*position: fixed;*/
+    z-index: 1;
+    top: 0;
+    left: 0;
+    overflow-x: hidden;
+}
+
 .info {
     padding: 6px 8px;
     font: 14px/16px Arial, Helvetica, sans-serif;
     background: white;
-    background: rgba(255,255,255,0.8);
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     border-radius: 5px;
 }
+
 .info h4 {
     margin: 0 0 5px;
     color: #777;
+}
+
+#openAsideSection {
+    position: absolute;
+    z-index: 2;
+    top: 2px;
+    right: 2px;
+}
+
+#AsideSection {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    right: 0;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+    border: 1px solid grey;
+}
+
+#AsideSection .closebtn {
+    position: absolute;
+    top: 0;
+    right: 5px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+#AsideSection #title {
+    position: absolute;
+    top: 20px;
+    /*left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    /*text-align: center;*/
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#buttonBar {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-around;
+}
+
+#buttonBar>* {
+    background-color: transparent;
+    border: 1px solid lightgrey;
+    border-radius: 8%;
+    font-size: 13px;
 }
