@@ -1,4 +1,3 @@
-
 const L = require('leaflet');
 
 exports.MouseEvents = function(map, info, myinfo) {
@@ -16,4 +15,22 @@ exports.MouseEvents = function(map, info, myinfo) {
         myinfo.zoom = mapScale;
         info.update(myinfo);
     });
+}
+
+exports.PanelCreate = function(info) {
+    info.onAdd = function(map) {
+        this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+        this.update();
+        return this._div;
+    }
+    info.update = function(myinfo) {
+    }
+    return info;
+}
+exports.PanelUpdate = function(info) {
+    info.update = function(myinfo) {
+        this._div.innerHTML = (myinfo ? '<b> lat: ' + myinfo.lat + " long: " + myinfo.lng + ' zoom: ' + myinfo.zoom + '</b>' :
+            'unavailable');
+    }
+    return info;
 }

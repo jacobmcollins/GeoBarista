@@ -20,16 +20,8 @@ class MapView {
         // set up the info control box
         var myinfo = { lat: 0, lng: 0, zoom: this.map.getZoom() };
         var info = L.control({ position: 'bottomleft' });
-        info.onAdd = function(map) {
-            this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
-            this.update();
-            return this._div;
-        }
-            // updates the information displayed in the info control box
-        info.update = function(myinfo) {
-            this._div.innerHTML = (myinfo ? '<b> lat: ' + myinfo.lat + " long: " + myinfo.lng + ' zoom: ' + myinfo.zoom + '</b>' :
-                'unavailable');
-        }
+        info = LATLONG.PanelCreate(info);
+        info = LATLONG.PanelUpdate(info);
         info.addTo(this.map);
 
         //latlong mouse events
