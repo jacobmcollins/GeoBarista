@@ -1,23 +1,44 @@
 {
-  "name": "geobarista",
-  "version": "1.0.0",
-  "description": "This README would normally document whatever steps are necessary to get your application up and running.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron index.js"
+  "name": "lookup-server",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "@material-ui/core": "^4.9.7",
+    "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.46",
+    "atob": "^2.1.2",
+    "babel-core": "6.14.0",
+    "body-parser": "^1.19.0",
+    "express": "4.13.3",
+    "file-dialog": "0.0.8",
+    "fs": "0.0.2",
+    "leaflet": "^1.6.0",
+    "react-leaflet": "^2.6.3",
+    "runsync": "^0.1.8",
+    "sql.js": "0.3.2"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://jmc27@bitbucket.org/jmc27/geobarista.git"
+  "build": {
+    "appId": "your.id",
+    "mac": {
+      "category": "your.app.category.type"
+    }
+  },
+  "scripts": {
+    "start-dev": "concurrently \"yarn server-dev\" \"cd client && yarn start\"",
+    "start-prod": "cross-env-shell NODE_ENV=production \"cd client && yarn build && cd .. && npm run server-prod\"",
+    "server-prod": "node server.js",
+    "server-dev": "nodemon server.js"
   },
   "devDependencies": {
-    "electron": "^6.0.0"
-  },
-  "author": "",
-  "license": "ISC",
-  "homepage": "https://bitbucket.org/jmc27/geobarista#readme",
-  "dependencies": {
-    "leaflet": "^1.6.0"
+    "concurrently": "3.1.0",
+    "cross-env": "^7.0.2",
+    "electron": "^8.2.0",
+    "electron-builder": "^22.4.1",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb": "14.1.0",
+    "eslint-plugin-import": "2.2.0",
+    "eslint-plugin-jsx-a11y": "4.0.0",
+    "eslint-plugin-react": "6.9.0",
+    "nodemon": "^2.0.2"
   }
 }
