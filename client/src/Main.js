@@ -14,6 +14,7 @@ import { Map, TileLayer } from 'react-leaflet';
 // Our components
 import Header from './components/Header';
 import ZoomLatLngBox from './components/ZoomLatLngBox';
+import ToolBox from './components/ToolBox';
 import MainMenu from './components/MainMenu';
 import ImageMenu from './components/ImageMenu';
 import Client from './Client';
@@ -69,6 +70,12 @@ const useStyles = makeStyles((theme) => ({
         zIndex: 1,
         bottom: '2vh',
         left: '2vw',
+    },
+    ToolBox: {
+        position: 'absolute',
+        zIndex: 1,
+        top: '1vh',
+        left: '8vw',
     }
 }));
 const mapRef = createRef();
@@ -78,6 +85,7 @@ function Main() {
     const [state, setState] = React.useState({
         mainMenuOpen: false,
         imageMenuOpen: false,
+        toolselection: "none",
         map: {
             zoom: 13,
             center_latlng: {
@@ -89,7 +97,7 @@ function Main() {
                 lng: -0.09,
             }
         },
-        images: []
+        images: [],
     });
     const handleOnMouseMove = (e) => {
         if(!mapRef.current) return;
@@ -141,6 +149,16 @@ function Main() {
             images: state.images.concat(f)
         });
     }
+    const handleOnClick = (e) => {
+        console.log("toolselection: " + state.toolselection);
+    }
+    const setTool = (value) => error => {
+        setState({
+            ...state,
+            toolselection: value
+        })
+        console.log("tool change");
+    }
     return (
         <div className={classes.root} >
             <CssBaseline />
@@ -151,6 +169,7 @@ function Main() {
                     length={4}
                     onmousemove={handleOnMouseMove}
                     onzoomend={handleZoom}
+                    onclick={handleOnClick}
                     ref={mapRef}
                     zoom={state.map.zoom}
                     style={{height: "100%", width: "100%"}}
@@ -163,6 +182,7 @@ function Main() {
                 </Map>
             </main>
             <ZoomLatLngBox classes={classes} zoom={state.map.zoom} latlng={state.map.mouse_latlng}/>
+            <ToolBox classes={classes} tool={state.toolselection} setTool = {setTool}/>
             <MainMenu classes={classes} open={state.mainMenuOpen} toggleMainMenu={toggleMainMenu} openDialog={openDialog}/>
             <ImageMenu classes={classes} open={state.imageMenuOpen} toggleImageMenu={toggleImageMenu} images={state.images} />
         </div>

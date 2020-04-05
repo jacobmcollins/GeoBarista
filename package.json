@@ -13,7 +13,9 @@
     "file-dialog": "0.0.8",
     "fs": "0.0.2",
     "leaflet": "^1.6.0",
+    "mui-datatables": "^2.14.0",
     "react-leaflet": "^2.6.3",
+    "react-leaflet-draw": "^0.19.0",
     "runsync": "^0.1.8",
     "sql.js": "0.3.2"
   },
