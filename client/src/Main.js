@@ -69,6 +69,13 @@ const useStyles = makeStyles((theme) => ({
         zIndex: 1,
         bottom: '2vh',
         left: '2vw',
+    },
+    appBar: {
+        position: 'relative',
+        width: '100%',
+    },
+    grow: {
+        flexGrow: 1,
     }
 }));
 const mapRef = createRef();
