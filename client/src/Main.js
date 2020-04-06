@@ -17,6 +17,8 @@ import ZoomLatLngBox from './components/ZoomLatLngBox';
 import MainMenu from './components/MainMenu';
 import ImageMenu from './components/ImageMenu';
 import Client from './Client';
+import ComLineOptions from './components/ComLineOptions';
+import { setLocStorage } from './Tools/initLocStorage';
 
 const useStyles = makeStyles((theme) => ({
     appbar: {
@@ -70,12 +72,16 @@ const useStyles = makeStyles((theme) => ({
         bottom: '2vh',
         left: '2vw',
     },
-    appBar: {
+    appBarOptions: {
         position: 'relative',
         width: '100%',
     },
     grow: {
         flexGrow: 1,
+    },
+    randomButton: {
+        zIndex: 999,
+        position: 'absolute'
     }
 }));
 const mapRef = createRef();
@@ -84,8 +90,8 @@ function Main() {
     const classes = useStyles();
     const [state, setState] = React.useState({
         mainMenuOpen: false,
-        imageMenuOpen: false,
         optionsMenuOpen: false,
+        imageMenuOpen: false,
         map: {
             zoom: 13,
             center_latlng: {
@@ -97,7 +103,8 @@ function Main() {
                 lng: -0.09,
             }
         },
-        images: []
+        images: [],
+        thumbnailsData: ''
     });
     const handleOnMouseMove = (e) => {
         if(!mapRef.current) return;
@@ -125,6 +132,14 @@ function Main() {
             mainMenuOpen: open
         })
     }
+    const toggleOptionsMenu = (open) => error => {
+        console.log(open)
+        setState({
+            ...state,
+            optionsMenuOpen: open
+        })
+        console.log(state)
+    }
     const toggleImageMenu = (open) => error => {
         setState({
             ...state,
@@ -149,14 +164,20 @@ function Main() {
             images: state.images.concat(f)
         });
     }
-    const toggleOptionsMenu = (open) => {
-        setState({
-            ...state,
-            optionsMenuOpen: open
-        })
-    }
     const getTextToDisplay = (toDisplay) => {
         return (toDisplay[0] + ": ");
+    }
+    const saveData = () => {
+        toggleOptionsMenu(false);
+        return setLocStorage(state.thumbnailsData);
+    }
+    const handleTextField = (e) => {
+        console.log(e.target.value)
+        setState({
+            ...state,
+            thumbnailsData: e.target.value
+        })
+        console.log(state)
     }
     return (
         <div className={classes.root} >
@@ -185,10 +206,22 @@ function Main() {
                 open={state.mainMenuOpen}
                 toggleMainMenu={toggleMainMenu}
                 openDialog={openDialog}
-                getTextToDisplay={getTextToDisplay}
                 toggleOptionsMenu={toggleOptionsMenu}
             />
-            <ImageMenu classes={classes} open={state.imageMenuOpen} toggleImageMenu={toggleImageMenu} images={state.images} />
+            <ImageMenu classes={classes}
+                       open={state.imageMenuOpen}
+                       toggleImageMenu={toggleImageMenu}
+                       images={state.images}
+            />
+            <button className={classes.randomButton} onClick={toggleOptionsMenu(true)}>open options</button>
+            <ComLineOptions
+                classes={classes}
+                optionsMenuOpen={state.optionsMenuOpen}
+                getTextToDisplay={getTextToDisplay}
+                toggleOptionsMenu={toggleOptionsMenu}
+                saveData={saveData}
+                handleTextField={handleTextField}
+            />
         </div>
     )
 }

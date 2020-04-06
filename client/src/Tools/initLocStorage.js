@@ -18,13 +18,12 @@ function init() {
         console.error("Client/src/Tools/initLocStorage.js - init()");
         return false;
     }
-    return false;
 }
 
 //flase - Check if localStorage is initialized or not and runs init()
 //true - run init() and reset all settings
 function initLocStorage(bool) {
-    if (bool == true) {
+    if (bool === true) {
         return init();
     }
     else {
@@ -42,5 +41,17 @@ function getLocStorage(toRetreive) {
     return localStorage.getItem(toRetreive[0]);
 }
 
+function setLocStorage(toSet) {
+    try {
+        localStorage.setItem("Thumbnails", toSet);
+        return true;
+    }
+    catch(err) {
+        console.error(err.message);
+        console.error("Client/src/Tools/initLocStorage.js - setLocStorage()");
+        return false;
+    }
+}
+
 //export constants for other functions to be able to access the options
-export {initLocStorage, getLocStorage, thumbnails};
+export {initLocStorage, getLocStorage, setLocStorage, thumbnails};
