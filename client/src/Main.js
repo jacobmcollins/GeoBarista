@@ -9,7 +9,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
 // React Leaflet component
-import { Map, TileLayer } from 'react-leaflet';
+import { Map, TileLayer,} from 'react-leaflet';
+// React Leaflet Draw components
+
 
 // Our components
 import Header from './components/Header';
@@ -17,6 +19,7 @@ import ZoomLatLngBox from './components/ZoomLatLngBox';
 import MainMenu from './components/MainMenu';
 import ImageMenu from './components/ImageMenu';
 import Client from './Client';
+import DrawTools from './components/DrawTools';
 
 const useStyles = makeStyles((theme) => ({
     appbar: {
@@ -69,7 +72,7 @@ const useStyles = makeStyles((theme) => ({
         zIndex: 1,
         bottom: '2vh',
         left: '2vw',
-    }
+    },
 }));
 const mapRef = createRef();
 
@@ -89,7 +92,7 @@ function Main() {
                 lng: -0.09,
             }
         },
-        images: []
+        images: [],
     });
     const handleOnMouseMove = (e) => {
         if(!mapRef.current) return;
@@ -141,6 +144,9 @@ function Main() {
             images: state.images.concat(f)
         });
     }
+    const handleOnClick = (e) => {
+        console.log("i clicked")
+    }
     return (
         <div className={classes.root} >
             <CssBaseline />
@@ -151,6 +157,7 @@ function Main() {
                     length={4}
                     onmousemove={handleOnMouseMove}
                     onzoomend={handleZoom}
+                    onclick={handleOnClick}
                     ref={mapRef}
                     zoom={state.map.zoom}
                     style={{height: "100%", width: "100%"}}
@@ -160,6 +167,7 @@ function Main() {
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
+                    <DrawTools/>
                 </Map>
             </main>
             <ZoomLatLngBox classes={classes} zoom={state.map.zoom} latlng={state.map.mouse_latlng}/>
