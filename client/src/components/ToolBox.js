@@ -15,7 +15,13 @@ export default function ToolBox(props) {
         <ToggleButton key={1} value="none" onClick = {setTool("none")}>
             <FilterNoneIcon />
         </ToggleButton>,
-        <ToggleButton key={2} value="draw" onClick={setTool("draw")}  >
+        <ToggleButton key={2} value="marker" onClick={setTool("marker")}  >
+            <BorderColorIcon />
+        </ToggleButton>,
+        <ToggleButton key={3} value="drawRec" onClick={setTool("drawRec")}  >
+            <BorderColorIcon />
+        </ToggleButton>,
+        <ToggleButton key={4} value="drawPoly" onClick={setTool("drawPoly")}  >
             <BorderColorIcon />
         </ToggleButton>,
     ]

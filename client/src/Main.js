@@ -9,7 +9,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
 // React Leaflet component
-import { Map, TileLayer } from 'react-leaflet';
+import { Map, TileLayer,} from 'react-leaflet';
+// React Leaflet Draw components
+
 
 // Our components
 import Header from './components/Header';
@@ -18,6 +20,7 @@ import ToolBox from './components/ToolBox';
 import MainMenu from './components/MainMenu';
 import ImageMenu from './components/ImageMenu';
 import Client from './Client';
+import DrawTools from './components/DrawTools';
 
 const useStyles = makeStyles((theme) => ({
     appbar: {
@@ -81,11 +84,14 @@ const useStyles = makeStyles((theme) => ({
 const mapRef = createRef();
 
 function Main() {
+    var boundup = [45.51,-122.68];
+    var bounddown = [45.51,-122.68];
     const classes = useStyles();
     const [state, setState] = React.useState({
         mainMenuOpen: false,
         imageMenuOpen: false,
         toolselection: "none",
+        bstate: false,
         map: {
             zoom: 13,
             center_latlng: {
@@ -97,6 +103,9 @@ function Main() {
                 lng: -0.09,
             }
         },
+        poly: [],
+        bounds: [boundup,bounddown],
+        markers: [45.51,-122.68],
         images: [],
     });
     const handleOnMouseMove = (e) => {
@@ -150,7 +159,7 @@ function Main() {
         });
     }
     const handleOnClick = (e) => {
-        console.log("toolselection: " + state.toolselection);
+        console.log("i clicked")
     }
     const setTool = (value) => error => {
         setState({
@@ -159,6 +168,13 @@ function Main() {
         })
         console.log("tool change");
     }
+    const updateMarkerPos = () => {
+        setState({
+            ...state,
+            markers: [state.map.mouse_latlng.lat, state.map.mouse_latlng.lng],
+        })
+    }
+
     return (
         <div className={classes.root} >
             <CssBaseline />
@@ -179,10 +195,10 @@ function Main() {
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
+                    <DrawTools/>
                 </Map>
             </main>
             <ZoomLatLngBox classes={classes} zoom={state.map.zoom} latlng={state.map.mouse_latlng}/>
-            <ToolBox classes={classes} tool={state.toolselection} setTool = {setTool}/>
             <MainMenu classes={classes} open={state.mainMenuOpen} toggleMainMenu={toggleMainMenu} openDialog={openDialog}/>
             <ImageMenu classes={classes} open={state.imageMenuOpen} toggleImageMenu={toggleImageMenu} images={state.images} />
         </div>
