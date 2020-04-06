@@ -2,9 +2,10 @@ import React from 'react'
 import {Drawer, Toolbar, IconButton} from '@material-ui/core';
 import {Cancel as CancelIcon} from '@material-ui/icons';
 import MUIDataTable from "mui-datatables";
+import CustomToolbar from "./CustomToolbar";
 
 export default function ImageMenu(props) {
-    const {classes, toggleImageMenu, open, images} = props;
+    const {classes, toggleImageMenu, open, images, openDialog} = props;
 
     const columns = [
         {name: "file",label: "File"},
@@ -23,6 +24,15 @@ export default function ImageMenu(props) {
         return {
           size: "small"
         };
+      },
+      search: false,
+      print: false,
+      download: false,
+      viewColumns: false,
+      customToolbar: () => {
+        return (
+          <CustomToolbar openDialog={openDialog}/>
+        );
       }
     };
 
