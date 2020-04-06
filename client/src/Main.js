@@ -85,6 +85,7 @@ function Main() {
     const [state, setState] = React.useState({
         mainMenuOpen: false,
         imageMenuOpen: false,
+        optionsMenuOpen: false,
         map: {
             zoom: 13,
             center_latlng: {
@@ -148,6 +149,15 @@ function Main() {
             images: state.images.concat(f)
         });
     }
+    const toggleOptionsMenu = (open) => {
+        setState({
+            ...state,
+            optionsMenuOpen: open
+        })
+    }
+    const getTextToDisplay = (toDisplay) => {
+        return (toDisplay[0] + ": ");
+    }
     return (
         <div className={classes.root} >
             <CssBaseline />
@@ -170,7 +180,14 @@ function Main() {
                 </Map>
             </main>
             <ZoomLatLngBox classes={classes} zoom={state.map.zoom} latlng={state.map.mouse_latlng}/>
-            <MainMenu classes={classes} open={state.mainMenuOpen} toggleMainMenu={toggleMainMenu} openDialog={openDialog}/>
+            <MainMenu
+                classes={classes}
+                open={state.mainMenuOpen}
+                toggleMainMenu={toggleMainMenu}
+                openDialog={openDialog}
+                getTextToDisplay={getTextToDisplay}
+                toggleOptionsMenu={toggleOptionsMenu}
+            />
             <ImageMenu classes={classes} open={state.imageMenuOpen} toggleImageMenu={toggleImageMenu} images={state.images} />
         </div>
     )
