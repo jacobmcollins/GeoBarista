@@ -2,6 +2,8 @@ import React from 'react';
 
 import { EditControl} from 'react-leaflet-draw';
 import { FeatureGroup } from 'react-leaflet';
+import L from 'leaflet';
+
 
 
 // work around broken icons when using webpack, see https://github.com/PaulLeCam/react-leaflet/issues/255

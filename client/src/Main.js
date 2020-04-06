@@ -16,7 +16,6 @@ import { Map, TileLayer,} from 'react-leaflet';
 // Our components
 import Header from './components/Header';
 import ZoomLatLngBox from './components/ZoomLatLngBox';
-import ToolBox from './components/ToolBox';
 import MainMenu from './components/MainMenu';
 import ImageMenu from './components/ImageMenu';
 import Client from './Client';
@@ -74,24 +73,14 @@ const useStyles = makeStyles((theme) => ({
         bottom: '2vh',
         left: '2vw',
     },
-    ToolBox: {
-        position: 'absolute',
-        zIndex: 1,
-        top: '1vh',
-        left: '8vw',
-    }
 }));
 const mapRef = createRef();
 
 function Main() {
-    var boundup = [45.51,-122.68];
-    var bounddown = [45.51,-122.68];
     const classes = useStyles();
     const [state, setState] = React.useState({
         mainMenuOpen: false,
         imageMenuOpen: false,
-        toolselection: "none",
-        bstate: false,
         map: {
             zoom: 13,
             center_latlng: {
@@ -103,9 +92,6 @@ function Main() {
                 lng: -0.09,
             }
         },
-        poly: [],
-        bounds: [boundup,bounddown],
-        markers: [45.51,-122.68],
         images: [],
     });
     const handleOnMouseMove = (e) => {
@@ -161,20 +147,6 @@ function Main() {
     const handleOnClick = (e) => {
         console.log("i clicked")
     }
-    const setTool = (value) => error => {
-        setState({
-            ...state,
-            toolselection: value
-        })
-        console.log("tool change");
-    }
-    const updateMarkerPos = () => {
-        setState({
-            ...state,
-            markers: [state.map.mouse_latlng.lat, state.map.mouse_latlng.lng],
-        })
-    }
-
     return (
         <div className={classes.root} >
             <CssBaseline />
