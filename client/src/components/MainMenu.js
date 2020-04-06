@@ -6,7 +6,7 @@ import {initLocStorage} from "../Tools/initLocStorage";
 
 
 export default function MainMenu(props) {
-    const {classes, toggleMainMenu, open, openDialog} = props;
+    const {classes, toggleMainMenu, open, openDialog, getTextToDisplay, toggleOptionsMenu} = props;
     return (
         initLocStorage(true);
     <Drawer anchor="left" open={open} onClose={toggleMainMenu(false)}>
@@ -22,6 +22,12 @@ export default function MainMenu(props) {
                             <AddIcon />
                         </ListItemIcon>
                         <ListItemText primary="Load Image" />
+                    </ListItem>
+                    <ListItem button onClick={toggleOptionsMenu}>
+                        <ListItemIcon >
+                            <AddIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Options" />
                     </ListItem>
                 </List>
             </div>
