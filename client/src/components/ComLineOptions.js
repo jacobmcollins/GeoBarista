@@ -19,17 +19,11 @@ import { getLocStorage, thumbnails } from '../Tools/initLocStorage';
 export default function ComLineOptions(props) {
     const {classes, optionsMenuOpen, getTextToDisplay, toggleOptionsMenu, saveData, handleTextField} = props;
 
-
-    const Transition = React.forwardRef(function Transition(props, ref) {
-        return <Slide direction="up" ref={ref} {...props} />;
-    });
-
-
     return (
-        <Dialog fullScreen={true} open={optionsMenuOpen} onClose={toggleOptionsMenu(false)} TransitionComponent={Transition}>
+        <Dialog fullScreen={true} open={optionsMenuOpen} onClose={toggleOptionsMenu(false)}>
             <AppBar className={classes.appBarOptions}>
                 <Toolbar>
-                    <IconButton edge="start" color="inherit" onClick={toggleOptionsMenu(false)} aria-label="close">
+                    <IconButton edge="start" color="inherit" onClick={toggleOptionsMenu(false)}>
                         <CloseIcon/>
                     </IconButton>
                     <div className={classes.grow}/>
@@ -47,7 +41,7 @@ export default function ComLineOptions(props) {
                 </ListItem>
                 <Divider/>
                 <ListItem>
-                    <ListItemText primary={getTextToDisplay(thumbnails)}/>
+                    <ListItemText primary={'Temp Display'}/>
                 </ListItem>
                 <ListItem>
                     <TextField id="thumbnails2" label={getLocStorage(thumbnails)} variant="filled" fullWidth/>

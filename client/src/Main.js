@@ -88,6 +88,7 @@ const mapRef = createRef();
 
 function Main() {
     const classes = useStyles();
+    const [optionsMenuOpen, setOptionsMenuOpen] = React.useState(false)
     const [state, setState] = React.useState({
         mainMenuOpen: false,
         optionsMenuOpen: false,
@@ -96,11 +97,11 @@ function Main() {
             zoom: 13,
             center_latlng: {
                 lat: 45.51,
-                lng: -122.68,
+                lng: -122.68
             },
             mouse_latlng: {
                 lat: 51.505,
-                lng: -0.09,
+                lng: -0.09
             }
         },
         images: [],
@@ -133,12 +134,8 @@ function Main() {
         })
     }
     const toggleOptionsMenu = (open) => error => {
-        console.log(open)
-        setState({
-            ...state,
-            optionsMenuOpen: open
-        })
-        console.log(state)
+        setOptionsMenuOpen(open)
+
     }
     const toggleImageMenu = (open) => error => {
         setState({
@@ -168,16 +165,14 @@ function Main() {
         return (toDisplay[0] + ": ");
     }
     const saveData = () => {
-        toggleOptionsMenu(false);
-        return setLocStorage(state.thumbnailsData);
+        setLocStorage(state.thumbnailsData);
+        setState({...state});
     }
     const handleTextField = (e) => {
-        console.log(e.target.value)
         setState({
             ...state,
             thumbnailsData: e.target.value
         })
-        console.log(state)
     }
     return (
         <div className={classes.root} >
@@ -213,10 +208,9 @@ function Main() {
                        toggleImageMenu={toggleImageMenu}
                        images={state.images}
             />
-            <button className={classes.randomButton} onClick={toggleOptionsMenu(true)}>open options</button>
             <ComLineOptions
                 classes={classes}
-                optionsMenuOpen={state.optionsMenuOpen}
+                optionsMenuOpen={optionsMenuOpen}
                 getTextToDisplay={getTextToDisplay}
                 toggleOptionsMenu={toggleOptionsMenu}
                 saveData={saveData}
