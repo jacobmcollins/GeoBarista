@@ -9,7 +9,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
 // React Leaflet component
-import { Map, TileLayer,} from 'react-leaflet';
+import { Map, TileLayer, Polygon } from 'react-leaflet';
 // React Leaflet Draw components
 
 
@@ -132,13 +132,15 @@ function Main() {
         var i;
         for (i=0; i < files.length; i++) {
             var data = await Client.load(files[i]);
-            console.log(data);
+            let points = []
+            data.gcps.gcpList.forEach((x) => {
+                points.push([x['y'], x['x']]);
+            });
             f.push({
+                points: points,
                 file: data.description
             });
         }
-        console.log(f)
-        console.log(state.images)
         setState({
             ...state,
             images: state.images.concat(f)
@@ -167,6 +169,9 @@ function Main() {
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
+                    {
+                        state.images.map((image, index) => <Polygon key={index} positions={image.points}/>)
+                    }
                     <DrawTools/>
                 </Map>
             </main>
