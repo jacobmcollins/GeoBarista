@@ -78,10 +78,6 @@ const useStyles = makeStyles((theme) => ({
     },
     grow: {
         flexGrow: 1,
-    },
-    randomButton: {
-        zIndex: 999,
-        position: 'absolute'
     }
 }));
 const mapRef = createRef();
