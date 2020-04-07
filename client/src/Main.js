@@ -162,6 +162,7 @@ function Main() {
     }
     const handleOnClick = (e) => {
         console.log("i clicked")
+    }
     const getTextToDisplay = (toDisplay) => {
         return (toDisplay[0] + ": ");
     }
