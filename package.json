@@ -17,7 +17,8 @@
     "react-leaflet": "^2.6.3",
     "react-leaflet-draw": "^0.19.0",
     "runsync": "^0.1.8",
-    "sql.js": "0.3.2"
+    "sql.js": "0.3.2",
+    "sqlite3": "^4.1.1"
   },
   "build": {
     "appId": "your.id",

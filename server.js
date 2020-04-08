@@ -8,6 +8,10 @@ const app = express();
 
 app.set("port", process.env.PORT || 3001);
 
+// SQLite DB components
+const testdb = require('./Database/Database')
+const testdbobj = new testdb()
+
 // Express only serves static assets in production
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
@@ -53,8 +57,11 @@ app.route("/api/v1/image")
   })
   .post(function (req, res) {
     let buff = Buffer.from(req.body.buffer, 'base64');
-    fs.writeFileSync(req.body.filename, buff);
+    fs.writeFileSync(req.body.filename, buff);    
     var output = runsync.exec("gdalinfo -json " + req.body.filename);
+    // Test insert of a value
+    testdbobj.testinsert(req.body.filename);
+    fs.unlinkSync(req.body.filename);
     res.json(JSON.parse(output));
   })
   .put(function (req, res) {
