@@ -4,7 +4,12 @@ server = require('./server.js');
 let mainWindow = null;
 
 function main() {
-  server('client/build')
+  if(app.isPackaged) {
+    server('resources/client/build');
+  }
+  else {
+    server('client/build');
+  }
   mainWindow = new BrowserWindow();
   mainWindow.loadURL(`http://localhost:3001`);
   mainWindow.on('close', event => {
