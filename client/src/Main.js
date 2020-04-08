@@ -211,6 +211,7 @@ function Main() {
                        open={state.imageMenuOpen}
                        toggleImageMenu={toggleImageMenu}
                        images={state.images}
+                       openDialog={openDialog}
             />
             <ComLineOptions
                 classes={classes}
