@@ -22,8 +22,8 @@
     "setup": "yarn install && cd client && yarn install && cd ..",
     "start-dev": "concurrently \"yarn server-dev\" \"cd client && yarn start\"",
     "start-prod": "cross-env-shell NODE_ENV=production \"cd client && yarn build && cd .. && npm run server-prod\"",
-    "server-prod": "node server.js",
-    "server-dev": "nodemon server.js",
+    "server-prod": "node start-server.js",
+    "server-dev": "nodemon start-server.js",
     "start-electron": "cross-env-shell NODE_ENV=production \"cd client && yarn build && cd .. && electron main.js"
   },
   "devDependencies": {
