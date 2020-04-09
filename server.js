@@ -1,5 +1,5 @@
 const express = require("express");
-const runsync = require("runsync");
+const {execSync} = require("child_process");
 const fs = require("fs");
 const bodyParser = require("body-parser");
 global.atob = require("atob");
@@ -60,7 +60,7 @@ function server(client_path) {
     .post(function (req, res) {
       let buff = Buffer.from(req.body.buffer, 'base64');
       fs.writeFileSync(req.body.filename, buff);    
-      var output = runsync.exec("gdalinfo -json " + req.body.filename);
+      var output = execSync("gdalinfo -json " + req.body.filename);
       // Test insert of a value
       testdbobj.testinsert(req.body.filename);
       fs.unlinkSync(req.body.filename);

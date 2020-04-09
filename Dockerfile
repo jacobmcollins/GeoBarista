@@ -13,5 +13,6 @@ COPY . .
 EXPOSE 3000
 EXPOSE 3001
 
-CMD ["yarn", "setup"]
-CMD ["yarn", "start-dev"]
+RUN apt-get update
+RUN apt-get install -y gdal-bin
+RUN yarn setup
