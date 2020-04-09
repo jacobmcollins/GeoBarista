@@ -9,7 +9,6 @@
     "express": "4.13.3",
     "file-dialog": "0.0.8",
     "fs": "0.0.2",
-    "runsync": "^0.1.8",
     "sql.js": "0.3.2"
   },
   "build": {
@@ -20,6 +19,7 @@
   },
   "scripts": {
     "setup": "yarn install && cd client && yarn install && cd ..",
+    "build-client": "cd client && yarn build && cd ..",
     "start-dev": "concurrently \"yarn server-dev\" \"cd client && yarn start\"",
     "start-prod": "cross-env-shell NODE_ENV=production \"cd client && yarn build && cd .. && npm run server-prod\"",
     "server-prod": "node start-server.js",
