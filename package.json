@@ -1,35 +1,31 @@
 {
-  "name": "lookup-server",
-  "version": "0.0.1",
+  "name": "GeoBarista",
+  "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@material-ui/core": "^4.9.7",
-    "@material-ui/icons": "^4.9.1",
-    "@material-ui/lab": "^4.0.0-alpha.46",
     "atob": "^2.1.2",
     "babel-core": "6.14.0",
     "body-parser": "^1.19.0",
     "express": "4.13.3",
     "file-dialog": "0.0.8",
     "fs": "0.0.2",
-    "leaflet": "^1.6.0",
-    "mui-datatables": "^2.14.0",
-    "react-leaflet": "^2.6.3",
-    "react-leaflet-draw": "^0.19.0",
-    "runsync": "^0.1.8",
     "sql.js": "0.3.2"
   },
   "build": {
-    "appId": "your.id",
-    "mac": {
-      "category": "your.app.category.type"
-    }
+    "appId": "GeoBarista",
+    "extraResources": [
+      "./client/build"
+    ]
   },
   "scripts": {
+    "setup": "yarn install && cd client && yarn install && cd ..",
+    "build-client": "cd client && yarn build && cd ..",
     "start-dev": "concurrently \"yarn server-dev\" \"cd client && yarn start\"",
     "start-prod": "cross-env-shell NODE_ENV=production \"cd client && yarn build && cd .. && npm run server-prod\"",
-    "server-prod": "node server.js",
-    "server-dev": "nodemon server.js"
+    "server-prod": "node start-server.js",
+    "server-dev": "nodemon start-server.js",
+    "start-electron": "cross-env-shell NODE_ENV=production \"cd client && yarn build && cd .. && electron index.js\"",
+    "dist": "yarn setup && cd client && yarn build && cd .. && electron-builder"
   },
   "devDependencies": {
     "concurrently": "3.1.0",
