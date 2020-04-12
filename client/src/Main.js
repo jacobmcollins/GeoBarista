@@ -20,6 +20,8 @@ import MainMenu from './components/MainMenu';
 import ImageMenu from './components/ImageMenu';
 import Client from './Client';
 import DrawTools from './components/DrawTools';
+import ComLineOptions from './components/ComLineOptions';
+import { setLocStorage } from './Tools/initLocStorage';
 
 const useStyles = makeStyles((theme) => ({
     appbar: {
@@ -73,26 +75,36 @@ const useStyles = makeStyles((theme) => ({
         bottom: '2vh',
         left: '2vw',
     },
+    appBarOptions: {
+        position: 'relative',
+        width: '100%',
+    },
+    grow: {
+        flexGrow: 1,
+    }
 }));
 const mapRef = createRef();
 
 function Main() {
     const classes = useStyles();
+    const [optionsMenuOpen, setOptionsMenuOpen] = React.useState(false)
     const [state, setState] = React.useState({
         mainMenuOpen: false,
+        optionsMenuOpen: false,
         imageMenuOpen: false,
         map: {
             zoom: 13,
             center_latlng: {
                 lat: 45.51,
-                lng: -122.68,
+                lng: -122.68
             },
             mouse_latlng: {
                 lat: 51.505,
-                lng: -0.09,
+                lng: -0.09
             }
         },
         images: [],
+        thumbnailsData: ''
     });
     const handleOnMouseMove = (e) => {
         if(!mapRef.current) return;
@@ -119,6 +131,10 @@ function Main() {
             ...state,
             mainMenuOpen: open
         })
+    }
+    const toggleOptionsMenu = (open) => error => {
+        setOptionsMenuOpen(open)
+
     }
     const toggleImageMenu = (open) => error => {
         setState({
@@ -149,6 +165,19 @@ function Main() {
     const handleOnClick = (e) => {
         console.log("i clicked")
     }
+    const getTextToDisplay = (toDisplay) => {
+        return (toDisplay[0] + ": ");
+    }
+    const saveData = () => {
+        setLocStorage(state.thumbnailsData);
+        setState({...state});
+    }
+    const handleTextField = (e) => {
+        setState({
+            ...state,
+            thumbnailsData: e.target.value
+        })
+    }
     return (
         <div className={classes.root} >
             <CssBaseline />
@@ -176,8 +205,27 @@ function Main() {
                 </Map>
             </main>
             <ZoomLatLngBox classes={classes} zoom={state.map.zoom} latlng={state.map.mouse_latlng}/>
-            <MainMenu classes={classes} open={state.mainMenuOpen} toggleMainMenu={toggleMainMenu} openDialog={openDialog}/>
-            <ImageMenu classes={classes} open={state.imageMenuOpen} toggleImageMenu={toggleImageMenu} images={state.images} openDialog={openDialog}/>
+            <MainMenu
+                classes={classes}
+                open={state.mainMenuOpen}
+                toggleMainMenu={toggleMainMenu}
+                openDialog={openDialog}
+                toggleOptionsMenu={toggleOptionsMenu}
+            />
+            <ImageMenu classes={classes}
+                       open={state.imageMenuOpen}
+                       toggleImageMenu={toggleImageMenu}
+                       images={state.images}
+                       openDialog={openDialog}
+            />
+            <ComLineOptions
+                classes={classes}
+                optionsMenuOpen={optionsMenuOpen}
+                getTextToDisplay={getTextToDisplay}
+                toggleOptionsMenu={toggleOptionsMenu}
+                saveData={saveData}
+                handleTextField={handleTextField}
+            />
         </div>
     )
 }
