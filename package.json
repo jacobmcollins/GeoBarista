@@ -25,7 +25,8 @@
     "server-prod": "node start-server.js",
     "server-dev": "nodemon start-server.js",
     "start-electron": "cross-env-shell NODE_ENV=production \"cd client && yarn build && cd .. && electron index.js\"",
-    "dist": "yarn setup && cd client && yarn build && cd .. && electron-builder"
+    "dist": "yarn setup && cd client && yarn build && cd .. && electron-builder",
+    "test": "jest"
   },
   "devDependencies": {
     "concurrently": "3.1.0",
@@ -37,6 +38,8 @@
     "eslint-plugin-import": "2.2.0",
     "eslint-plugin-jsx-a11y": "4.0.0",
     "eslint-plugin-react": "6.9.0",
-    "nodemon": "^2.0.2"
+    "jest": "^25.3.0",
+    "nodemon": "^2.0.2",
+    "supertest": "^4.0.2"
   }
 }

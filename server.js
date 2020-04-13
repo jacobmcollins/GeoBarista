@@ -73,13 +73,77 @@ function server(client_path) {
       console.log(req.body);
     });
 
+  const supported_extensions = ['ntf'];
+  const get_extension = (path) => path.split('.').pop();
+  const image_db = new testdb();
+
+  app.get('/api/v2/image', function(req, res) {
+    let file_path = req.query.file_path;
+    let success = false;
+    let selected = [];
+    try {
+      let raw_select = image_db.select(file_path);
+      selected = raw_select[0].values.map(entry => {
+        const e = {}
+        raw_select[0].columns.forEach((c, idx) => {
+          e[c] = entry[idx];
+        })
+        return e;
+      });
+      success = true;
+    } catch(e) {
+      success = false;
+      selected = [];
+    } finally {
+      res.json({
+        success: success,
+        data: selected
+      });
+    }
+  });
+
+  app.post('/api/v2/image', function(req, res) {
+    let file_path = req.body.file_path;
+    let success = false;
+    let thumbnail_path = null;
+    let thumbnail_extension = null;
+    let mission = null;
+    let camera = null;
+    let geojson = null;
+    try {
+      let file_extension = get_extension(file_path);
+      if(supported_extensions.includes(file_extension)) {
+        switch(file_extension) {
+          case 'ntf':
+            var gdalinfo_output = execSync(`gdalinfo -json ${file_path}`);
+            image_db.insert(file_path, file_extension, thumbnail_path, thumbnail_extension, mission, camera, geojson);
+            success = true;
+            break;
+          default:
+            success = false;
+            break;
+        }
+      }
+    } 
+    catch (e) {
+      success = false;
+    } 
+    finally {
+      res.json({
+        success: success
+      });
+    };
+  });
+
   app.get('/user/:userId/image/:imageId', function (req, res) {
     res.send(req.params)
   })
 
-  app.listen(app.get("port"), () => {
+  s = app.listen(app.get("port"), () => {
     console.log(`Find the server at: http://localhost:${app.get("port")}/`); // eslint-disable-line no-console
   });
+
+  return s;
 }
 
 module.exports = server;
