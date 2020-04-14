@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const request = require('supertest');
-const server = require('../server');
-const imageModel = require('../src/models/image')
+const server = require('../server/server');
+const imageModel = require('../server/models/image')
 const path = require('path');
 
 let test_server;
