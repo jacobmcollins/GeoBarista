@@ -9,17 +9,16 @@ import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
 // React Leaflet component
-import { Map, TileLayer, Polygon } from 'react-leaflet';
+// import { Map, TileLayer, Polygon } from 'react-leaflet';
+import MyMap from './components/MyMap';
 // React Leaflet Draw components
 
 
 // Our components
 import Header from './components/Header';
-import ZoomLatLngBox from './components/ZoomLatLngBox';
 import MainMenu from './components/MainMenu';
 import ImageMenu from './components/ImageMenu';
 import Client from './Client';
-import DrawTools from './components/DrawTools';
 import ComLineOptions from './components/ComLineOptions';
 import { setLocStorage } from './Tools/initLocStorage';
 
@@ -83,11 +82,11 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
     }
 }));
-const mapRef = createRef();
 
 function Main() {
     const classes = useStyles();
     const [optionsMenuOpen, setOptionsMenuOpen] = React.useState(false)
+    const [imageMenuImages, setImageMenuImages] = React.useState(Array());
     const [state, setState] = React.useState({
         mainMenuOpen: false,
         optionsMenuOpen: false,
@@ -106,26 +105,7 @@ function Main() {
         images: [],
         thumbnailsData: ''
     });
-    const handleOnMouseMove = (e) => {
-        if(!mapRef.current) return;
-        setState({
-            ...state,
-            map: {
-                ...state.map,
-                mouse_latlng: e.latlng
-            }
-        })
-    }
-    const handleZoom = (e) => {
-        if(!mapRef.current) return;
-        setState({
-            ...state,
-            map: {
-                ...state.map,
-                zoom: mapRef.current.leafletElement.getZoom()
-            }
-        })
-    }
+   
     const toggleMainMenu = (open) => error => {
         setState({
             ...state,
@@ -143,27 +123,21 @@ function Main() {
         })
     }
     const openDialog = async () => {
-        var f = [];
         var files = await fileDialog({ multiple: true });
         var i;
         for (i=0; i < files.length; i++) {
             var data = await Client.load(files[i]);
-            let points = []
-            data.gcps.gcpList.forEach((x) => {
-                points.push([x['y'], x['x']]);
-            });
-            f.push({
-                points: points,
-                file: data.description
-            });
         }
-        setState({
-            ...state,
-            images: state.images.concat(f)
-        });
-    }
-    const handleOnClick = (e) => {
-        console.log("i clicked")
+        let res = await Client.get_all();
+        // console.log(res);
+        // let im = []
+        // for (i=0; i < res.data.length; i++) {
+        //     im.push({
+        //         file_path: res.data[i].file_path
+        //     });
+        // }
+        // console.log(im)
+        setImageMenuImages(res.data);
     }
     const getTextToDisplay = (toDisplay) => {
         return (toDisplay[0] + ": ");
@@ -182,29 +156,7 @@ function Main() {
         <div className={classes.root} >
             <CssBaseline />
             <Header classes={classes} toggleMainMenu={toggleMainMenu} toggleImageMenu={toggleImageMenu} />
-            <main className={state.imageMenuOpen ? classes.mainShifted : classes.main}>
-                <Map 
-                    center={state.map.center_latlng} 
-                    length={4}
-                    onmousemove={handleOnMouseMove}
-                    onzoomend={handleZoom}
-                    onclick={handleOnClick}
-                    ref={mapRef}
-                    zoom={state.map.zoom}
-                    style={{height: "100%", width: "100%"}}
-                    zoomControl={false}
-                >
-                    <TileLayer
-                    attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                    {
-                        state.images.map((image, index) => <Polygon key={index} positions={image.points}/>)
-                    }
-                    <DrawTools/>
-                </Map>
-            </main>
-            <ZoomLatLngBox classes={classes} zoom={state.map.zoom} latlng={state.map.mouse_latlng}/>
+                <MyMap classes={classes} imageMenuOpen={state.imageMenuOpen}/>
             <MainMenu
                 classes={classes}
                 open={state.mainMenuOpen}
@@ -215,7 +167,7 @@ function Main() {
             <ImageMenu classes={classes}
                        open={state.imageMenuOpen}
                        toggleImageMenu={toggleImageMenu}
-                       images={state.images}
+                       images={imageMenuImages}
                        openDialog={openDialog}
             />
             <ComLineOptions

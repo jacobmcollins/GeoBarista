@@ -5,10 +5,12 @@ import MUIDataTable from "mui-datatables";
 import CustomToolbar from "./CustomToolbar";
 
 export default function ImageMenu(props) {
+  console.log('render')
     const {classes, toggleImageMenu, open, images, openDialog} = props;
+  console.log(images)
 
     const columns = [
-        {name: "file",label: "File"},
+        {name: "file_path",label: "File"},
         {name: "mission",label: "Mission"},
         {name: "fov",label: "FOV"},
         {name: "lla",label: "LLA"},

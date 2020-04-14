@@ -1,17 +1,34 @@
+const mongoose = require('mongoose');
 const request = require('supertest');
-const server = require('./server');
+const server = require('../server');
+const imageModel = require('../src/models/image')
+const path = require('path');
 
 let test_server;
 const image_api = "/api/v2/image";
-const valid_ntf_image_path = "C:\\Users\\jacob\\dev\\data\\Pearl6_Alcatraz\\2017May10_225223_16100298_3c4c9600607e14bdbdfdc6c053d24a2b.ntf";
-const invalid_image_path = "C:\\Users\\jacob\\dev\\data\\Pearl6_Alcatraz\\2017May10_225223_16100298_3c4c9600607bdfdc6c053d24a2b.ntf";
+
+const data_path = path.join(__dirname, "data");
+const pearl6_alcatraz_path = path.join(data_path, "Pearl6_Alcatraz");
+const valid_ntf_image_path = path.join(pearl6_alcatraz_path, "2017May10_225223_16100298_3c4c9600607e14bdbdfdc6c053d24a2b.ntf");
+const invalid_image_path = path.join(pearl6_alcatraz_path, "garbage.ntf");
+
 
 describe(`${image_api} Test Suite`, () => {
-    beforeEach(() => {
+    beforeEach( async () => {
         test_server = server(null);
     });
 
-    afterEach(() => {
+    afterEach( async () => {
+        test_server.close();
+        const collections = mongoose.connection.collections;
+
+        for (const key in collections) {
+            const collection = collections[key];
+            await collection.deleteMany();
+        }
+    });
+
+    afterAll( async() => {
         test_server.close();
     });
 
@@ -30,12 +47,10 @@ describe(`${image_api} Test Suite`, () => {
                 'file_path': valid_ntf_image_path
             });
         expect(res2.statusCode).toEqual(200);
-        expect(res2.body).toHaveProperty('success');
-        expect(res2.body).toHaveProperty('data');
-        expect(res2.body.success).toEqual(true);
-        expect(res2.body.data).toEqual([{
-            file_path: valid_ntf_image_path
-        }]);
+        let images = res2.body;
+        expect(images.length == 1);
+        expect(images[0].file_path).toEqual(valid_ntf_image_path);
+        expect(images[0].file_extension).toEqual('ntf');
     });
 
     it('should not insert image into database', async () => {
@@ -53,9 +68,8 @@ describe(`${image_api} Test Suite`, () => {
                 'file_path': invalid_image_path
             });
         expect(res2.statusCode).toEqual(200);
-        expect(res2.body).toHaveProperty('success');
-        expect(res2.body).toHaveProperty('data');
-        expect(res2.body.success).toEqual(false);
-        expect(res2.body.data).toEqual([]);
+        expect(res2.statusCode).toEqual(200);
+        let images = res2.body;
+        expect(images.length == 0);
     });
 })

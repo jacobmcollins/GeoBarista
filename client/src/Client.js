@@ -1,17 +1,18 @@
 import axios from 'axios';
 
 async function load(file) {
-  var b = await file.arrayBuffer();
-  var name = file.name;
-  var res = await axios.post("/api/v1/image", {
-      filename: name,
-      buffer: btoa(new Uint8Array(b).reduce(function (data, byte) {
-                      return data + String.fromCharCode(byte);
-                      }, ''))
-                    });
+  var file_path = file.path;
+  var res = await axios.post("/api/v2/image", {
+      file_path: file_path
+  });
   
   return res.data;
 }
 
-const Client = { load };
+async function get_all() {
+  var res = await axios.get("/api/v2/image", {});
+  return res;
+}
+
+const Client = { load, get_all };
 export default Client;
