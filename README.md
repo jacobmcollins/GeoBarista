@@ -1,38 +1,66 @@
-# GeoBarista
 
-## Install dependencies for server and client
+# GeoBarista v0.1.0
 
-```
-yarn install
-cd client
-yarn install
-cd ..
-```
+GeoBarista is a cross-platform application built on web technology to sort/filter/view/convert geo-referenced imagery on a map. 
+> NOTE: This is not quite GeoBarista v1.0.0, as this basic functionality is in progress.
 
-## Development Build
+## Getting Started
 
-```
-yarn start-dev
-```
+### Install dependencies for server and client
 
-## Production Build
+First you have to install the node dependencies for the client and server.
 
 ```
-yarn start-prod
+yarn setup
 ```
 
-## Docker Build
+### Running a development build
 
-The first line creates an image called geobarista.
-Line 2 runs a container from that image, exposes the necessary ports and runs 'yarn start-prod'.
-Replace 'yarn start-prod' with whatever command you want to try out
-For 'yarn start-prod' you will eventually see the app show up on localhost:3001 like normal.
-When you are done make sure to run 'docker ps' to find the running container and close it so the ports close.
+The former development build does not work where you run everything in the browser. This will build the client static page, serve it in Express, and will run on Electron.
 
 ```
-docker build -t geobarista .
-docker run -p 3000:3000 -p 3001:3001 -d geobarista:latest yarn start-prod
+yarn start-electron
 ```
 
-NOTE: use 'yarn dist' in the run command and then 'docker cp <container>:/Dock/dist dist' when it completes to get the linux build
-NOTE: running 'yarn dist' successfully means it is working on linux!
+### Project Structure
+
+| Directory | Description                                                                                     |
+|-----------|-------------------------------------------------------------------------------------------------|
+| client    | Everything front end related. This includes the React application that calls the API endpoints. |
+| server    | Everything back end related. This includes the Express API endpoints that connect to MongoDB.   |
+| tests     | Everything to test the server and client. Currently only holds server API tests.                |
+
+## Running tests
+
+We currently have Express endpoint tests. The current tests expect you to have tests/data/Pearl6_Alcatraz filled with all of the .ntf, and .ppj files.
+
+```
+yarn test
+```
+
+## Deployment
+
+This will create the dist directory to be filled based on the current operating system.
+
+```
+yarn dist
+```
+
+## Built With
+
+- MERN Web stack
+	- MongoDB
+	- Express
+	- React
+	- Node
+- Electron
+
+## Authors
+
+- Jacob
+- Jomar
+- Khoi
+- Mike
+- Shayan
+- Tim
+- Trevor
