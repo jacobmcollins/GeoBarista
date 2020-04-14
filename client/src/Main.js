@@ -86,7 +86,7 @@ const useStyles = makeStyles((theme) => ({
 function Main() {
     const classes = useStyles();
     const [optionsMenuOpen, setOptionsMenuOpen] = React.useState(false)
-    const [imageMenuImages, setImageMenuImages] = React.useState(Array());
+    const [images, setImages] = React.useState(Array());
     const [state, setState] = React.useState({
         mainMenuOpen: false,
         optionsMenuOpen: false,
@@ -105,7 +105,6 @@ function Main() {
         images: [],
         thumbnailsData: ''
     });
-   
     const toggleMainMenu = (open) => error => {
         setState({
             ...state,
@@ -129,15 +128,7 @@ function Main() {
             var data = await Client.load(files[i]);
         }
         let res = await Client.get_all();
-        // console.log(res);
-        // let im = []
-        // for (i=0; i < res.data.length; i++) {
-        //     im.push({
-        //         file_path: res.data[i].file_path
-        //     });
-        // }
-        // console.log(im)
-        setImageMenuImages(res.data);
+        setImages(res.data);
     }
     const getTextToDisplay = (toDisplay) => {
         return (toDisplay[0] + ": ");
@@ -156,7 +147,7 @@ function Main() {
         <div className={classes.root} >
             <CssBaseline />
             <Header classes={classes} toggleMainMenu={toggleMainMenu} toggleImageMenu={toggleImageMenu} />
-                <MyMap classes={classes} imageMenuOpen={state.imageMenuOpen}/>
+                <MyMap classes={classes} imageMenuOpen={state.imageMenuOpen} mapImages={images}/>
             <MainMenu
                 classes={classes}
                 open={state.mainMenuOpen}
@@ -167,7 +158,7 @@ function Main() {
             <ImageMenu classes={classes}
                        open={state.imageMenuOpen}
                        toggleImageMenu={toggleImageMenu}
-                       images={imageMenuImages}
+                       images={images}
                        openDialog={openDialog}
             />
             <ComLineOptions

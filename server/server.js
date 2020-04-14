@@ -49,13 +49,15 @@ function server(client_path) {
         switch(file_extension) {
           case 'ntf':
             var gdalinfo_output = execSync(`gdalinfo -json ${file_path}`);
-            const imageComplete = {
-                file_path: 'example_path',
-                file_extension: 'example_extension'
-            };
+            var gdalinfo = JSON.parse(gdalinfo_output);
+            var points = [];
+            gdalinfo.gcps.gcpList.forEach((gcp) => {
+              points.push([gcp['y'], gcp['x']])
+            });
             await imageModel.create({
               'file_path': file_path,
-              'file_extension': file_extension
+              'file_extension': file_extension,
+              'points': JSON.stringify(points)
             });
             success = true;
             break;

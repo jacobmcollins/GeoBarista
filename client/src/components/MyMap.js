@@ -6,7 +6,7 @@ import ZoomLatLngBox from './ZoomLatLngBox';
 const mapRef = createRef();
 
 export default function MyMap(props) {
-    const {classes, imageMenuOpen} = props;
+    const {classes, imageMenuOpen, mapImages} = props;
     const [zoom, setZoom] =  React.useState(13);
     const [center, setCenter] = React.useState({
         lat: 45.51,
@@ -45,6 +45,9 @@ export default function MyMap(props) {
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
+                    {
+                        mapImages.map((image, index) => <Polygon key={index} positions={JSON.parse(image.points)}/>)
+                    }
                     <DrawTools/>
                 </Map>
             </main>
