@@ -41,7 +41,7 @@ export default function DrawTools(props) {
                  rectangle: true,
                  polygon: true,
                  polyline: false,
-                 circlemarker: false,
+                 circlemarker: true,
                  edit: false,
              }}
         />
