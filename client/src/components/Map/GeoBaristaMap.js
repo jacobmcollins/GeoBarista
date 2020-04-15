@@ -6,7 +6,7 @@ import { polygon, Renderer } from 'leaflet';
 
 const mapRef = createRef();
 
-export default function MyMap(props) {
+export default function GeoBaristaMap(props) {
     const {classes, imageMenuOpen, images, selectImageById} = props;
     const [zoom, setZoom] =  React.useState(13);
     const [center, setCenter] = React.useState({

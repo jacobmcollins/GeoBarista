@@ -8,16 +8,10 @@ import fileDialog from 'file-dialog';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
-// React Leaflet component
-// import { Map, TileLayer, Polygon } from 'react-leaflet';
-import MyMap from './components/MyMap';
-// React Leaflet Draw components
-
-
-// Our components
+import GeoBaristaMap from './components/Map/GeoBaristaMap';
 import Header from './components/Header';
 import MainMenu from './components/MainMenu';
-import ImageMenu from './components/ImageMenu';
+import ImageMenu from './components/ImageMenu/ImageMenu';
 import Client from './Client';
 import ComLineOptions from './components/ComLineOptions';
 import { setLocStorage } from './Tools/initLocStorage';
@@ -161,7 +155,7 @@ function Main() {
         <div className={classes.root} >
             <CssBaseline />
             <Header classes={classes} toggleMainMenu={toggleMainMenu} toggleImageMenu={toggleImageMenu} />
-            <MyMap 
+            <GeoBaristaMap 
                 classes={classes} 
                 imageMenuOpen={state.imageMenuOpen} 
                 images={images}

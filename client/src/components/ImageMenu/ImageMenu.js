@@ -1,9 +1,8 @@
 import React from 'react'
 import {Drawer, Toolbar, IconButton} from '@material-ui/core';
 import {Cancel as CancelIcon} from '@material-ui/icons';
-import MUIDataTable from "mui-datatables";
-import CustomToolbar from "./CustomToolbar";
 import ImageTable from "./ImageTable";
+import ImageMenuToolbar from "./ImageMenuToolbar";
 
 export default function ImageMenu(props) {
     const {classes, toggleImageMenu, open, images, openDialog, selectImageById, sortImages} = props;
@@ -16,8 +15,10 @@ export default function ImageMenu(props) {
                         <CancelIcon />
                     </IconButton >
                 </Toolbar>
-                <CustomToolbar classes={classes} openDialog={openDialog}/>
-                <ImageTable images={images} selectImageById={selectImageById}/>
+                <ImageMenuToolbar 
+                    openDialog={openDialog} 
+                />
+                <ImageTable images={images} selectImageById={selectImageById} openDialog={openDialog}/>
             </div>
         </Drawer>
     )

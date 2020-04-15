@@ -13,7 +13,7 @@ const defaultToolbarStyles = {
   },
 };
 
-class CustomToolbar extends React.Component {
+class ImageMenuToolbar extends React.Component {
 
   render() {
     const { classes, openDialog } = this.props;
@@ -41,7 +41,7 @@ class CustomToolbar extends React.Component {
           </IconButton>
         </Tooltip>
         <Tooltip title={"Sort Images"}>
-          <IconButton className={classes.iconButton} onClick={sortImages}>
+          <IconButton className={classes.iconButton} >
             <SortIcon className={classes.deleteIcon} />
           </IconButton>
         </Tooltip>
@@ -51,4 +51,4 @@ class CustomToolbar extends React.Component {
 
 }
 
-export default withStyles(defaultToolbarStyles, { name: "CustomToolbar" })(CustomToolbar);
+export default withStyles(defaultToolbarStyles, { name: "CustomToolbar" })(ImageMenuToolbar);
