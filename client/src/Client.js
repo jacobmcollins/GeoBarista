@@ -14,5 +14,14 @@ async function get_all() {
   return res;
 }
 
+async function update(id, field, value) {
+  var res = await axios.put("/api/v2/image", {
+    _id: id,
+    field: 'selected',
+    value: true
+  });
+  return res.body.success;
+}
+
 const Client = { load, get_all };
 export default Client;

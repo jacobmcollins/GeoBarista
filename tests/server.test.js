@@ -72,4 +72,50 @@ describe(`${image_api} Test Suite`, () => {
         let images = res2.body;
         expect(images.length == 0);
     });
+    it('should change image selected field in database', async () => {
+        // check that it inserts
+        const res = await request(test_server)
+            .post(image_api)
+            .send({
+                file_path: valid_ntf_image_path 
+            });
+        expect(res.statusCode).toEqual(200);
+        expect(res.body).toHaveProperty('success');
+        expect(res.body.success).toEqual(true);
+        // get it and check false
+        const res2 = await request(test_server)
+            .get(image_api)
+            .query({
+                file_path: valid_ntf_image_path
+            });
+        expect(res2.statusCode).toEqual(200);
+        let images = res2.body;
+        expect(images.length == 1);
+        expect(images[0].file_path).toEqual(valid_ntf_image_path);
+        expect(images[0].file_extension).toEqual('ntf');
+        expect(images[0].selected).toEqual(false);
+        // update it
+        const res3 = await request(test_server)
+            .put(image_api)
+            .send({
+                _id: images[0]._id,
+                field: 'selected',
+                value: true
+            });
+        expect(res3.statusCode).toEqual(200);
+        expect(res3.body).toHaveProperty('success');
+        expect(res3.body.success).toEqual(true);
+        // get it and check true
+        const res4 = await request(test_server)
+            .get(image_api)
+            .query({
+                'file_path': valid_ntf_image_path
+            });
+        expect(res4.statusCode).toEqual(200);
+        images = res4.body;
+        expect(images.length == 1);
+        expect(images[0].file_path).toEqual(valid_ntf_image_path);
+        expect(images[0].file_extension).toEqual('ntf');
+        expect(images[0].selected).toEqual(true);
+    });
 })
