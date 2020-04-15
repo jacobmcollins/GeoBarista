@@ -1,12 +1,13 @@
-import React, { createRef } from 'react';
+import React, { createRef }  from 'react';
 import { Map, TileLayer, Polygon } from 'react-leaflet';
 import DrawTools from './DrawTools';
 import ZoomLatLngBox from './ZoomLatLngBox';
+import { polygon, Renderer } from 'leaflet';
 
 const mapRef = createRef();
 
 export default function MyMap(props) {
-    const {classes, imageMenuOpen, mapImages} = props;
+    const {classes, imageMenuOpen, mapImages, selectImageById} = props;
     const [zoom, setZoom] =  React.useState(13);
     const [center, setCenter] = React.useState({
         lat: 45.51,
@@ -27,6 +28,9 @@ export default function MyMap(props) {
         if(!mapRef.current) return;
         setZoom(mapRef.current.leafletElement.getZoom());
     }
+    const onClickSelection = async (e,image) => {
+        await selectImageById(image._id, !image.selected);
+    }
     return (
         <React.Fragment>
             <main className={imageMenuOpen ? classes.mainShifted : classes.main}>
@@ -46,7 +50,7 @@ export default function MyMap(props) {
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
                     {
-                        mapImages.map((image, index) => <Polygon key={index} positions={JSON.parse(image.points)}/>)
+                        mapImages.map((image, index) => <Polygon onclick={e => onClickSelection(e, image)} selected={image.selected} key={index} positions={JSON.parse(image.points)} color={image.selected ? "#00ff00" : "#ff0000"} fillColor={image.selected ? "#00ff00" : "#ff0000"} />)
                     }
                     <DrawTools/>
                 </Map>

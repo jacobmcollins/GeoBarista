@@ -35,6 +35,32 @@ function server(client_path) {
     res.json(selected);
   });
 
+  app.put('/api/v2/image', async function(req, res) {
+    const id = req.body._id;
+    const field = req.body.field;
+    const value = req.body.value;
+    let success = false;
+    try {
+      switch(field) {
+        case 'selected':
+          const response = await imageModel.findByIdAndUpdate(id, {selected: value});
+          success = true;
+          break;
+        default:
+          success = false;
+          break;
+      } 
+    }
+    catch(e) {
+      success = false;
+    }
+    finally {
+      res.json({
+        success: success
+      });
+    }
+  });
+
   app.post('/api/v2/image', async function(req, res) {
     let file_path = req.body.file_path;
     let success = false;

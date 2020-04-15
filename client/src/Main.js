@@ -121,6 +121,13 @@ function Main() {
             imageMenuOpen: open
         })
     }
+    const selectImageById = async (id, value) => {
+        let success = await Client.update(id, 'selected', value);
+        if(success) {
+            let res = await Client.get_all();
+            setImages(res.data);
+        }
+    }
     const openDialog = async () => {
         var files = await fileDialog({ multiple: true });
         var i;
@@ -147,7 +154,12 @@ function Main() {
         <div className={classes.root} >
             <CssBaseline />
             <Header classes={classes} toggleMainMenu={toggleMainMenu} toggleImageMenu={toggleImageMenu} />
-                <MyMap classes={classes} imageMenuOpen={state.imageMenuOpen} mapImages={images}/>
+            <MyMap 
+                classes={classes} 
+                imageMenuOpen={state.imageMenuOpen} 
+                mapImages={images}
+                selectImageById={selectImageById}
+            />
             <MainMenu
                 classes={classes}
                 open={state.mainMenuOpen}
@@ -160,6 +172,7 @@ function Main() {
                        toggleImageMenu={toggleImageMenu}
                        images={images}
                        openDialog={openDialog}
+                       selectImageById={selectImageById}
             />
             <ComLineOptions
                 classes={classes}

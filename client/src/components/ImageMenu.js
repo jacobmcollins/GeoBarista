@@ -5,9 +5,7 @@ import MUIDataTable from "mui-datatables";
 import CustomToolbar from "./CustomToolbar";
 
 export default function ImageMenu(props) {
-  console.log('render')
-    const {classes, toggleImageMenu, open, images, openDialog} = props;
-  console.log(images)
+    const {classes, toggleImageMenu, open, images, openDialog, selectImageById} = props;
 
     const columns = [
         {name: "file_path",label: "File"},
@@ -35,6 +33,35 @@ export default function ImageMenu(props) {
         return (
           <CustomToolbar openDialog={openDialog}/>
         );
+      },
+      serverSide: true,
+      onRowsSelect: (all, curr) => {
+        console.log('onRowsSelect', all, curr);
+      },
+      onTableChange: (action, tableState) => {
+        console.log('onTableChange', action, tableState);
+        switch(action) {
+          case 'rowsSelect':
+            tableState.selectedRows.data.forEach((elem) => {
+              selectImageById(images[elem.index]._id, !images[elem.index].selected);
+            });
+            break;
+          case 'sort':
+            // handle sort server side
+            break;
+          case 'rowsSelect':
+            // handle how row select works
+            // TODO: fix checkbox unclicking when 'propsUpdate'
+            break;
+          case 'filterChange':
+            // handle a filter server side
+            break;
+          case 'propsUpdate':
+            // TODO: see rowsSelect TODO
+            break;
+          default:
+            break;
+        }
       }
     };
 
