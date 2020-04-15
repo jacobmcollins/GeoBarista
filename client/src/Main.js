@@ -128,6 +128,13 @@ function Main() {
             setImages(res.data);
         }
     }
+    const sortImages = async (field, direction) => {
+        let filter = {};
+        let sort = {};
+        sort[field] = direction
+        let res = await Client.get(filter, sort);
+        setImages(res.data);
+    }
     const openDialog = async () => {
         var files = await fileDialog({ multiple: true });
         var i;
@@ -157,7 +164,7 @@ function Main() {
             <MyMap 
                 classes={classes} 
                 imageMenuOpen={state.imageMenuOpen} 
-                mapImages={images}
+                images={images}
                 selectImageById={selectImageById}
             />
             <MainMenu
@@ -173,6 +180,7 @@ function Main() {
                        images={images}
                        openDialog={openDialog}
                        selectImageById={selectImageById}
+                       sortImages={sortImages}
             />
             <ComLineOptions
                 classes={classes}
