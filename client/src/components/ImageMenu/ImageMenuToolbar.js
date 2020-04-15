@@ -16,7 +16,7 @@ const defaultToolbarStyles = {
 class ImageMenuToolbar extends React.Component {
 
   render() {
-    const { classes, openDialog } = this.props;
+    const { classes, openDialog, toggleFilterDialogOpen, toggleSortDialogOpen } = this.props;
 
     return (
       <React.Fragment>
@@ -36,12 +36,12 @@ class ImageMenuToolbar extends React.Component {
           </IconButton>
         </Tooltip>
         <Tooltip title={"Filter Images"}>
-          <IconButton className={classes.iconButton}>
+          <IconButton className={classes.iconButton} onClick={() => { toggleFilterDialogOpen(true) }}>
             <FilterListIcon className={classes.deleteIcon} />
           </IconButton>
         </Tooltip>
         <Tooltip title={"Sort Images"}>
-          <IconButton className={classes.iconButton} >
+          <IconButton className={classes.iconButton} onClick={() => { toggleSortDialogOpen(true) }}>
             <SortIcon className={classes.deleteIcon} />
           </IconButton>
         </Tooltip>

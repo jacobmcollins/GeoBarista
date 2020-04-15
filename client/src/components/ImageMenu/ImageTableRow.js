@@ -2,6 +2,7 @@ import React from 'react';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Checkbox from '@material-ui/core/Checkbox';
+import Tooltip from "@material-ui/core/Tooltip";
 
 export default function ImageTableRow(props) {
     const {columns, image, selectImageById} = props;
@@ -18,9 +19,11 @@ export default function ImageTableRow(props) {
             { 
                 columns.map((column) => {
                     return (
-                        <TableCell component="th" scope="row">
-                            {image[column.id]}
-                        </TableCell>
+                        <Tooltip title={image.file_path}>
+                            <TableCell component="th" scope="row">
+                                {image[column.id]}
+                            </TableCell>
+                        </Tooltip>
                     )
                 })
             }
