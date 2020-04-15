@@ -17,11 +17,11 @@ async function get_all() {
 async function update(id, field, value) {
   var res = await axios.put("/api/v2/image", {
     _id: id,
-    field: 'selected',
-    value: true
+    field: field,
+    value: value
   });
-  return res.body.success;
+  return res.data.success;
 }
 
-const Client = { load, get_all };
+const Client = { load, get_all, update };
 export default Client;

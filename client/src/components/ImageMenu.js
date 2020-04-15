@@ -6,7 +6,7 @@ import CustomToolbar from "./CustomToolbar";
 
 export default function ImageMenu(props) {
   console.log('render')
-    const {classes, toggleImageMenu, open, images, openDialog} = props;
+    const {classes, toggleImageMenu, open, images, openDialog, selectImageById} = props;
   console.log(images)
 
     const columns = [

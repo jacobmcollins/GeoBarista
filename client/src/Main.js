@@ -121,8 +121,8 @@ function Main() {
             imageMenuOpen: open
         })
     }
-    const selectImageById = async (id) => {
-        let success = await Client.update(id, 'selected', true);
+    const selectImageById = async (id, value) => {
+        let success = await Client.update(id, 'selected', value);
         if(success) {
             let res = await Client.get_all();
             setImages(res.data);
