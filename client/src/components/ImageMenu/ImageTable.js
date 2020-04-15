@@ -17,13 +17,33 @@ export default function ImageTable(props) {
     const classes = useStyles();
     const columns = [
         {
-            id: 'file_path',
-            label: 'File Path'
+            id: 'file_extension',
+            label: 'File Type'
         },
         {
             id: 'mission',
             label: 'Mission'
-        }
+        },
+        {
+            id: 'camera',
+            label: 'Camera'
+        },
+        {
+            id: 'fov',
+            label: 'FOV'
+        },
+        {
+            id: 'lla',
+            label: 'LLA'
+        },
+        {
+            id: 'velocity',
+            label: 'Velocity'
+        },
+        {
+            id: 'gsd',
+            label: 'GSD'
+        },
     ]
 
     return (
