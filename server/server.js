@@ -31,7 +31,9 @@ function server(client_path) {
   const get_extension = (path) => path.split('.').pop();
 
   app.get('/api/v2/image', async function(req, res) {
-    let selected = await imageModel.find(res.query);
+    let filter = req.query.filter;
+    let sort = req.query.sort;
+    let selected = await imageModel.find(filter).sort(sort);
     res.json(selected);
   });
 

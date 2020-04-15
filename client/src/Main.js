@@ -8,16 +8,10 @@ import fileDialog from 'file-dialog';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
-// React Leaflet component
-// import { Map, TileLayer, Polygon } from 'react-leaflet';
-import MyMap from './components/MyMap';
-// React Leaflet Draw components
-
-
-// Our components
+import GeoBaristaMap from './components/Map/GeoBaristaMap';
 import Header from './components/Header';
 import MainMenu from './components/MainMenu';
-import ImageMenu from './components/ImageMenu';
+import ImageMenu from './components/ImageMenu/ImageMenu';
 import Client from './Client';
 import ComLineOptions from './components/ComLineOptions';
 import { setLocStorage } from './Tools/initLocStorage';
@@ -128,6 +122,13 @@ function Main() {
             setImages(res.data);
         }
     }
+    const sortImages = async (field, direction) => {
+        let filter = {};
+        let sort = {};
+        sort[field] = direction
+        let res = await Client.get(filter, sort);
+        setImages(res.data);
+    }
     const openDialog = async () => {
         var files = await fileDialog({ multiple: true });
         var i;
@@ -154,10 +155,10 @@ function Main() {
         <div className={classes.root} >
             <CssBaseline />
             <Header classes={classes} toggleMainMenu={toggleMainMenu} toggleImageMenu={toggleImageMenu} />
-            <MyMap 
+            <GeoBaristaMap 
                 classes={classes} 
                 imageMenuOpen={state.imageMenuOpen} 
-                mapImages={images}
+                images={images}
                 selectImageById={selectImageById}
             />
             <MainMenu
@@ -173,6 +174,7 @@ function Main() {
                        images={images}
                        openDialog={openDialog}
                        selectImageById={selectImageById}
+                       sortImages={sortImages}
             />
             <ComLineOptions
                 classes={classes}
