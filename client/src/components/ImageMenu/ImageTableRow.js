@@ -4,7 +4,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Checkbox from '@material-ui/core/Checkbox';
 
 export default function ImageTableRow(props) {
-    const {image, selectImageById} = props;
+    const {columns, image, selectImageById} = props;
     return (
         <TableRow key={image._id} style={{height: 33}}>
             <TableCell padding="checkbox">
@@ -15,12 +15,15 @@ export default function ImageTableRow(props) {
                         })}
                     />
             </TableCell>
-            <TableCell component="th" scope="row">
-                {image.file_path}
-            </TableCell>
-            <TableCell component="th" scope="row">
-                {image.mission}
-            </TableCell>
+            { 
+                columns.map((column) => {
+                    return (
+                        <TableCell component="th" scope="row">
+                            {image[column.id]}
+                        </TableCell>
+                    )
+                })
+            }
         </TableRow>
     )
 }

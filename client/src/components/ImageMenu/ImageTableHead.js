@@ -5,7 +5,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Checkbox from '@material-ui/core/Checkbox';
 
 export default function ImageTableHead(props) {
-    const {images, selectImageById, openDialog} = props;
+    const {columns, images, selectImageById, openDialog} = props;
     return (
         <TableHead>
             <TableRow>
@@ -18,8 +18,15 @@ export default function ImageTableHead(props) {
                         })}
                     />
                 </TableCell>
-                <TableCell>File Path</TableCell>
-                <TableCell>Mission</TableCell>
+                {
+                    columns.map((column) => {
+                        return (
+                            <TableCell>
+                                {column.label}
+                            </TableCell>
+                        )
+                    })
+                }
             </TableRow>
         </TableHead>
     )

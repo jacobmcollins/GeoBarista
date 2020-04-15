@@ -15,16 +15,28 @@ const useStyles = makeStyles({
 export default function ImageTable(props) {
     const {images, selectImageById, openDialog} = props;
     const classes = useStyles();
+    const columns = [
+        {
+            id: 'file_path',
+            label: 'File Path'
+        },
+        {
+            id: 'mission',
+            label: 'Mission'
+        }
+    ]
 
     return (
     <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="simple table">
             <ImageTableHead 
+                columns={columns}
                 images={images} 
                 selectImageById={selectImageById} 
                 openDialog={openDialog}
             />
             <ImageTableBody 
+                columns={columns}
                 images={images} 
                 selectImageById={selectImageById} 
             />

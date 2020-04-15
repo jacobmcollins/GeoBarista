@@ -18,7 +18,11 @@ export default function ImageMenu(props) {
                 <ImageMenuToolbar 
                     openDialog={openDialog} 
                 />
-                <ImageTable images={images} selectImageById={selectImageById} openDialog={openDialog}/>
+                <ImageTable 
+                    images={images} 
+                    selectImageById={selectImageById} 
+                    openDialog={openDialog}
+                />
             </div>
         </Drawer>
     )

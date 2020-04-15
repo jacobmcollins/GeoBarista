@@ -3,11 +3,15 @@ import TableBody from '@material-ui/core/TableBody';
 import ImageTableRow from './ImageTableRow';
 
 export default function ImageTableBody(props) {
-    const {images, selectImageById} = props;
+    const {columns, images, selectImageById} = props;
     return (
         <TableBody>
             {images.map((image) => (
-                <ImageTableRow image={image} selectImageById={selectImageById}/>
+                <ImageTableRow 
+                    columns={columns} 
+                    image={image} 
+                    selectImageById={selectImageById}
+                />
             ))}
         </TableBody>
     )
