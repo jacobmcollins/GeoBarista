@@ -50,7 +50,7 @@ export default function MyMap(props) {
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
                     {
-                        mapImages.map((image, index) => <Polygon onclick={e => onClickSelection(e, image)} selected={image.selected} key={index} positions={JSON.parse(image.points)} color={image.selected ? "#ff0000" : "#0000ff"} fillColor={image.selected ? "#ff0000" : "#0000ff"} />)
+                        mapImages.map((image, index) => <Polygon onclick={e => onClickSelection(e, image)} selected={image.selected} key={index} positions={JSON.parse(image.points)} color={image.selected ? "#00ff00" : "#ff0000"} fillColor={image.selected ? "#00ff00" : "#ff0000"} />)
                     }
                     <DrawTools/>
                 </Map>
