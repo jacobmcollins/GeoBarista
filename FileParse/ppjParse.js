@@ -92,7 +92,7 @@ class pointMapPkg {
         this.ecefZ = data.ecefZ[0]
 
         //wgs84 conversions
-        this.wgsCoordinates = projector.project(
+        this.wgsCoordinates = projector.unproject(
             parseFloat(this.ecefX),
             parseFloat(this.ecefY),
             parseFloat(this.ecefZ))

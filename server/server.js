@@ -2,6 +2,8 @@ const express = require("express");
 const {execSync} = require("child_process");
 const bodyParser = require("body-parser");
 global.atob = require("atob");
+var Parser = require('../FileParse/ppjParse')
+var util = require('util')
 
 function server(client_path) {
   const app = express();
@@ -13,6 +15,9 @@ function server(client_path) {
   const imageService = require('./services/image');
   const imageModel = require('./models/image');
   dbHandler.connect();
+
+  // Create the PPJ Parser early on
+  const ppjParser = new Parser()
 
   // Express only serves static assets in production
   if(client_path != null) {
@@ -27,7 +32,7 @@ function server(client_path) {
 
   app.use(bodyParser.json({ limit: '50mb', verify: rawBodySaver }));
 
-  const supported_extensions = ['ntf'];
+  const supported_extensions = ['ppj'];
   const get_extension = (path) => path.split('.').pop();
 
   app.get('/api/v2/image', async function(req, res) {
@@ -66,29 +71,28 @@ function server(client_path) {
   app.post('/api/v2/image', async function(req, res) {
     let file_path = req.body.file_path;
     let success = false;
-    let thumbnail_path = null;
-    let thumbnail_extension = null;
-    let mission = null;
-    let camera = null;
-    let geojson = null;
     try {
       let file_extension = get_extension(file_path);
       if(supported_extensions.includes(file_extension)) {
         switch(file_extension) {
-          case 'ntf':
-            var gdalinfo_output = execSync(`gdalinfo -json ${file_path}`);
-            var gdalinfo = JSON.parse(gdalinfo_output);
-            var points = [];
-            gdalinfo.gcps.gcpList.forEach((gcp) => {
-              points.push([gcp['y'], gcp['x']])
-            });
+          case 'ppj':
+            var metaData = ppjParser.convertXml(file_path)
+            var points = []
+            var i;
+            // Only go from 0 to i-1 because the last point is the center
+            for(i=0; i < (metaData.pointMap.length - 1); i++) {
+              let coords = metaData.pointMap[i].wgsCoordinates;
+              points.push([coords[0], coords[1]]);
+            }
+            let base_name = metaData.fileName;
             await imageModel.create({
+              '_id': base_name,
+              'base_name': base_name,
               'file_path': file_path,
               'file_extension': file_extension,
               'points': JSON.stringify(points)
             });
             success = true;
-            break;
           default:
             success = false;
             break;
