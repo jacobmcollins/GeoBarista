@@ -6,13 +6,16 @@
     "atob": "^2.1.2",
     "babel-core": "6.14.0",
     "body-parser": "^1.19.0",
+    "ecef-projector": "^1.0.1",
     "express": "4.13.3",
     "file-dialog": "0.0.8",
     "fs": "0.0.2",
     "mongodb": "^3.5.5",
     "mongodb-memory-server": "^6.5.2",
     "mongoose": "^5.9.9",
-    "sql.js": "0.3.2"
+    "sql.js": "0.3.2",
+    "util": "^0.12.2",
+    "xml2js": "^0.4.23"
   },
   "build": {
     "appId": "GeoBarista",
