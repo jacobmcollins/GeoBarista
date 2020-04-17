@@ -122,6 +122,13 @@ function Main() {
             setImages(res.data);
         }
     }
+    const setImageVisibleById = async (id, value) => {
+        let success = await Client.update(id, 'visible', value);
+        if(success) {
+            let res = await Client.get_all();
+            setImages(res.data);
+        }
+    }
     const sortImages = async (field, direction) => {
         let filter = {};
         let sort = {};
@@ -174,6 +181,7 @@ function Main() {
                        images={images}
                        openDialog={openDialog}
                        selectImageById={selectImageById}
+                       setImageVisibleById={setImageVisibleById}
                        sortImages={sortImages}
             />
             <ComLineOptions

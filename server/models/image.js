@@ -19,7 +19,8 @@ const imageSchema = new mongoose.Schema({
     time: { type: String, default: "Unknown" },
     gsd: { type: String, default: "Unknown" },
     points: { type: String},
-    selected: {type: Boolean, default: false}
+    selected: {type: Boolean, default: false},
+    visible: {type: Boolean, default: true}
 });
 
 module.exports = mongoose.model('image', imageSchema);
