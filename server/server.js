@@ -35,17 +35,24 @@ function server(client_path) {
     let sort = req.query.sort;
     let selected = await imageModel.find(filter).sort(sort);
     res.json(selected);
+    let visible = await imageModel.find(filter).sort(sort);
+    res.json(visible);
   });
 
   app.put('/api/v2/image', async function(req, res) {
     const id = req.body._id;
     const field = req.body.field;
     const value = req.body.value;
+    let response = null;
     let success = false;
     try {
       switch(field) {
         case 'selected':
-          const response = await imageModel.findByIdAndUpdate(id, {selected: value});
+          response = await imageModel.findByIdAndUpdate(id, {selected: value});
+          success = true;
+          break;
+        case 'visible':
+          response = await imageModel.findByIdAndUpdate(id, {visible: value});
           success = true;
           break;
         default:

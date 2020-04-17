@@ -2,10 +2,12 @@ import React from 'react';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Checkbox from '@material-ui/core/Checkbox';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import Tooltip from "@material-ui/core/Tooltip";
 
 export default function ImageTableRow(props) {
-    const {columns, image, selectImageById} = props;
+    const {columns, image, selectImageById, setImageVisibleById} = props;
     return (
         <TableRow key={image._id} style={{height: 33}}>
             <TableCell padding="checkbox">
@@ -13,6 +15,18 @@ export default function ImageTableRow(props) {
                         checked={image.selected}
                         onChange={((e) => {
                             selectImageById(image._id, e.target.checked);
+                            console.log("selected: " + image.selected)
+                        })}
+                    />
+            </TableCell>
+            <TableCell padding="checkbox">
+                    <Checkbox
+                        icon = {<VisibilityIcon/>}
+                        checkedIcon = {<VisibilityOffIcon/>}
+                        checked={image.visible}
+                        onChange={((e) => {
+                            setImageVisibleById(image._id, e.target.checked);
+                            console.log("visible: " + image.visible)
                         })}
                     />
             </TableCell>

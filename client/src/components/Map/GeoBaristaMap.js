@@ -49,8 +49,9 @@ export default function GeoBaristaMap(props) {
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
+                    
                     {
-                        images.map((image, index) => <Polygon onclick={e => onClickSelection(e, image)} selected={image.selected} key={index} positions={JSON.parse(image.points)} color={image.selected ? "#00ff00" : "#ff0000"} fillColor={image.selected ? "#00ff00" : "#ff0000"} />)
+                        images.map((image, index) => <Polygon onclick={!image.visible ? e => onClickSelection(e, image) : null} selected={image.selected} key={index} positions={JSON.parse(image.points)} color={image.selected ? "#00ff00" : "#ff0000"} fillColor={image.selected ? "#00ff00" : "#ff0000"} opacity={image.visible ? 0 : 0.5} fillOpacity={image.visible ? 0 : 0.5} /> )
                     }
                     <DrawTools/>
                 </Map>
