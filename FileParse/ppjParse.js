@@ -1,7 +1,7 @@
 var x2j = require('xml2js') 
 var fs = require('fs')
 var util = require('util')
-
+var projector = require('ecef-projector')
 
 /*
 EXAMPLE USAGE
@@ -90,6 +90,12 @@ class pointMapPkg {
         this.ecefX = data.ecefX[0]
         this.ecefY = data.ecefY[0]
         this.ecefZ = data.ecefZ[0]
+
+        //wgs84 conversions
+        this.wgsCoordinates = projector.project(
+            parseFloat(this.ecefX),
+            parseFloat(this.ecefY),
+            parseFloat(this.ecefZ))
     }
 
     logAllEntries() {
@@ -99,6 +105,7 @@ class pointMapPkg {
         console.log("ecefX: ",this.ecefX)
         console.log("ecefY: ",this.ecefY)
         console.log("ecefZ: ",this.ecefZ)
+        console.log("wgs84 coordinates: ", this.wgsCoordinates)
     }
 }
 
