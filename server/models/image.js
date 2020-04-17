@@ -21,6 +21,7 @@ const imageSchema = new mongoose.Schema({
     gsd: { type: String, default: "Unknown" },
     points: { type: String},                                    // TODO: change this to a Map/Json type
     selected: {type: Boolean, default: false}                   // Determines if the image is marked selected for some action (e.g. generate thumbnails)
+    visible: {type: Boolean, default: true}
 });
 
 module.exports = mongoose.model('image', imageSchema);

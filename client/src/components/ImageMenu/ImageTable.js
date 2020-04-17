@@ -13,7 +13,7 @@ const useStyles = makeStyles({
 });
 
 export default function ImageTable(props) {
-    const {images, selectImageById, openDialog} = props;
+    const {images, selectImageById, setImageVisibleById, openDialog} = props;
     const classes = useStyles();
     const columns = [
         {
@@ -53,12 +53,14 @@ export default function ImageTable(props) {
                 columns={columns}
                 images={images} 
                 selectImageById={selectImageById} 
+                setImageVisibleById={setImageVisibleById}
                 openDialog={openDialog}
             />
             <ImageTableBody 
                 columns={columns}
                 images={images} 
                 selectImageById={selectImageById} 
+                setImageVisibleById={setImageVisibleById}
             />
         </Table>
     </TableContainer>
