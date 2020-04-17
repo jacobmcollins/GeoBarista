@@ -35,8 +35,6 @@ function server(client_path) {
     let sort = req.query.sort;
     let selected = await imageModel.find(filter).sort(sort);
     res.json(selected);
-    let visible = await imageModel.find(filter).sort(sort);
-    res.json(visible);
   });
 
   app.put('/api/v2/image', async function(req, res) {

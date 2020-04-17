@@ -51,7 +51,18 @@ export default function GeoBaristaMap(props) {
                     />
                     
                     {
-                        images.map((image, index) => <Polygon onclick={!image.visible ? e => onClickSelection(e, image) : null} selected={image.selected} key={index} positions={JSON.parse(image.points)} color={image.selected ? "#00ff00" : "#ff0000"} fillColor={image.selected ? "#00ff00" : "#ff0000"} opacity={image.visible ? 0 : 0.5} fillOpacity={image.visible ? 0 : 0.5} /> )
+                        images.map((image, index) => {
+                            if(image.visible) {
+                                return (<Polygon 
+                                    onclick={e => onClickSelection(e, image)} 
+                                    selected={image.selected} 
+                                    key={image._id} 
+                                    positions={JSON.parse(image.points)} 
+                                    color={image.selected ? "#00ff00" : "#ff0000"} 
+                                    fillColor={image.selected ? "#00ff00" : "#ff0000"} 
+                                    /> )
+                            }
+                        })                   
                     }
                     <DrawTools/>
                 </Map>

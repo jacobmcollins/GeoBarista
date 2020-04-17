@@ -21,8 +21,9 @@ export default function ImageTableRow(props) {
             </TableCell>
             <TableCell padding="checkbox">
                     <Checkbox
-                        icon = {<VisibilityIcon/>}
-                        checkedIcon = {<VisibilityOffIcon/>}
+                        color = {'default'}
+                        checkedIcon = {<VisibilityIcon/>}
+                        icon = {<VisibilityOffIcon color = {'secondary'}/>}
                         checked={image.visible}
                         onChange={((e) => {
                             setImageVisibleById(image._id, e.target.checked);
