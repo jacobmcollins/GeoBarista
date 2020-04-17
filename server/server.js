@@ -98,6 +98,7 @@ function server(client_path) {
               'points': JSON.stringify(points)
             });
             success = true;
+            break;
           default:
             success = false;
             break;
