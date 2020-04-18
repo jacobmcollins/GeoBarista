@@ -1,7 +1,6 @@
 const express = require("express");
-const {execSync} = require("child_process");
 const bodyParser = require("body-parser");
-global.atob = require("atob");
+var Parser = require('../FileParse/ppjParse')
 
 function server(client_path) {
   const app = express();
@@ -13,6 +12,9 @@ function server(client_path) {
   const imageService = require('./services/image');
   const imageModel = require('./models/image');
   dbHandler.connect();
+
+  // Create the PPJ Parser early on
+  const ppjParser = new Parser()
 
   // Express only serves static assets in production
   if(client_path != null) {
@@ -29,9 +31,6 @@ function server(client_path) {
   }
 
   app.use(bodyParser.json({ limit: '50mb', verify: rawBodySaver }));
-
-  const supported_extensions = ['ntf'];
-  const get_extension = (path) => path.split('.').pop();
 
   app.get('/api/v2/image', async function(req, res) {
     let filter = req.query.filter;
@@ -73,7 +72,6 @@ function server(client_path) {
 
   app.post('/api/v2/image', async function(req, res) {
     let file_list = req.body.file_obj;
-    console.log("json delivered: " + file_list);
     let file_list_obj = JSON.parse(file_list);
     let success = false;
     let fileHandlerObj = new fileHandler(file_list_obj);
@@ -81,45 +79,6 @@ function server(client_path) {
     res.json({
        success: success
     });
-    // let file_path = req.body.file_path;
-    // let success = false;
-    // let thumbnail_path = null;
-    // let thumbnail_extension = null;
-    // let mission = null;
-    // let camera = null;
-    // let geojson = null;
-    // try {
-    //   let file_extension = get_extension(file_path);
-    //   if(supported_extensions.includes(file_extension)) {
-    //     switch(file_extension) {
-    //       case 'ntf':
-    //         var gdalinfo_output = execSync(`gdalinfo -json ${file_path}`);
-    //         var gdalinfo = JSON.parse(gdalinfo_output);
-    //         var points = [];
-    //         gdalinfo.gcps.gcpList.forEach((gcp) => {
-    //           points.push([gcp['y'], gcp['x']])
-    //         });
-    //         await imageModel.create({
-    //           'file_path': file_path,
-    //           'file_extension': file_extension,
-    //           'points': JSON.stringify(points)
-    //         });
-    //         success = true;
-    //         break;
-    //       default:
-    //         success = false;
-    //         break;
-    //     }
-    //   }
-    // } 
-    // catch (e) {
-    //   success = false;
-    // } 
-    // finally {
-    //   res.json({
-    //     success: success
-    //   });
-    // };
   });
 
   app.get('/user/:userId/image/:imageId', function (req, res) {

@@ -140,7 +140,6 @@ function Main() {
         var files = await fileDialog({ multiple: true });
         var i;
         var fileObj = [];
-        console.log("test");
         for (i=0; i < files.length; i++) {
             var name = files[i].name;
             var path = files[i].path;
@@ -152,19 +151,8 @@ function Main() {
         }
         //var payload = JSON.stringify(fileObj);
         var data = await Client.load(fileObj);
-        console.log("payload: ");
-        console.log(JSON.stringify(fileObj));
-        console.log("data: ");
-        console.log(data);
         let res = await Client.get_all();
         setImages(res.data);
-        // var files = await fileDialog({ multiple: true });
-        // var i;
-        // for (i=0; i < files.length; i++) {
-        //     var data = await Client.load(files[i]);
-        // }
-        // let res = await Client.get_all();
-        // setImages(res.data);
     }
     const getTextToDisplay = (toDisplay) => {
         return (toDisplay[0] + ": ");

@@ -1,8 +1,10 @@
-const {execSync} = require("child_process");
 var path = require('path');
-const imageService = require('../server/services/image');
 const imageModel = require('../server/models/image');
 var ppjParse = require('./ppjParse');
+
+// Since the ppj parser doesnt hold much state to it, we only need to declare it once to
+// do all of our conversions
+var ppjParser = new ppjParse();
 
 class fileHandler {
     constructor(file_list) {        
@@ -12,18 +14,12 @@ class fileHandler {
     }
 
     async processList() {
-        console.log("json delivered: " + this.file_list);
         if(this.file_list.length >= 1) {
             for (const element of this.file_list) {
                 let fileext = path.extname(element.name);
                 switch (fileext) {
-                    case ".ntf":
-                        this.ntfinfo(element.path);
-                        break;
                     case ".ppj":
                         this.ppjinfo(element.path);
-                        break;
-                    case ".jpg":
                         break;
                     default:
                         break;
@@ -32,22 +28,21 @@ class fileHandler {
         }
     }
 
-    ppjinfo(path) {
-        var ppjParser = new ppjParse();
-        var metadata = ppjParser.convertXml(path);
-        metadata.logAllEntries();
-    }
-
-    async ntfinfo(path) {
-        var gdalinfo_output = execSync(`gdalinfo -json "${path}"`);
-        var gdalinfo = JSON.parse(gdalinfo_output);
-        var points = [];
-        gdalinfo.gcps.gcpList.forEach((gcp) => {
-          points.push([gcp['y'], gcp['x']])
-        });
+    async ppjinfo(path) {
+        var metaData = ppjParser.convertXml(path)
+        var points = []
+        var i;
+        // Only go from 0 to i-1 because the last point is the center
+        for(i=0; i < (metaData.pointMap.length - 1); i++) {
+          let coords = metaData.pointMap[i].wgsCoordinates;
+          points.push([coords[0], coords[1]]);
+        }
+        let base_name = metaData.fileName;
         await imageModel.create({
+          '_id': base_name,
+          'base_name': base_name,
           'file_path': path,
-          'file_extension': "ntf",
+          'file_extension': 'ppj',
           'points': JSON.stringify(points)
         });
     }

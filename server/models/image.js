@@ -6,20 +6,21 @@ const mongoose = require('mongoose');
  * image model schema.
  */
 const imageSchema = new mongoose.Schema({
-    file_path: { type: String, required: true },
-    file_extension: { type: String, required: true },
-    thumbnail_path: { type: String, default: "Unknown" },
-    thumbnail_extension: { type: String, default: "Unknown" },
-    mission: { type: String, default: "Unknown" },
+    _id: { type: String, required: true },                      // The _id field acts like a primary key for mongoose. We will set it to the base name
+    base_name: { type: String, required: true },                // if BASE_NAME.ppj is the ppj read in, BASE_NAME.extension are any associated files, and BASE_NAME_thumb.jpeg is the thumbnail
+    file_path: { type: String, required: true },                // BASE_NAME.ppj
+    file_extension: { type: String, required: true },           // TODO: change this to whatever image file is located with the ppj, if there is one
+    thumbnail_path: { type: String, default: "Unknown" },       // BASE_NAME_thumb.jpeg
+    thumbnail_extension: { type: String, default: "Unknown" },  // TODO: figure out if this is always jpeg
+    mission: { type: String, default: "Unknown" },              // Directory that BASE_NAME.ppj is located in
     camera: { type: String, default: "Unknown" },
-    geojson: { type: String, default: "Unknown" },
     fov: { type: String, default: "Unknown" },
     lla: { type: String, default: "Unknown" },
     velocity: { type: String, default: "Unknown" },
     time: { type: String, default: "Unknown" },
     gsd: { type: String, default: "Unknown" },
-    points: { type: String},
-    selected: {type: Boolean, default: false},
+    points: { type: String},                                    // TODO: change this to a Map/Json type
+    selected: {type: Boolean, default: false},                  // Determines if the image is marked selected for some action (e.g. generate thumbnails)
     visible: {type: Boolean, default: true}
 });
 
