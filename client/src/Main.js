@@ -139,9 +139,18 @@ function Main() {
     const openDialog = async () => {
         var files = await fileDialog({ multiple: true });
         var i;
+        var fileObj = [];
         for (i=0; i < files.length; i++) {
-            var data = await Client.load(files[i]);
+            var name = files[i].name;
+            var path = files[i].path;
+            var fileData = {
+                "name": name,
+                "path": path
+            };
+            fileObj.push(fileData);
         }
+        //var payload = JSON.stringify(fileObj);
+        var data = await Client.load(fileObj);
         let res = await Client.get_all();
         setImages(res.data);
     }

@@ -1,9 +1,6 @@
 const express = require("express");
-const {execSync} = require("child_process");
 const bodyParser = require("body-parser");
-global.atob = require("atob");
 var Parser = require('../FileParse/ppjParse')
-var util = require('util')
 
 function server(client_path) {
   const app = express();
@@ -24,6 +21,9 @@ function server(client_path) {
     app.use(express.static(client_path));
   }
 
+  // FileHandler components
+  const fileHandler = require('../FileParse/file-handler');
+  
   var rawBodySaver = function (req, res, buf, encoding) {
     if (buf && buf.length) {
       req.rawBody = buf.toString(encoding || 'utf8');
@@ -31,9 +31,6 @@ function server(client_path) {
   }
 
   app.use(bodyParser.json({ limit: '50mb', verify: rawBodySaver }));
-
-  const supported_extensions = ['ppj'];
-  const get_extension = (path) => path.split('.').pop();
 
   app.get('/api/v2/image', async function(req, res) {
     let filter = req.query.filter;
@@ -74,45 +71,14 @@ function server(client_path) {
   });
 
   app.post('/api/v2/image', async function(req, res) {
-    let file_path = req.body.file_path;
+    let file_list = req.body.file_obj;
+    let file_list_obj = JSON.parse(file_list);
     let success = false;
-    try {
-      let file_extension = get_extension(file_path);
-      if(supported_extensions.includes(file_extension)) {
-        switch(file_extension) {
-          case 'ppj':
-            var metaData = ppjParser.convertXml(file_path)
-            var points = []
-            var i;
-            // Only go from 0 to i-1 because the last point is the center
-            for(i=0; i < (metaData.pointMap.length - 1); i++) {
-              let coords = metaData.pointMap[i].wgsCoordinates;
-              points.push([coords[0], coords[1]]);
-            }
-            let base_name = metaData.fileName;
-            await imageModel.create({
-              '_id': base_name,
-              'base_name': base_name,
-              'file_path': file_path,
-              'file_extension': file_extension,
-              'points': JSON.stringify(points)
-            });
-            success = true;
-            break;
-          default:
-            success = false;
-            break;
-        }
-      }
-    } 
-    catch (e) {
-      success = false;
-    } 
-    finally {
-      res.json({
-        success: success
-      });
-    };
+    let fileHandlerObj = new fileHandler(file_list_obj);
+    success = true;
+    res.json({
+       success: success
+    });
   });
 
   app.get('/user/:userId/image/:imageId', function (req, res) {
