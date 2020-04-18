@@ -1,11 +1,10 @@
 import axios from 'axios';
 
 async function load(file) {
-  var file_path = file.path;
+  var file_obj = JSON.stringify(file);
   var res = await axios.post("/api/v2/image", {
-      file_path: file_path
-  });
-  
+      file_obj: file_obj
+  });  
   return res.data;
 }
 

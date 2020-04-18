@@ -19,6 +19,9 @@ function server(client_path) {
     app.use(express.static(client_path));
   }
 
+  // FileHandler components
+  const fileHandler = require('../FileParse/file-handler');
+  
   var rawBodySaver = function (req, res, buf, encoding) {
     if (buf && buf.length) {
       req.rawBody = buf.toString(encoding || 'utf8');
@@ -69,45 +72,54 @@ function server(client_path) {
   });
 
   app.post('/api/v2/image', async function(req, res) {
-    let file_path = req.body.file_path;
+    let file_list = req.body.file_obj;
+    console.log("json delivered: " + file_list);
+    let file_list_obj = JSON.parse(file_list);
     let success = false;
-    let thumbnail_path = null;
-    let thumbnail_extension = null;
-    let mission = null;
-    let camera = null;
-    let geojson = null;
-    try {
-      let file_extension = get_extension(file_path);
-      if(supported_extensions.includes(file_extension)) {
-        switch(file_extension) {
-          case 'ntf':
-            var gdalinfo_output = execSync(`gdalinfo -json ${file_path}`);
-            var gdalinfo = JSON.parse(gdalinfo_output);
-            var points = [];
-            gdalinfo.gcps.gcpList.forEach((gcp) => {
-              points.push([gcp['y'], gcp['x']])
-            });
-            await imageModel.create({
-              'file_path': file_path,
-              'file_extension': file_extension,
-              'points': JSON.stringify(points)
-            });
-            success = true;
-            break;
-          default:
-            success = false;
-            break;
-        }
-      }
-    } 
-    catch (e) {
-      success = false;
-    } 
-    finally {
-      res.json({
-        success: success
-      });
-    };
+    let fileHandlerObj = new fileHandler(file_list_obj);
+    success = true;
+    res.json({
+       success: success
+    });
+    // let file_path = req.body.file_path;
+    // let success = false;
+    // let thumbnail_path = null;
+    // let thumbnail_extension = null;
+    // let mission = null;
+    // let camera = null;
+    // let geojson = null;
+    // try {
+    //   let file_extension = get_extension(file_path);
+    //   if(supported_extensions.includes(file_extension)) {
+    //     switch(file_extension) {
+    //       case 'ntf':
+    //         var gdalinfo_output = execSync(`gdalinfo -json ${file_path}`);
+    //         var gdalinfo = JSON.parse(gdalinfo_output);
+    //         var points = [];
+    //         gdalinfo.gcps.gcpList.forEach((gcp) => {
+    //           points.push([gcp['y'], gcp['x']])
+    //         });
+    //         await imageModel.create({
+    //           'file_path': file_path,
+    //           'file_extension': file_extension,
+    //           'points': JSON.stringify(points)
+    //         });
+    //         success = true;
+    //         break;
+    //       default:
+    //         success = false;
+    //         break;
+    //     }
+    //   }
+    // } 
+    // catch (e) {
+    //   success = false;
+    // } 
+    // finally {
+    //   res.json({
+    //     success: success
+    //   });
+    // };
   });
 
   app.get('/user/:userId/image/:imageId', function (req, res) {
