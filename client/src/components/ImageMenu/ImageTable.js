@@ -17,6 +17,10 @@ export default function ImageTable(props) {
     const classes = useStyles();
     const columns = [
         {
+            id: 'base_name',
+            label: 'File Name'
+        },
+        {
             id: 'file_extension',
             label: 'File Type'
         },
@@ -45,7 +49,6 @@ export default function ImageTable(props) {
             label: 'GSD'
         },
     ]
-
     return (
     <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="simple table">
