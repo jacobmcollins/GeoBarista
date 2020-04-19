@@ -43,8 +43,14 @@ class fileHandler {
           'base_name': base_name,
           'file_path': path,
           'file_extension': 'ppj',
-          'points': JSON.stringify(points)
+          'points': JSON.stringify(points),
+          'mission': this.getMissionName(path)
         });
+    }
+
+    getMissionName(path) {
+        var tempName = path.split('\\');
+        return tempName[tempName.length - 2];
     }
 }
 
