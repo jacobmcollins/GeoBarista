@@ -81,6 +81,10 @@ function Main() {
     const classes = useStyles();
     const [optionsMenuOpen, setOptionsMenuOpen] = React.useState(false)
     const [images, setImages] = React.useState(Array());
+    const [sortParams, setSortParams] = React.useState({
+        'base_name': 'ascending'
+    });
+    const [filterParams, setFilterParams] = React.useState({});
     const [state, setState] = React.useState({
         mainMenuOpen: false,
         optionsMenuOpen: false,
@@ -118,22 +122,19 @@ function Main() {
     const selectImageById = async (id, value) => {
         let success = await Client.update(id, 'selected', value);
         if(success) {
-            let res = await Client.get_all();
+            let res = await Client.get(filterParams, sortParams);
             setImages(res.data);
         }
     }
     const setImageVisibleById = async (id, value) => {
         let success = await Client.update(id, 'visible', value);
         if(success) {
-            let res = await Client.get_all();
+            let res = await Client.get(filterParams, sortParams);
             setImages(res.data);
         }
     }
     const sortImages = async (field, direction) => {
-        let filter = {};
-        let sort = {};
-        sort[field] = direction
-        let res = await Client.get(filter, sort);
+        let res = await Client.get(filterParams, sortParams);
         setImages(res.data);
     }
     const openDialog = async () => {
@@ -151,7 +152,7 @@ function Main() {
         }
         //var payload = JSON.stringify(fileObj);
         var data = await Client.load(fileObj);
-        let res = await Client.get_all();
+        let res = await Client.get(filterParams, sortParams);
         setImages(res.data);
     }
     const getTextToDisplay = (toDisplay) => {
