@@ -12,30 +12,7 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 
 
 export default function ImageTableHead(props) {
-    const {columns, images, selectImageById, setImageVisibleById, openDialog, sortImages} = props;
-    const [sortState, setSortState] = React.useState({
-        sortBy : 'base_name',
-        sortDirection : 'ascending'
-    });
-    const columnToSort = (e,column) => {
-        console.log("clicky clack: " + column.id);
-        if (sortState.sortBy === column.id && sortState.sortDirection === "ascending") {
-            setSortState({
-                ...sortState,
-                sortBy: column.id,
-                sortDirection : 'descending'
-            })
-        }
-        else {
-            setSortState({
-                ...sortState,
-                sortBy: column.id,
-                sortDirection : 'ascending'
-            })
-        }
-
-        props.sortImages( sortState.sortBy, sortState.sortDirection);
-    }
+    const {columns, images, selectImageById, setImageVisibleById, openDialog, sortImages, sortFields, setSortFields} = props;
     return (
         <TableHead>
             <TableRow>
@@ -64,12 +41,12 @@ export default function ImageTableHead(props) {
                 {
                     columns.map((column) => {
                         return (
-                            <TableCell onClick={(e) => columnToSort(e,column)}>
+                            <TableCell onClick={(e) => sortImages(column.id)}>
                             <div style={{display: 'flex',alignItems: 'center'}} >
                                 <span>{column.label} </span>
-                        {sortState.sortBy === column.id
-                            ? (sortState.sortDirection === 'ascending' ? <ArrowUpwardIcon/> : <ArrowDownwardIcon/>)
-                             : <ImportExportIcon />}
+                            {sortFields.sortBy === column.id
+                                ? (sortFields.sortDirection === 'ascending' ? <ArrowUpwardIcon/> : <ArrowDownwardIcon/>)
+                                : <ImportExportIcon />}
                             </div>
 
                             </TableCell>

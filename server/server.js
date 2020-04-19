@@ -38,7 +38,7 @@ function server(client_path) {
     console.log('filter', filter);
     console.log('sort:', sort);
     let selected = await imageModel.find(filter).sort(sort);
-    console.log(selected);
+    console.log("SELECTED",selected);
     res.json(selected);
   });
 

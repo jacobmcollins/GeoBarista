@@ -84,6 +84,10 @@ function Main() {
     const [sortParams, setSortParams] = React.useState({
         'base_name': 'descending'
     });
+    const [sortFields, setSortFields] = React.useState({
+        sortBy : 'base_name',
+        sortDirection : 'descending'
+    });
     const [filterParams, setFilterParams] = React.useState({});
     const [state, setState] = React.useState({
         mainMenuOpen: false,
@@ -122,6 +126,7 @@ function Main() {
     const selectImageById = async (id, value) => {
         let success = await Client.update(id, 'selected', value);
         if(success) {
+            sortUpdate();
             let res = await Client.get(filterParams, sortParams);
             setImages(res.data);
         }
@@ -129,14 +134,25 @@ function Main() {
     const setImageVisibleById = async (id, value) => {
         let success = await Client.update(id, 'visible', value);
         if(success) {
+            sortUpdate();
             let res = await Client.get(filterParams, sortParams);
             setImages(res.data);
         }
     }
-    const sortImages = async (field, direction) => {
+    const sortUpdate = async () => {
         setSortParams({
-            [field]: direction
+            [sortFields.sortBy]: sortFields.sortDirection
         })
+        let res = await Client.get(filterParams, sortParams);
+        setImages(res.data);
+    }
+    const sortImages = async (fields,direction) => {
+            let mydir = sortFields.sortDirection === 'ascending' ? 'descending' : 'ascending';
+            setSortFields({
+                sortBy: fields,
+                sortDirection : mydir
+            })
+        sortUpdate();
         let res = await Client.get(filterParams, sortParams);
         setImages(res.data);
     }
@@ -155,6 +171,7 @@ function Main() {
         }
         //var payload = JSON.stringify(fileObj);
         var data = await Client.load(fileObj);
+        sortUpdate();
         let res = await Client.get(filterParams, sortParams);
         setImages(res.data);
     }
@@ -196,6 +213,8 @@ function Main() {
                        selectImageById={selectImageById}
                        setImageVisibleById={setImageVisibleById}
                        sortImages={sortImages}
+                       sortFields={sortFields}
+                       setSortFields={setSortFields}
             />
             <ComLineOptions
                 classes={classes}
