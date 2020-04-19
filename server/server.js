@@ -33,12 +33,13 @@ function server(client_path) {
   app.use(bodyParser.json({ limit: '50mb', verify: rawBodySaver }));
 
   app.get('/api/v2/image', async function(req, res) {
-    let filter = JSON.parse(req.query.filter);
-    let sort = JSON.parse(req.query.sort);
+    let filter = await JSON.parse(req.query.filter);
+    let sort = await JSON.parse(req.query.sort);
     console.log('filter', filter);
     console.log('sort:', sort);
     let selected = await imageModel.find(filter).sort(sort);
-    console.log("SELECTED",selected);
+    console.log("Selected",selected);
+    console.log('sort:', sort);
     res.json(selected);
   });
 
