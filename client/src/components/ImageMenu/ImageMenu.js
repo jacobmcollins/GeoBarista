@@ -37,6 +37,7 @@ export default function ImageMenu(props) {
                     selectImageById={selectImageById} 
                     setImageVisibleById={setImageVisibleById}
                     openDialog={openDialog}
+                    sortImages={sortImages}
                 />
                 <ImageMenuFilterDialog 
                     open={filterDialogOpen}

@@ -12,27 +12,29 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 
 
 export default function ImageTableHead(props) {
-    const {columns, images, selectImageById, setImageVisibleById, openDialog} = props;
+    const {columns, images, selectImageById, setImageVisibleById, openDialog, sortImages} = props;
     const [sortState, setSortState] = React.useState({
-        sortBy : 'File Name',
-        sortDirection : 'asc'
+        sortBy : 'base_name',
+        sortDirection : 'ascending'
     });
     const columnToSort = (e,column) => {
-        console.log("clicky clack: " + column.label);
-        if (sortState.sortBy === column.label) {
+        console.log("clicky clack: " + column.id);
+        if (sortState.sortBy === column.id && sortState.sortDirection === "ascending") {
             setSortState({
                 ...sortState,
-                sortBy: column.label,
-                sortDirection : 'desc'
+                sortBy: column.id,
+                sortDirection : 'descending'
             })
         }
         else {
             setSortState({
                 ...sortState,
-                sortBy: column.label,
-                sortDirection : 'asc'
+                sortBy: column.id,
+                sortDirection : 'ascending'
             })
         }
+
+        props.sortImages( sortState.sortBy, sortState.sortDirection);
     }
     return (
         <TableHead>
@@ -65,8 +67,8 @@ export default function ImageTableHead(props) {
                             <TableCell onClick={(e) => columnToSort(e,column)}>
                             <div style={{display: 'flex',alignItems: 'center'}} >
                                 <span>{column.label} </span>
-                        {sortState.sortBy === column.label 
-                            ? (sortState.sortDirection === 'asc' ? <ArrowUpwardIcon/> : <ArrowDownwardIcon/>)
+                        {sortState.sortBy === column.id
+                            ? (sortState.sortDirection === 'ascending' ? <ArrowUpwardIcon/> : <ArrowDownwardIcon/>)
                              : <ImportExportIcon />}
                             </div>
 

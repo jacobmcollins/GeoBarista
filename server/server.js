@@ -36,7 +36,7 @@ function server(client_path) {
     let filter = JSON.parse(req.query.filter);
     let sort = JSON.parse(req.query.sort);
     console.log('filter', filter);
-    console.log('sort', sort);
+    console.log('sort:', sort);
     let selected = await imageModel.find(filter).sort(sort);
     console.log(selected);
     res.json(selected);

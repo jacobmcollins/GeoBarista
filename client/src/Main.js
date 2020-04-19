@@ -82,7 +82,7 @@ function Main() {
     const [optionsMenuOpen, setOptionsMenuOpen] = React.useState(false)
     const [images, setImages] = React.useState(Array());
     const [sortParams, setSortParams] = React.useState({
-        'base_name': 'ascending'
+        'base_name': 'descending'
     });
     const [filterParams, setFilterParams] = React.useState({});
     const [state, setState] = React.useState({
@@ -134,6 +134,9 @@ function Main() {
         }
     }
     const sortImages = async (field, direction) => {
+        setSortParams({
+            [field]: direction
+        })
         let res = await Client.get(filterParams, sortParams);
         setImages(res.data);
     }
