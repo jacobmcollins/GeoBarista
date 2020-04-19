@@ -41,7 +41,7 @@ export default function ImageTableHead(props) {
                 {
                     columns.map((column) => {
                         return (
-                            <TableCell onClick={(e) => sortImages(column.id)}>
+                            <TableCell onClick={(e) => sortImages(column.id, e.target.checked)}>
                             <div style={{display: 'flex',alignItems: 'center'}} >
                                 <span>{column.label} </span>
                             {sortFields.sortBy === column.id

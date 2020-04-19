@@ -126,33 +126,29 @@ function Main() {
     const selectImageById = async (id, value) => {
         let success = await Client.update(id, 'selected', value);
         if(success) {
-            sortUpdate();
             let res = await Client.get(filterParams, sortParams);
             setImages(res.data);
         }
+        console.log("sorty its your bithday ", sortParams);
     }
     const setImageVisibleById = async (id, value) => {
         let success = await Client.update(id, 'visible', value);
         if(success) {
-            sortUpdate();
             let res = await Client.get(filterParams, sortParams);
             setImages(res.data);
         }
     }
-    const sortUpdate = async () => {
-        setSortParams({
-            [sortFields.sortBy]: sortFields.sortDirection
-        })
-        let res = await Client.get(filterParams, sortParams);
-        setImages(res.data);
-    }
-    const sortImages = async (fields,direction) => {
+    const sortImages = async (fields) => {
             let mydir = sortFields.sortDirection === 'ascending' ? 'descending' : 'ascending';
+        console.log("MY PARAMS ARE: ",sortParams);
+        console.log("mydir: ",mydir);
             setSortFields({
                 sortBy: fields,
                 sortDirection : mydir
             })
-        sortUpdate();
+            setSortParams({
+                [fields]: mydir
+            })
         let res = await Client.get(filterParams, sortParams);
         setImages(res.data);
     }
@@ -171,7 +167,7 @@ function Main() {
         }
         //var payload = JSON.stringify(fileObj);
         var data = await Client.load(fileObj);
-        sortUpdate();
+        //sortUpdate();
         let res = await Client.get(filterParams, sortParams);
         setImages(res.data);
     }
