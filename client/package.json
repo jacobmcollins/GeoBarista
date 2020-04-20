@@ -6,6 +6,7 @@
   "dependencies": {
     "@material-ui/core": "^4.9.7",
     "@material-ui/icons": "^4.9.1",
+    "@turf/turf": "^5.1.6",
     "axios": "^0.19.2",
     "file-dialog": "0.0.8",
     "leaflet": "^1.6.0",

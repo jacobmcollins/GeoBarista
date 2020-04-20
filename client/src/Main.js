@@ -131,6 +131,17 @@ function Main() {
         }
         console.log("sorty its your bithday ", sortParams);
     }
+    const selectImagesById = async (id_map) => {
+        let i;
+        for(i=0;i<id_map.select.length;i++) {
+            await Client.update(id_map.select[i], 'selected', true);
+        }
+        for(i=0;i<id_map.unselect.length;i++) {
+            await Client.update(id_map.unselect[i], 'selected', false);
+        }
+        let res = await Client.get(filterParams, sortParams);
+        setImages(res.data);
+    }
     const setImageVisibleById = async (id, value) => {
         let success = await Client.update(id, 'visible', value);
         if(success) {
@@ -199,6 +210,7 @@ function Main() {
                 imageMenuOpen={state.imageMenuOpen} 
                 images={images}
                 selectImageById={selectImageById}
+                selectImagesById={selectImagesById}
             />
             <MainMenu
                 classes={classes}

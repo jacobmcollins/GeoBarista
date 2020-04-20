@@ -14,6 +14,10 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0/images/marker-shadow.png',
 });
 
+
+
+export default function DrawTools(props) {
+  const {selectByGeoJSON} = props;
   const onCreated = (e) => {
     let type = e.layerType;
     let layer = e.layer;
@@ -22,10 +26,8 @@ L.Icon.Default.mergeOptions({
     // Do whatever else you need to. (save to db; etc)
     let test = layer.toGeoJSON();
     console.log("GeoJSON: ", test);
+    selectByGeoJSON(test);
   }
-
-
-export default function DrawTools(props) {
      return (
         <FeatureGroup fillColor="black" >
         <EditControl
@@ -39,10 +41,11 @@ export default function DrawTools(props) {
                  marker: false,
                  circle: false,
                  rectangle: true,
-                 polygon: true,
+                 polygon: false,
                  polyline: false,
-                 circlemarker: true,
+                 circlemarker: false,
                  edit: false,
+                 repeatMode: false
              }}
         />
     </FeatureGroup>
