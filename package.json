@@ -6,6 +6,8 @@
     "atob": "^2.1.2",
     "babel-core": "6.14.0",
     "body-parser": "^1.19.0",
+    "csv": "^5.3.2",
+    "csv-parse": "^4.8.8",
     "ecef-projector": "^1.0.1",
     "express": "4.13.3",
     "file-dialog": "0.0.8",

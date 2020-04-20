@@ -4,7 +4,8 @@ const initExec = "initializedExecs"
 //Hard coded because these shouldn't change (much, if at all)
 //after being set
 //[task, command]
-const thumbnails = ["Thumbnails", "echo I don't know the command"];
+const thumbnails = ["Thumbnails", "gdal_translate -ot Byte -of JPEG -scale 0 4095 0 255 -outsize 5% 5%"];
+const geojson = ["geoJSON", "gdalinfo -json"];
 
 //Initializes localStorage with default commands for things such as
 //creating thumbnails with GDAL.
@@ -12,6 +13,7 @@ function init() {
     try {
         localStorage.setItem(initExec, "true");
         localStorage.setItem(thumbnails[0], thumbnails[1]);
+        localStorage.setItem(geojson[0], geojson[1]);
         return true;
     } catch(err) {
         console.error(err.message);
@@ -41,9 +43,9 @@ function getLocStorage(toRetreive) {
     return localStorage.getItem(toRetreive[0]);
 }
 
-function setLocStorage(toSet) {
+function setLocStorage(toSet, data) {
     try {
-        localStorage.setItem("Thumbnails", toSet);
+        localStorage.setItem(toSet[0], data);
         return true;
     }
     catch(err) {
@@ -54,4 +56,4 @@ function setLocStorage(toSet) {
 }
 
 //export constants for other functions to be able to access the options
-export {initLocStorage, getLocStorage, setLocStorage, thumbnails};
+export {initLocStorage, getLocStorage, setLocStorage, thumbnails, geojson};

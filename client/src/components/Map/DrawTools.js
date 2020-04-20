@@ -1,9 +1,11 @@
 import React from 'react';
+import { createRef }  from 'react';
 
 import { EditControl} from 'react-leaflet-draw';
 import { FeatureGroup } from 'react-leaflet';
 import L from 'leaflet';
 
+const drawToolsGroupRef = createRef();
 
 
 // work around broken icons when using webpack, see https://github.com/PaulLeCam/react-leaflet/issues/255
@@ -14,6 +16,13 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0/images/marker-shadow.png',
 });
 
+
+
+export default function DrawTools(props) {
+  const {selectByGeoJSON} = props;
+  const onDrawStop = (e) => {
+    drawToolsGroupRef.current.leafletElement.clearLayers();
+  }
   const onCreated = (e) => {
     let type = e.layerType;
     let layer = e.layer;
@@ -22,15 +31,17 @@ L.Icon.Default.mergeOptions({
     // Do whatever else you need to. (save to db; etc)
     let test = layer.toGeoJSON();
     console.log("GeoJSON: ", test);
+    selectByGeoJSON(test);
   }
-
-
-export default function DrawTools(props) {
      return (
-        <FeatureGroup fillColor="black" >
+        <FeatureGroup 
+          ref={drawToolsGroupRef}
+          fillColor="black" 
+        >
         <EditControl
              position = 'bottomright'
              onCreated={onCreated}
+             onDrawStop={onDrawStop}
              edit = {{
                edit : false,
                remove : true,
@@ -39,10 +50,11 @@ export default function DrawTools(props) {
                  marker: false,
                  circle: false,
                  rectangle: true,
-                 polygon: true,
+                 polygon: false,
                  polyline: false,
-                 circlemarker: true,
+                 circlemarker: false,
                  edit: false,
+                 repeatMode: false
              }}
         />
     </FeatureGroup>

@@ -14,8 +14,9 @@ import MainMenu from './components/MainMenu';
 import ImageMenu from './components/ImageMenu/ImageMenu';
 import Client from './Client';
 import ComLineOptions from './components/ComLineOptions';
-import { setLocStorage } from './Tools/initLocStorage';
+import {setLocStorage, thumbnails, geojson} from './Tools/initLocStorage';
 
+const fileRef = createRef();
 const useStyles = makeStyles((theme) => ({
     appbar: {
         position: 'absolute',
@@ -81,6 +82,9 @@ function Main() {
     const classes = useStyles();
     const [optionsMenuOpen, setOptionsMenuOpen] = React.useState(false)
     const [images, setImages] = React.useState(Array());
+    const [sortParams, setSortParams] = React.useState({
+    });
+    const [filterParams, setFilterParams] = React.useState({});
     const [state, setState] = React.useState({
         mainMenuOpen: false,
         optionsMenuOpen: false,
@@ -97,7 +101,8 @@ function Main() {
             }
         },
         images: [],
-        thumbnailsData: ''
+        thumbnailsData: '',
+        geoJSONData: ''
     });
     const toggleMainMenu = (open) => error => {
         setState({
@@ -107,7 +112,11 @@ function Main() {
     }
     const toggleOptionsMenu = (open) => error => {
         setOptionsMenuOpen(open)
-
+        setState({
+            ...state,
+            thumbnailsData: '',
+            geoJSONData: ''
+        })
     }
     const toggleImageMenu = (open) => error => {
         setState({
@@ -118,36 +127,46 @@ function Main() {
     const selectImageById = async (id, value) => {
         let success = await Client.update(id, 'selected', value);
         if(success) {
-            let res = await Client.get_all();
+            let res = await Client.get(filterParams, sortParams);
             setImages(res.data);
         }
+        console.log("sorty its your bithday ", sortParams);
+    }
+    const selectImagesById = async (id_map) => {
+        let i;
+        for(i=0;i<id_map.select.length;i++) {
+            await Client.update(id_map.select[i], 'selected', true);
+        }
+        for(i=0;i<id_map.unselect.length;i++) {
+            await Client.update(id_map.unselect[i], 'selected', false);
+        }
+        let res = await Client.get(filterParams, sortParams);
+        setImages(res.data);
     }
     const setImageVisibleById = async (id, value) => {
         let success = await Client.update(id, 'visible', value);
         if(success) {
-            let res = await Client.get_all();
+            let res = await Client.get(filterParams, sortParams);
             setImages(res.data);
         }
     }
     const sortImages = async (field, direction) => {
-        let filter = {};
-        let sort = {};
-        sort[field] = direction
-        let res = await Client.get(filter, sort);
+        let res = await Client.get(filterParams, {[field]: direction});
         setImages(res.data);
+        await setSortParams({
+            [field]: direction
+        });
     }
-    const filterImages = async (field, value) => {
-        let filter = {};
-        filter[field] = value;
-        let sort = {};
-        let res = await Client.get(filter, sort);
-        setImages(res.data);
+    const filterImages = async () => {
+
     }
-    const openDialog = async () => {
-        var files = await fileDialog({ multiple: true });
+    const onChange = async (e) => {
+        var files = fileRef.current.files;
+        console.log('files', files)
         var i;
         var fileObj = [];
         for (i=0; i < files.length; i++) {
+            console.log('file', files[i])
             var name = files[i].name;
             var path = files[i].path;
             var fileData = {
@@ -158,20 +177,38 @@ function Main() {
         }
         //var payload = JSON.stringify(fileObj);
         var data = await Client.load(fileObj);
-        let res = await Client.get_all();
+        let res = await Client.get(filterParams, sortParams);
         setImages(res.data);
+    }
+    const openDialog = async () => {
+        console.log(fileRef);
+        fileRef.current.click();
     }
     const getTextToDisplay = (toDisplay) => {
         return (toDisplay[0] + ": ");
     }
-    const saveData = () => {
-        setLocStorage(state.thumbnailsData);
+    const forceStateRefresh = () => {
         setState({...state});
     }
-    const handleTextField = (e) => {
+    const saveData = () => {
+        if (state.thumbnailsData !== '') {
+            setLocStorage(thumbnails, state.thumbnailsData);
+        }
+        if (state.geoJSONData !== '') {
+            setLocStorage(geojson, state.geoJSONData);
+        }
+        forceStateRefresh();
+    }
+    const handleThumbnails = (e) => {
         setState({
             ...state,
             thumbnailsData: e.target.value
+        })
+    }
+    const handleGeoJSON = (e) => {
+        setState({
+            ...state,
+            geoJSONData: e.target.value
         })
     }
     return (
@@ -183,6 +220,7 @@ function Main() {
                 imageMenuOpen={state.imageMenuOpen} 
                 images={images}
                 selectImageById={selectImageById}
+                selectImagesById={selectImagesById}
             />
             <MainMenu
                 classes={classes}
@@ -207,8 +245,11 @@ function Main() {
                 getTextToDisplay={getTextToDisplay}
                 toggleOptionsMenu={toggleOptionsMenu}
                 saveData={saveData}
-                handleTextField={handleTextField}
+                handleThumbnails={handleThumbnails}
+                handleGeoJSON={handleGeoJSON}
+                forceStateRefresh={forceStateRefresh}
             />
+        <input directory="" webkitdirectory="" multiple="" type="file" id="file" ref={fileRef} onChange={onChange} style={{display: "none"}}/>
         </div>
     )
 }

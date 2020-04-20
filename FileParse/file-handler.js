@@ -35,16 +35,22 @@ class fileHandler {
         // Only go from 0 to i-1 because the last point is the center
         for(i=0; i < (metaData.pointMap.length - 1); i++) {
           let coords = metaData.pointMap[i].wgsCoordinates;
-          points.push([coords[0], coords[1]]);
+          points.push([coords[1], coords[0]]);
         }
         let base_name = metaData.fileName;
         await imageModel.create({
-          '_id': base_name,
+          '_id': path,
           'base_name': base_name,
           'file_path': path,
           'file_extension': 'ppj',
-          'points': JSON.stringify(points)
+          'points': JSON.stringify(points),
+          'mission': this.getMissionName(path)
         });
+    }
+
+    getMissionName(path) {
+        var tempName = path.split('\\');
+        return tempName[tempName.length - 2];
     }
 }
 
