@@ -8,13 +8,13 @@ async function load(file) {
   return res.data;
 }
 
-async function get_all() {
-  var res = await axios.get("/api/v2/image", {}, {});
-  return res;
-}
-
 async function get(filter, sort) {
-  var res = await axios.get("/api/v2/image", filter, sort);
+  var res = await axios.get("/api/v2/image", {
+    params: {
+      filter: JSON.stringify(filter),
+      sort: JSON.stringify(sort)
+    }
+  });
   return res;
 }
 
@@ -27,5 +27,5 @@ async function update(id, field, value) {
   return res.data.success;
 }
 
-const Client = { load, get_all, update, get };
+const Client = { load, update, get };
 export default Client;
