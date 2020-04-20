@@ -14,7 +14,7 @@ import MainMenu from './components/MainMenu';
 import ImageMenu from './components/ImageMenu/ImageMenu';
 import Client from './Client';
 import ComLineOptions from './components/ComLineOptions';
-import { setLocStorage } from './Tools/initLocStorage';
+import {setLocStorage, thumbnails, geojson} from './Tools/initLocStorage';
 
 const useStyles = makeStyles((theme) => ({
     appbar: {
@@ -100,7 +100,8 @@ function Main() {
             }
         },
         images: [],
-        thumbnailsData: ''
+        thumbnailsData: '',
+        geoJSONData: ''
     });
     const toggleMainMenu = (open) => error => {
         setState({
@@ -110,7 +111,11 @@ function Main() {
     }
     const toggleOptionsMenu = (open) => error => {
         setOptionsMenuOpen(open)
-
+        setState({
+            ...state,
+            thumbnailsData: '',
+            geoJSONData: ''
+        })
     }
     const toggleImageMenu = (open) => error => {
         setState({
@@ -161,14 +166,28 @@ function Main() {
     const getTextToDisplay = (toDisplay) => {
         return (toDisplay[0] + ": ");
     }
-    const saveData = () => {
-        setLocStorage(state.thumbnailsData);
+    const forceStateRefresh = () => {
         setState({...state});
     }
-    const handleTextField = (e) => {
+    const saveData = () => {
+        if (state.thumbnailsData !== '') {
+            setLocStorage(thumbnails, state.thumbnailsData);
+        }
+        if (state.geoJSONData !== '') {
+            setLocStorage(geojson, state.geoJSONData);
+        }
+        forceStateRefresh();
+    }
+    const handleThumbnails = (e) => {
         setState({
             ...state,
             thumbnailsData: e.target.value
+        })
+    }
+    const handleGeoJSON = (e) => {
+        setState({
+            ...state,
+            geoJSONData: e.target.value
         })
     }
     return (
@@ -203,7 +222,9 @@ function Main() {
                 getTextToDisplay={getTextToDisplay}
                 toggleOptionsMenu={toggleOptionsMenu}
                 saveData={saveData}
-                handleTextField={handleTextField}
+                handleThumbnails={handleThumbnails}
+                handleGeoJSON={handleGeoJSON}
+                forceStateRefresh={forceStateRefresh}
             />
         </div>
     )
