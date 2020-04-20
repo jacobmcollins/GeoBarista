@@ -27,5 +27,10 @@ async function update(id, field, value) {
   return res.data.success;
 }
 
-const Client = { load, update, get };
+async function get_unique_fields() {
+  var res = await axios.get("/api/v2/images/unique");
+  return res.data;
+}
+
+const Client = { load, update, get, get_unique_fields };
 export default Client;

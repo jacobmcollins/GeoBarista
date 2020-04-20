@@ -9,15 +9,32 @@ import TextField from "@material-ui/core/TextField";
 
 import MenuItem from "@material-ui/core/MenuItem";
 
+import Client from '../../Client';
+
 export default function ImageMenuFilterDialog(props) {
     const {images,columns,filterImages,open, toggleFilterDialogOpen} = props;
     //var storing input and selection user choose from the filter dialog
     const [filterParams, setFilterParams] = React.useState({})
-
     //var storing distinct value from file types, missions, ... to show in the dopdown in dialog
-    const distinct_columns_data = []
-    for(const column of columns){
-        distinct_columns_data[column.id] = [...new Set(images.map(item => item[column.id]))];
+    const [uniqueColumnData, setUniqueColumnData] = React.useState({});
+
+    React.useEffect(() => {
+        const get_fields = async () => {
+            const res = await Client.get_unique_fields()
+            setUniqueColumnData(res)
+        }
+        get_fields();
+    }, [images]);
+    console.log(uniqueColumnData);
+
+    const render_items = (id) => {
+        if(id in uniqueColumnData) {
+            return uniqueColumnData[id].map((option) => (
+                    <MenuItem key={option} value={option}>
+                        {option}
+                    </MenuItem>
+            ));
+        }
     }
  
     return (
@@ -44,11 +61,9 @@ export default function ImageMenuFilterDialog(props) {
                                     setFilterParams(filterParams);
                                 }}
                              >
-                                {distinct_columns_data[column.id].map((option) => (
-                                    <MenuItem key={option} value={option}>
-                                        {option}
-                                    </MenuItem>
-                                ))}
+                                {
+                                    render_items(column.id)
+                                }
                             </TextField>
                             </div>
                         )
