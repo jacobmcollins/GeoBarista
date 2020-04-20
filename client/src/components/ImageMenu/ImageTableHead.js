@@ -15,7 +15,7 @@ export default function ImageTableHead(props) {
     const {columns, images, selectImageById, setImageVisibleById, openDialog, sortImages} = props;
     const [sortFields, setSortFields] = React.useState({
         sortBy : 'base_name',
-        sortDirection : -1
+        sortDirection : 1
     });
     const handleClick = async (column) => {
         let sendDirections = (sortFields.sortDirection === 1) ? -1 : 1;
@@ -28,7 +28,7 @@ export default function ImageTableHead(props) {
         else {
             setSortFields({
                 sortBy: column,
-                sortDirection: -1
+                sortDirection: 1
             })
         }
         await sortImages(column, sendDirections);

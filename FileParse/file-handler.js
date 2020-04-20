@@ -39,7 +39,7 @@ class fileHandler {
         }
         let base_name = metaData.fileName;
         await imageModel.create({
-          '_id': base_name,
+          '_id': path,
           'base_name': base_name,
           'file_path': path,
           'file_extension': 'ppj',

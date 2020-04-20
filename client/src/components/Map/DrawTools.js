@@ -20,7 +20,7 @@ L.Icon.Default.mergeOptions({
 
 export default function DrawTools(props) {
   const {selectByGeoJSON} = props;
-  const onDrawStart = (e) => {
+  const onDrawStop = (e) => {
     drawToolsGroupRef.current.leafletElement.clearLayers();
   }
   const onCreated = (e) => {
@@ -41,7 +41,7 @@ export default function DrawTools(props) {
         <EditControl
              position = 'bottomright'
              onCreated={onCreated}
-             onDrawStart={onDrawStart}
+             onDrawStop={onDrawStop}
              edit = {{
                edit : false,
                remove : true,
