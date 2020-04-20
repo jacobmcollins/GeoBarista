@@ -18,10 +18,11 @@ export default function ImageTableHead(props) {
         sortDirection : -1
     });
     const handleClick = async (column) => {
+        let sendDirections = (sortFields.sortDirection === 1) ? -1 : 1;
         if(sortFields.sortBy == column) {
             setSortFields({
                 sortBy: column,
-                sortDirection: ((sortFields.sortDirection === 1) ? -1 : 1)
+                sortDirection: sendDirections
             })
         }
         else {
@@ -30,7 +31,7 @@ export default function ImageTableHead(props) {
                 sortDirection: -1
             })
         }
-        await sortImages(sortFields.sortBy, sortFields.sortDirection);
+        await sortImages(column, sendDirections);
     }
     return (
         <TableHead>

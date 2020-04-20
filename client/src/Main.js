@@ -120,18 +120,18 @@ function Main() {
     }
     const selectImageById = async (id, value) => {
         let success = await Client.update(id, 'selected', value);
-        //if(success) {
+        if(success) {
             let res = await Client.get(filterParams, sortParams);
             setImages(res.data);
-        //}
+        }
         console.log("sorty its your bithday ", sortParams);
     }
     const setImageVisibleById = async (id, value) => {
         let success = await Client.update(id, 'visible', value);
-     //   if(success) {
+        if(success) {
             let res = await Client.get(filterParams, sortParams);
             setImages(res.data);
-     //   }
+        }
     }
     const sortImages = async (field, direction) => {
         let res = await Client.get(filterParams, {[field]: direction});
@@ -155,7 +155,6 @@ function Main() {
         }
         //var payload = JSON.stringify(fileObj);
         var data = await Client.load(fileObj);
-        //sortUpdate();
         let res = await Client.get(filterParams, sortParams);
         setImages(res.data);
     }
