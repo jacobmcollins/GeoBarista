@@ -39,6 +39,7 @@ export default function ImageMenu(props) {
                     openDialog={openDialog}
                 />
                 <ImageMenuFilterDialog 
+                    images={images} 
                     open={filterDialogOpen}
                     toggleFilterDialogOpen={toggleFilterDialogOpen}
                 />
