@@ -35,7 +35,7 @@ class fileHandler {
         // Only go from 0 to i-1 because the last point is the center
         for(i=0; i < (metaData.pointMap.length - 1); i++) {
           let coords = metaData.pointMap[i].wgsCoordinates;
-          points.push([coords[0], coords[1]]);
+          points.push([coords[1], coords[0]]);
         }
         let base_name = metaData.fileName;
         await imageModel.create({
