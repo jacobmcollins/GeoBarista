@@ -1,9 +1,11 @@
 import React from 'react';
+import { createRef }  from 'react';
 
 import { EditControl} from 'react-leaflet-draw';
 import { FeatureGroup } from 'react-leaflet';
 import L from 'leaflet';
 
+const drawToolsGroupRef = createRef();
 
 
 // work around broken icons when using webpack, see https://github.com/PaulLeCam/react-leaflet/issues/255
@@ -18,6 +20,9 @@ L.Icon.Default.mergeOptions({
 
 export default function DrawTools(props) {
   const {selectByGeoJSON} = props;
+  const onDrawStart = (e) => {
+    drawToolsGroupRef.current.leafletElement.clearLayers();
+  }
   const onCreated = (e) => {
     let type = e.layerType;
     let layer = e.layer;
@@ -29,10 +34,14 @@ export default function DrawTools(props) {
     selectByGeoJSON(test);
   }
      return (
-        <FeatureGroup fillColor="black" >
+        <FeatureGroup 
+          ref={drawToolsGroupRef}
+          fillColor="black" 
+        >
         <EditControl
              position = 'bottomright'
              onCreated={onCreated}
+             onDrawStart={onDrawStart}
              edit = {{
                edit : false,
                remove : true,

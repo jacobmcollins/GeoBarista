@@ -1,14 +1,14 @@
 import React, { createRef }  from 'react';
-import { Map, TileLayer, Polygon, FeatureGroup } from 'react-leaflet';
+import { Map, TileLayer, GeoJSON, FeatureGroup } from 'react-leaflet';
 import DrawTools from './DrawTools';
 import ZoomLatLngBox from './ZoomLatLngBox';
-import { polygon, Renderer } from 'leaflet';
 import { booleanPointInPolygon } from '@turf/turf';
 import { intersect } from '@turf/turf';
-import { point } from '@turf/helpers';
+import { point, featureCollection, polygon } from '@turf/helpers';
+import hash from 'object-hash';
 
 const mapRef = createRef();
-const featureGroupRef = createRef();
+const geoJsonRef = createRef();
 
 export default function GeoBaristaMap(props) {
     const {classes, imageMenuOpen, images, selectImageById, selectImagesById} = props;
@@ -28,17 +28,16 @@ export default function GeoBaristaMap(props) {
     const [selectionGeoJSONs, setSelectionGeoJSONs] = React.useState({
     });
     const selectByGeoJSON = (geojson) => {
-        console.log(geojson)
-        const group = featureGroupRef.current.leafletElement;
+        const group = geoJsonRef.current.leafletElement;
         let select = [];
         let unselect = [];
         group.eachLayer((layer) => {
-            var poly = layer.toGeoJSON();
+            var poly = layer.feature;
             if(intersect(geojson, poly, {ignoreBoundary: true})){
-                select.push(layer.options.id)
+                select.push(layer.feature.properties.id)
             }
             else {
-                unselect.push(layer.options.id)
+                unselect.push(layer.feature.properties.id)
             }
         })
         selectImagesById({
@@ -47,17 +46,19 @@ export default function GeoBaristaMap(props) {
         });
     }
     const handleOnClick = (e) => {
-        const group = featureGroupRef.current.leafletElement;
+        const group = geoJsonRef?.current?.leafletElement;
         let select = [];
         let unselect = [];
         var pt = point([e.latlng.lng, e.latlng.lat]);
         group.eachLayer((layer) => {
-            var poly = layer.toGeoJSON();
+            console.log('layer', layer);
+            let poly = layer.feature;
             if(booleanPointInPolygon(pt, poly, {ignoreBoundary: true})){
-                select.push(layer.options.id)
+                console.log('select')
+                select.push(layer.feature.properties.id)
             }
             else {
-                unselect.push(layer.options.id)
+                unselect.push(layer.feature.properties.id)
             }
         })
         selectImagesById({
@@ -73,11 +74,47 @@ export default function GeoBaristaMap(props) {
         if(!mapRef.current) return;
         setZoom(mapRef.current.leafletElement.getZoom());
     }
-    const onClickSelection = async (e,image) => {
-        await selectImageById(image._id, !image.selected);
-    }
     const onViewPortChanged = (viewport) => {
     }
+    // input  -> an image
+    // output -> polygon in GeoJSON
+    const get_poly_from_image = (image) => {
+        let points = JSON.parse(image.points);
+        points.push(points[0])
+        let polyPoints = [];
+        polyPoints.push(points);
+        let poly = polygon(polyPoints, {
+            id: image._id,
+            selected: image.selected
+        });
+        return poly;
+    }
+    // input  -> images from DB
+    // output -> feature collection in GeoJSON
+    const get_data = (images) => {
+        let all = [];
+        images.slice(0).reverse().forEach((image) => {
+            if(image.visible) {
+                let poly = get_poly_from_image(image);
+                all.push(poly)
+            }
+        });
+        let collection = featureCollection(all);
+        return collection;
+    }
+    const get_style = (feature) => {
+        let style = {
+            color: 'red'
+        }
+        if(feature.properties.selected) {
+            style.color = 'blue';
+        }
+        else {
+            style.color = 'red';
+        }
+        return style;
+    }
+
     return (
         <React.Fragment>
             <main className={imageMenuOpen ? classes.mainShifted : classes.main}>
@@ -96,23 +133,7 @@ export default function GeoBaristaMap(props) {
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
-                    <FeatureGroup ref={featureGroupRef}>
-                    {
-                        images.map((image, index) => {
-                            if(image.visible) {
-                                return (<Polygon 
-                                    // onclick={e => onClickSelection(e, image)} 
-                                    id={image._id}
-                                    selected={image.selected} 
-                                    key={image._id} 
-                                    positions={JSON.parse(image.points)} 
-                                    color={image.selected ? "#00ff00" : "#ff0000"} 
-                                    // fillColor={image.selected ? "#00ff00" : "#ff0000"} 
-                                    /> )
-                            }
-                        })                   
-                    }
-                    </FeatureGroup>
+                    <GeoJSON key={hash(images)} ref={geoJsonRef} data={get_data(images)} style={get_style}/>
                     <DrawTools selectByGeoJSON={selectByGeoJSON}/>
                 </Map>
             </main>
