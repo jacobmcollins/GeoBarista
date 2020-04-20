@@ -21,6 +21,10 @@ export default function ImageMenu(props) {
 
     const columns = [
         {
+            id: 'base_name',
+            label: 'Name'
+        },
+        {
             id: 'file_extension',
             label: 'File Extension'
         },

@@ -11,15 +11,14 @@ import MenuItem from "@material-ui/core/MenuItem";
 
 export default function ImageMenuFilterDialog(props) {
     const {images,columns,filterImages,open, toggleFilterDialogOpen} = props;
+    //var storing input and selection user choose from the filter dialog
+    const [filterParams, setFilterParams] = React.useState({})
 
     //var storing distinct value from file types, missions, ... to show in the dopdown in dialog
     const distinct_columns_data = []
     for(const column of columns){
         distinct_columns_data[column.id] = [...new Set(images.map(item => item[column.id]))];
     }
-
-    //var storing input and selection user choose from the filter dialog
-    const user_filter_fields = []
  
     return (
             <Dialog
@@ -39,7 +38,11 @@ export default function ImageMenuFilterDialog(props) {
                                 select
                                 label="Select"
                                 helperText={"Filter by " + column.label}
-                                onChange={e => user_filter_fields[column.id] = e.target.value}
+                                onChange={e => {
+                                    console.log('filter params', filterParams);
+                                    filterParams[column.id] = e.target.value;
+                                    setFilterParams(filterParams);
+                                }}
                              >
                                 {distinct_columns_data[column.id].map((option) => (
                                     <MenuItem key={option} value={option}>
@@ -55,9 +58,9 @@ export default function ImageMenuFilterDialog(props) {
             </DialogContent>
             <DialogActions>
                 <Button onClick={() => { 
-                    //use user_filter_fields var to pass as arg to backend for retrieving filter data from DB
-                    console.log("Filter by:\n" + user_filter_fields)
                     toggleFilterDialogOpen(false)
+                    filterImages(filterParams);
+                    setFilterParams({});
                 }} color="primary" autoFocus>
                 Submit
                 </Button>
