@@ -16,6 +16,7 @@ import Client from './Client';
 import ComLineOptions from './components/ComLineOptions';
 import {setLocStorage, thumbnails, geojson} from './Tools/initLocStorage';
 
+const fileRef = createRef();
 const useStyles = makeStyles((theme) => ({
     appbar: {
         position: 'absolute',
@@ -156,11 +157,13 @@ function Main() {
             [field]: direction
         });
     }
-    const openDialog = async () => {
-        var files = await fileDialog({ multiple: true });
+    const onChange = async (e) => {
+        var files = fileRef.current.files;
+        console.log('files', files)
         var i;
         var fileObj = [];
         for (i=0; i < files.length; i++) {
+            console.log('file', files[i])
             var name = files[i].name;
             var path = files[i].path;
             var fileData = {
@@ -173,6 +176,10 @@ function Main() {
         var data = await Client.load(fileObj);
         let res = await Client.get(filterParams, sortParams);
         setImages(res.data);
+    }
+    const openDialog = async () => {
+        console.log(fileRef);
+        fileRef.current.click();
     }
     const getTextToDisplay = (toDisplay) => {
         return (toDisplay[0] + ": ");
@@ -238,6 +245,7 @@ function Main() {
                 handleGeoJSON={handleGeoJSON}
                 forceStateRefresh={forceStateRefresh}
             />
+        <input directory="" webkitdirectory="" multiple="" type="file" id="file" ref={fileRef} onChange={onChange} style={{display: "none"}}/>
         </div>
     )
 }
