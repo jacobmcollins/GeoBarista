@@ -7,7 +7,7 @@ import ImageMenuFilterDialog from "./ImageMenuFilterDialog";
 import ImageMenuSortDialog from "./ImageMenuSortDialog";
 
 export default function ImageMenu(props) {
-    const {classes, toggleImageMenu, open, images, openDialog, selectImageById, sortImages, sortFields, setSortFields, setImageVisibleById} = props;
+    const {classes, toggleImageMenu, open, images, openDialog, selectImageById, sortImages, setImageVisibleById} = props;
     const [filterDialogOpen, setFilterDialogOpen] = React.useState(false);
     const [sortDialogOpen, setSortDialogOpen] = React.useState(false);
 
@@ -38,8 +38,6 @@ export default function ImageMenu(props) {
                     setImageVisibleById={setImageVisibleById}
                     openDialog={openDialog}
                     sortImages={sortImages}
-                    sortFields={sortFields}
-                    setSortFields={setSortFields}
                 />
                 <ImageMenuFilterDialog 
                     open={filterDialogOpen}

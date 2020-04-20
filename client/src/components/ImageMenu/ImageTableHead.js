@@ -12,10 +12,25 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 
 
 export default function ImageTableHead(props) {
-    const {columns, images, selectImageById, setImageVisibleById, openDialog, sortImages, sortFields, setSortFields} = props;
-    const testos = async (field, direction) => {
-        let mydir = direction === -1 ? 1 : -1;
-        await sortImages(field,mydir);
+    const {columns, images, selectImageById, setImageVisibleById, openDialog, sortImages} = props;
+    const [sortFields, setSortFields] = React.useState({
+        sortBy : 'base_name',
+        sortDirection : -1
+    });
+    const handleClick = async (column) => {
+        if(sortFields.sortBy == column) {
+            setSortFields({
+                sortBy: column,
+                sortDirection: ((sortFields.sortDirection === 1) ? -1 : 1)
+            })
+        }
+        else {
+            setSortFields({
+                sortBy: column,
+                sortDirection: -1
+            })
+        }
+        await sortImages(sortFields.sortBy, sortFields.sortDirection);
     }
     return (
         <TableHead>
@@ -45,7 +60,7 @@ export default function ImageTableHead(props) {
                 {
                     columns.map((column) => {
                         return (
-                            <TableCell onClick={ async (e) =>  {await testos(column.id,sortFields.sortDirection)}}>
+                            <TableCell onClick={() => { handleClick(column.id) }}>
                             <div style={{display: 'flex',alignItems: 'center'}} >
                                 <span>{column.label} </span>
                                 {sortFields.sortBy === column.id

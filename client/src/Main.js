@@ -82,11 +82,6 @@ function Main() {
     const [optionsMenuOpen, setOptionsMenuOpen] = React.useState(false)
     const [images, setImages] = React.useState(Array());
     const [sortParams, setSortParams] = React.useState({
-        'base_name': -1
-    });
-    const [sortFields, setSortFields] = React.useState({
-        sortBy : 'base_name',
-        sortDirection : -1
     });
     const [filterParams, setFilterParams] = React.useState({});
     const [state, setState] = React.useState({
@@ -138,25 +133,12 @@ function Main() {
             setImages(res.data);
      //   }
     }
-    const check_me_out = () => {
-        console.log("check me out : ",sortFields.sortDirection);
-    }
-    const sortImages = async (fields, testdir) => {
-            //let mydir = sortFields.sortDirection === 'ascending' ? 'descending' : 'ascending';
-            let mydir = sortFields.sortDirection === -1 ? 1 : -1;
-            setSortFields({
-                sortBy: fields,
-                sortDirection : mydir
-            }, check_me_out())
-            setSortParams({
-                [fields]: mydir
-            }, console.log("why u no",sortParams))
-        console.log("MY PARAMS ARE: ",sortParams);
-        console.log("mydir: ",mydir);
-        let testParams = { fields : testdir};
-        console.log("test params: ", testParams );
-        let res = await Client.get(filterParams, testParams);
+    const sortImages = async (field, direction) => {
+        let res = await Client.get(filterParams, {[field]: direction});
         setImages(res.data);
+        await setSortParams({
+            [field]: direction
+        });
     }
     const openDialog = async () => {
         var files = await fileDialog({ multiple: true });
@@ -215,8 +197,6 @@ function Main() {
                        selectImageById={selectImageById}
                        setImageVisibleById={setImageVisibleById}
                        sortImages={sortImages}
-                       sortFields={sortFields}
-                       setSortFields={setSortFields}
             />
             <ComLineOptions
                 classes={classes}
