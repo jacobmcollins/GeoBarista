@@ -13,38 +13,9 @@ const useStyles = makeStyles({
 });
 
 export default function ImageTable(props) {
-    const {images, selectImageById, setImageVisibleById, openDialog} = props;
+    const {images, columns, selectImageById, setImageVisibleById, openDialog} = props;
     const classes = useStyles();
-    const columns = [
-        {
-            id: 'file_extension',
-            label: 'File Type'
-        },
-        {
-            id: 'mission',
-            label: 'Mission'
-        },
-        {
-            id: 'camera',
-            label: 'Camera'
-        },
-        {
-            id: 'fov',
-            label: 'FOV'
-        },
-        {
-            id: 'lla',
-            label: 'LLA'
-        },
-        {
-            id: 'velocity',
-            label: 'Velocity'
-        },
-        {
-            id: 'gsd',
-            label: 'GSD'
-        },
-    ]
+   
     return (
     <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="simple table">

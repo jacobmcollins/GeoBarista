@@ -136,6 +136,13 @@ function Main() {
         let res = await Client.get(filter, sort);
         setImages(res.data);
     }
+    const filterImages = async (field, value) => {
+        let filter = {};
+        filter[field] = value;
+        let sort = {};
+        let res = await Client.get(filter, sort);
+        setImages(res.data);
+    }
     const openDialog = async () => {
         var files = await fileDialog({ multiple: true });
         var i;
@@ -192,6 +199,7 @@ function Main() {
                        selectImageById={selectImageById}
                        setImageVisibleById={setImageVisibleById}
                        sortImages={sortImages}
+                       filterImages={filterImages}
             />
             <ComLineOptions
                 classes={classes}
