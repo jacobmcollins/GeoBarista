@@ -85,9 +85,15 @@ function server(client_path) {
     });
   });
 
-  app.get('/user/:userId/image/:imageId', function (req, res) {
-    res.send(req.params)
-  })
+  app.get('/api/v2/images/unique', async function (req, res) {
+    let all = {};
+    let keys = Object.keys(imageModel.schema.paths);
+    let i;
+    for(i=0; i < keys.length; i++) {
+      all[keys[i]] = await imageModel.distinct(keys[i]).exec();
+    }
+    res.json(all);
+  });
 
   process.on('SIGTERM', () => dbHandler.closeDatabase())
   process.on('SIGINT', () => dbHandler.closeDatabase())

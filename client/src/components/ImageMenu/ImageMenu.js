@@ -7,7 +7,7 @@ import ImageMenuFilterDialog from "./ImageMenuFilterDialog";
 import ImageMenuSortDialog from "./ImageMenuSortDialog";
 
 export default function ImageMenu(props) {
-    const {classes, toggleImageMenu, open, images, openDialog, selectImageById, sortImages, setImageVisibleById} = props;
+    const {classes, toggleImageMenu, open, images, openDialog, selectImageById, sortImages, setImageVisibleById, filterImages} = props;
     const [filterDialogOpen, setFilterDialogOpen] = React.useState(false);
     const [sortDialogOpen, setSortDialogOpen] = React.useState(false);
 
@@ -18,6 +18,41 @@ export default function ImageMenu(props) {
     const toggleSortDialogOpen = (open) => {
         setSortDialogOpen(open);
     };
+
+    const columns = [
+        {
+            id: 'base_name',
+            label: 'Name'
+        },
+        {
+            id: 'file_extension',
+            label: 'File Extension'
+        },
+        {
+            id: 'mission',
+            label: 'Mission'
+        },
+        {
+            id: 'camera',
+            label: 'Camera'
+        },
+        {
+            id: 'fov',
+            label: 'FOV'
+        },
+        {
+            id: 'lla',
+            label: 'LLA'
+        },
+        {
+            id: 'velocity',
+            label: 'Velocity'
+        },
+        {
+            id: 'gsd',
+            label: 'GSD'
+        },
+    ]
 
     return (
         <Drawer variant="persistent" anchor="right" open={open} onClose={toggleImageMenu(false)}>
@@ -34,12 +69,16 @@ export default function ImageMenu(props) {
                 />
                 <ImageTable 
                     images={images} 
+                    columns={columns}
                     selectImageById={selectImageById} 
                     setImageVisibleById={setImageVisibleById}
                     openDialog={openDialog}
                     sortImages={sortImages}
                 />
                 <ImageMenuFilterDialog 
+                    images={images} 
+                    columns={columns}
+                    filterImages={filterImages}
                     open={filterDialogOpen}
                     toggleFilterDialogOpen={toggleFilterDialogOpen}
                 />

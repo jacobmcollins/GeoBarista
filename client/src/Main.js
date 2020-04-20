@@ -130,7 +130,6 @@ function Main() {
             let res = await Client.get(filterParams, sortParams);
             setImages(res.data);
         }
-        console.log("sorty its your bithday ", sortParams);
     }
     const selectImagesById = async (id_map) => {
         let i;
@@ -156,6 +155,11 @@ function Main() {
         await setSortParams({
             [field]: direction
         });
+    }
+    const filterImages = async (newFilterParams) => {
+        let res = await Client.get(newFilterParams, sortParams);
+        setImages(res.data);
+        setFilterParams(newFilterParams);
     }
     const onChange = async (e) => {
         var files = fileRef.current.files;
@@ -234,6 +238,7 @@ function Main() {
                        selectImageById={selectImageById}
                        setImageVisibleById={setImageVisibleById}
                        sortImages={sortImages}
+                       filterImages={filterImages}
             />
             <ComLineOptions
                 classes={classes}
