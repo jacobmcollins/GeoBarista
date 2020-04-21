@@ -28,7 +28,6 @@ export default function ImageTableHead(props) {
     //gets the secondary sort information
     // this currently is set to only work with selected
     const selectedOnClick = async () => {
-        console.log("select click");
         let selectSort = sortFieldsSecondary.sortDirection === 0
             ? selectSort = 1 
             : (sortFieldsSecondary.sortDirection === 1 
@@ -44,7 +43,6 @@ export default function ImageTableHead(props) {
     }
     // gets the primary sort information gained by clicking on the column header
     const handleClick = async (column) => {
-        console.log("column click");
         let sendDirections = (sortFields.sortDirection === 1) ? -1 : 1;
         if(sortFields.sortBy == column) {
             setSortFields({

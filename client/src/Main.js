@@ -153,8 +153,6 @@ function Main() {
     const sortImages = async (field, direction, fieldSecondary, directionSecondary) => {
         // if there is a secondary sort
         if (directionSecondary){
-            console.log("directionSecondary true F: ", field, " D: ", direction );
-
             let res = await Client.get(filterParams, {[field]: direction, [fieldSecondary] : directionSecondary});
             setImages(res.data);
             await setSortParams({
@@ -163,7 +161,6 @@ function Main() {
         }
         // if there is only a primary sort
         else {
-            console.log("directionSecondary false");
             let res = await Client.get(filterParams, {[field]: direction});
             setImages(res.data);
             await setSortParams({
