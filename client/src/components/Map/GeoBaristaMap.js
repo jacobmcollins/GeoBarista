@@ -6,6 +6,8 @@ import { booleanPointInPolygon } from '@turf/turf';
 import { intersect } from '@turf/turf';
 import { point, featureCollection, polygon } from '@turf/helpers';
 import hash from 'object-hash';
+import L from 'leaflet';
+import 'leaflet-imageoverlay-rotated'
 
 const mapRef = createRef();
 const geoJsonRef = createRef();
@@ -114,6 +116,44 @@ export default function GeoBaristaMap(props) {
         }
         return style;
     }
+
+// EXAMPLE thumbnail vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
+    // logic for adding the overlays to the map needs to go in this effect,
+    // this effect will only trigger if images changes, hence the [images]
+    React.useEffect(() => {
+        console.log('images changed');
+        // logic that we need:
+        // if image.display_thumbnail and image.visible:
+        //    display_thumbnail
+        // else if image.visible:
+        //    display geojson
+    }, [images]);
+
+    // this imageDisplayed state helps us only display once, which should only be for this hard coded example
+    const [imageDisplayed, setImageDisplayed] =  React.useState(false);
+
+    // this is hard coding the image to a spot on the map and jumping there
+    if(mapRef?.current?.leafletElement) {
+        if(!imageDisplayed) {
+            var topleft    = L.latLng(40.52256691873593, -3.7743186950683594),
+            topright   = L.latLng(40.5210255066156, -3.7734764814376835),
+            bottomleft = L.latLng(40.52180437272552, -3.7768453359603886);
+            console.log('display')
+            let url; // modify this url, when I uncomment the line below it works when path is to a jpg
+            // url = "C:\\Users\\jcollins\\dev\\capstone\\data\\Pearl6_Alcatraz\\2017May10_225223_16100298_3c4c9600607e14bdbdfdc6c053d24a2bthumb.jpg";
+            var overlay = L.imageOverlay.rotated(url, topleft, topright, bottomleft, {
+                opacity: 0.5,
+                interactive: true,
+                attribution: "&copy; <a href='http://www.ign.es'>Instituto Geográfico Nacional de España</a>"
+            });
+            mapRef.current.leafletElement.addLayer(overlay);
+            var	bounds = new L.LatLngBounds(topleft, topright).extend(bottomleft);
+            mapRef.current.leafletElement.fitBounds(bounds);
+            setImageDisplayed(true);
+        }
+    }
+// EXAMPLE thumbnail ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     return (
         <React.Fragment>

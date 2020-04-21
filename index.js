@@ -10,7 +10,11 @@ function main() {
   else {
     server('client/build');
   }
-  mainWindow = new BrowserWindow();
+  mainWindow = new BrowserWindow({
+    webPreferences: {
+      webSecurity: false
+    }
+  })
   mainWindow.loadURL(`http://localhost:3001`);
   mainWindow.on('close', event => {
     mainWindow = null
