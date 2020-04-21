@@ -59,6 +59,10 @@ function server(client_path) {
           response = await imageModel.findByIdAndUpdate(id, {visible: value});
           success = true;
           break;
+        case 'thumbnail_path':
+          response = await imageModel.findByIdAndUpdate(id, {thumbnail_path: value});
+          success = true;
+          break;
         default:
           success = false;
           break;
