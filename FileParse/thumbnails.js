@@ -2,10 +2,6 @@ var path = require('path');
 const {execSync} = require("child_process");
 
 class thumbnails{
-    //Nothing to initialize
-    constructor() {
-    }
-
     //Returns the path of the newly generated thumbnail
     //imagePath - Path to image to generate thumbnail for
     //command - The command in order to make the thumbnail with two '{}' to be replaced
