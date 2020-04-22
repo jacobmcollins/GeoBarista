@@ -190,7 +190,7 @@ function Main() {
         }
         //var payload = JSON.stringify(fileObj);
         var data = await Client.load(fileObj);
-        let res = await Client.get(filterParams, sortParams);
+        // let res = await Client.get(filterParams, sortParams);
         console.log('Client load: ');
         console.log(data);
         console.log('Client get: ');

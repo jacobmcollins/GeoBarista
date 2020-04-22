@@ -81,11 +81,8 @@ function server(client_path) {
   app.post('/api/v2/image', async function(req, res) {
     let file_list = req.body.file_obj;
     let file_list_obj = JSON.parse(file_list);
-    let success = false;
     let fileHandlerObj = new fileHandler(file_list_obj);
     let results = await imageModel.find({});
-    // console.log("Results: " + JSON.stringify(results));
-    success = true;
     res.json(results);;
   });
 
