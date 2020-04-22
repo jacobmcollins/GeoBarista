@@ -83,6 +83,7 @@ function Main() {
     const [optionsMenuOpen, setOptionsMenuOpen] = React.useState(false)
     const [images, setImages] = React.useState(Array());
     const [sortParams, setSortParams] = React.useState({
+        'mission' : 1,
     });
     const [filterParams, setFilterParams] = React.useState({});
     const [state, setState] = React.useState({
@@ -149,12 +150,23 @@ function Main() {
             setImages(res.data);
         }
     }
-    const sortImages = async (field, direction) => {
-        let res = await Client.get(filterParams, {[field]: direction});
-        setImages(res.data);
-        await setSortParams({
-            [field]: direction
-        });
+    const sortImages = async (field, direction, fieldSecondary, directionSecondary) => {
+        // if there is a secondary sort
+        if (directionSecondary){
+            let res = await Client.get(filterParams, {[field]: direction, [fieldSecondary] : directionSecondary});
+            setImages(res.data);
+            await setSortParams({
+                [field]: direction, [fieldSecondary] : directionSecondary
+            });
+        }
+        // if there is only a primary sort
+        else {
+            let res = await Client.get(filterParams, {[field]: direction});
+            setImages(res.data);
+            await setSortParams({
+                [field]: direction
+            });
+        }
     }
     const filterImages = async (newFilterParams) => {
         let res = await Client.get(newFilterParams, sortParams);

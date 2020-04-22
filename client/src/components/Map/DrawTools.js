@@ -44,13 +44,13 @@ export default function DrawTools(props) {
              onDrawStop={onDrawStop}
              edit = {{
                edit : false,
-               remove : true,
+               remove : false,
              }}
              draw =  {{
                  marker: false,
                  circle: false,
                  rectangle: true,
-                 polygon: false,
+                 polygon: true,
                  polyline: false,
                  circlemarker: false,
                  edit: false,
