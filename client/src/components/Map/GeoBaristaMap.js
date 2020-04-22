@@ -9,11 +9,11 @@ import hash from 'object-hash';
 import L from 'leaflet';
 import 'leaflet-imageoverlay-rotated'
 
-const mapRef = createRef();
-const geoJsonRef = createRef();
+/*const mapRef = createRef();
+const geoJsonRef = createRef();*/
 
 export default function GeoBaristaMap(props) {
-    const {classes, imageMenuOpen, images, selectImageById, selectImagesById} = props;
+    const {mapRef, geoJsonRef, classes, imageMenuOpen, images, selectImageById, selectImagesById} = props;
     const [zoom, setZoom] =  React.useState(13);
     const [center, setCenter] = React.useState({
         lat: 45.51,
@@ -53,10 +53,10 @@ export default function GeoBaristaMap(props) {
         let unselect = [];
         var pt = point([e.latlng.lng, e.latlng.lat]);
         group.eachLayer((layer) => {
-            console.log('layer', layer);
+            //console.log('layer', layer);
             let poly = layer.feature;
             if(booleanPointInPolygon(pt, poly, {ignoreBoundary: true})){
-                console.log('select')
+                //console.log('select')
                 select.push(layer.feature.properties.id)
             }
             else {
@@ -119,41 +119,48 @@ export default function GeoBaristaMap(props) {
 
 // EXAMPLE thumbnail vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 
+    
+
+    // this imageDisplayed state helps us only display once, which should only be for this hard coded example
+    const [imageDisplayed, setImageDisplayed] =  React.useState(false);
+    
+    
     // logic for adding the overlays to the map needs to go in this effect,
     // this effect will only trigger if images changes, hence the [images]
-    React.useEffect(() => {
-        console.log('images changed');
+    /*React.useEffect(() => {
+        //console.log('images changed');
         // logic that we need:
         // if image.display_thumbnail and image.visible:
         //    display_thumbnail
         // else if image.visible:
         //    display geojson
-    }, [images]);
+        console.log('images changed = ' + imageDisplayed)
+        //if(!imageDisplayed) {
+            
+            for (const image of images) {
+                if(image.visible){
+                    if (!(image._id in overlays)) {
+                        overlays[image._id] = createOverlay(image.file_path, JSON.parse(image.points))      //The order of four points in image.point?
+                        setOverlays(overlays)
+                    }
+                    addOverlayToMap(overlays[image._id])
+                } else{
+                    removeOverlayOffMap(overlays[image._id])
+                }
 
-    // this imageDisplayed state helps us only display once, which should only be for this hard coded example
-    const [imageDisplayed, setImageDisplayed] =  React.useState(false);
+                  
 
-    // this is hard coding the image to a spot on the map and jumping there
-    if(mapRef?.current?.leafletElement) {
-        if(!imageDisplayed) {
-            var topleft    = L.latLng(40.52256691873593, -3.7743186950683594),
-            topright   = L.latLng(40.5210255066156, -3.7734764814376835),
-            bottomleft = L.latLng(40.52180437272552, -3.7768453359603886);
-            console.log('display')
-            let url; // modify this url, when I uncomment the line below it works when path is to a jpg
-            // url = "C:\\Users\\jcollins\\dev\\capstone\\data\\Pearl6_Alcatraz\\2017May10_225223_16100298_3c4c9600607e14bdbdfdc6c053d24a2bthumb.jpg";
-            var overlay = L.imageOverlay.rotated(url, topleft, topright, bottomleft, {
-                opacity: 0.5,
-                interactive: true,
-                attribution: "&copy; <a href='http://www.ign.es'>Instituto Geográfico Nacional de España</a>"
-            });
-            mapRef.current.leafletElement.addLayer(overlay);
-            var	bounds = new L.LatLngBounds(topleft, topright).extend(bottomleft);
-            mapRef.current.leafletElement.fitBounds(bounds);
-            setImageDisplayed(true);
-        }
-    }
-// EXAMPLE thumbnail ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            //})
+            console.log(overlays)
+            /*console.log(overlays.length)
+            const result = Object.values(overlays).length;
+            console.log(result)
+        //}
+        } 
+
+    }, [images]);*/
+
+// Code for displaying thumbnail ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^The order of four points in image.point?
 
     return (
         <React.Fragment>

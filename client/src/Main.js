@@ -15,8 +15,12 @@ import ImageMenu from './components/ImageMenu/ImageMenu';
 import Client from './Client';
 import ComLineOptions from './components/ComLineOptions';
 import {setLocStorage, thumbnails, geojson} from './Tools/initLocStorage';
+import L from 'leaflet';
 
 const fileRef = createRef();
+const mapRef = createRef();
+const geoJsonRef = createRef();
+
 const useStyles = makeStyles((theme) => ({
     appbar: {
         position: 'absolute',
@@ -167,7 +171,7 @@ function Main() {
         var i;
         var fileObj = [];
         for (i=0; i < files.length; i++) {
-            console.log('file', files[i])
+            //console.log('file', files[i])
             var name = files[i].name;
             var path = files[i].path;
             var fileData = {
@@ -212,11 +216,39 @@ function Main() {
             geoJSONData: e.target.value
         })
     }
+
+    const createOverlay = (file_path, points) =>{
+        //points format: Long, Lat instead of Lat, Long
+        let topleft    = L.latLng(points[0][1], points[0][0]),
+            topright   = L.latLng(points[1][1],points[1][0]),
+            bottomleft = L.latLng(points[3][1], points[3][0]);
+
+            //change file path to load thumbnail files from data folder
+            let url = file_path.slice(0,file_path.lastIndexOf(".")).replace(/\\/g,"\\\\")+"thumb.jpg"
+           
+            var overlay = L.imageOverlay.rotated(url, topleft, topright, bottomleft, {
+                opacity: 0.5,
+                interactive: true,
+            });
+            return overlay
+    }
+
+    const addOverlayToMap = (overlay) => {
+        mapRef.current.leafletElement.addLayer(overlay);
+    }
+
+    const removeOverlayOffMap = (overlay) => {
+        mapRef.current.leafletElement.removeLayer(overlay)
+    }
+
+
     return (
         <div className={classes.root} >
             <CssBaseline />
             <Header classes={classes} toggleMainMenu={toggleMainMenu} toggleImageMenu={toggleImageMenu} />
             <GeoBaristaMap 
+                mapRef={mapRef}
+                geoJsonRef={geoJsonRef}
                 classes={classes} 
                 imageMenuOpen={state.imageMenuOpen} 
                 images={images}
@@ -230,15 +262,19 @@ function Main() {
                 openDialog={openDialog}
                 toggleOptionsMenu={toggleOptionsMenu}
             />
-            <ImageMenu classes={classes}
-                       open={state.imageMenuOpen}
-                       toggleImageMenu={toggleImageMenu}
-                       images={images}
-                       openDialog={openDialog}
-                       selectImageById={selectImageById}
-                       setImageVisibleById={setImageVisibleById}
-                       sortImages={sortImages}
-                       filterImages={filterImages}
+            <ImageMenu 
+                classes={classes}
+                open={state.imageMenuOpen}
+                toggleImageMenu={toggleImageMenu}
+                images={images}
+                openDialog={openDialog}
+                selectImageById={selectImageById}
+                setImageVisibleById={setImageVisibleById}
+                sortImages={sortImages}
+                filterImages={filterImages}
+                createOverlay={createOverlay}
+                addOverlayToMap={addOverlayToMap}
+                removeOverlayOffMap={removeOverlayOffMap}
             />
             <ComLineOptions
                 classes={classes}

@@ -7,7 +7,7 @@ import ImageMenuFilterDialog from "./ImageMenuFilterDialog";
 import ImageMenuSortDialog from "./ImageMenuSortDialog";
 
 export default function ImageMenu(props) {
-    const {classes, toggleImageMenu, open, images, openDialog, selectImageById, sortImages, setImageVisibleById, filterImages} = props;
+    const {classes, toggleImageMenu, open, images, openDialog, selectImageById, sortImages, setImageVisibleById, filterImages, createOverlay, addOverlayToMap, removeOverlayOffMap} = props;
     const [filterDialogOpen, setFilterDialogOpen] = React.useState(false);
     const [sortDialogOpen, setSortDialogOpen] = React.useState(false);
 
@@ -63,9 +63,13 @@ export default function ImageMenu(props) {
                     </IconButton >
                 </Toolbar>
                 <ImageMenuToolbar 
+                    images={images} 
                     openDialog={openDialog} 
                     toggleFilterDialogOpen={toggleFilterDialogOpen}
                     toggleSortDialogOpen={toggleSortDialogOpen}
+                    createOverlay={createOverlay}
+                    addOverlayToMap={addOverlayToMap}
+                    removeOverlayOffMap={removeOverlayOffMap}
                 />
                 <ImageTable 
                     images={images} 
