@@ -106,7 +106,9 @@ export default function GeoBaristaMap(props) {
     }
     const get_style = (feature) => {
         let style = {
-            color: 'red'
+            color: 'red',
+            weight: 1,
+            fillOpacity: 0
         }
         if(feature.properties.selected) {
             style.color = 'blue';

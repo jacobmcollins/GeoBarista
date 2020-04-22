@@ -5,9 +5,11 @@ import Checkbox from '@material-ui/core/Checkbox';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import Tooltip from "@material-ui/core/Tooltip";
+import IconButton from "@material-ui/core/IconButton";
+import ZoomInIcon from '@material-ui/icons/ZoomIn';
 
 export default function ImageTableRow(props) {
-    const {columns, image, selectImageById, setImageVisibleById} = props;
+    const {columns, image, selectImageById, setImageVisibleById, zoomToImage} = props;
     return (
         <TableRow key={image._id} style={{height: 33}}>
             <TableCell padding="checkbox">
@@ -31,11 +33,20 @@ export default function ImageTableRow(props) {
                         })}
                     />
             </TableCell>
+            <TableCell padding="checkbox">
+                <Tooltip title={"Zoom to image"}>
+                    <IconButton 
+                        onClick={() => zoomToImage(image)}
+                    >
+                        <ZoomInIcon />
+                    </IconButton>
+                </Tooltip>
+            </TableCell>
             { 
                 columns.map((column) => {
                     return (
                         <Tooltip title={image.file_path}>
-                            <TableCell component="th" scope="row">
+                            <TableCell component="th" scope="row" >
                                 {image[column.id]}
                             </TableCell>
                         </Tooltip>

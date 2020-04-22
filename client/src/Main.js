@@ -227,7 +227,7 @@ function Main() {
             let url = file_path.slice(0,file_path.lastIndexOf(".")).replace(/\\/g,"\\\\")+"thumb.jpg"
            
             var overlay = L.imageOverlay.rotated(url, topleft, topright, bottomleft, {
-                opacity: 0.5,
+                opacity: 1,
                 interactive: true,
             });
             return overlay
@@ -239,6 +239,14 @@ function Main() {
 
     const removeOverlayOffMap = (overlay) => {
         mapRef.current.leafletElement.removeLayer(overlay)
+    }
+
+    const zoomToImage = (image) => {
+        var points = JSON.parse(image.points);
+        var upperLeft = L.latLng(points[0][1], points[0][0]);
+        var bottomRight = L.latLng(points[2][1], points[2][0]);
+        var bounds = L.latLngBounds(upperLeft, bottomRight);
+        mapRef.current.leafletElement.fitBounds(bounds);
     }
 
 
@@ -275,6 +283,7 @@ function Main() {
                 createOverlay={createOverlay}
                 addOverlayToMap={addOverlayToMap}
                 removeOverlayOffMap={removeOverlayOffMap}
+                zoomToImage={zoomToImage}
             />
             <ComLineOptions
                 classes={classes}
