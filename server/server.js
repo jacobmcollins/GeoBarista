@@ -83,10 +83,10 @@ function server(client_path) {
     let file_list_obj = JSON.parse(file_list);
     let success = false;
     let fileHandlerObj = new fileHandler(file_list_obj);
+    let results = await imageModel.find({});
+    // console.log("Results: " + JSON.stringify(results));
     success = true;
-    res.json({
-       success: success
-    });
+    res.json(results);;
   });
 
   app.get('/api/v2/images/unique', async function (req, res) {
