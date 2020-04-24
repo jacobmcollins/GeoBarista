@@ -50,19 +50,39 @@ class fileHandler {
     }
 
     parseFilename(filename) {
+        let result = null;
         try {
             let filenameParts = filename.split('_');
-            if (filenameParts.length > 0) {
-                let dateraw = filenameParts[0];        
+            if (filenameParts.length == 4) {
+                let dateraw = filenameParts[0];
+                let timeraw = filenameParts[1];
+                let camera = filenameParts[2];
+                let imgid = filenameParts[3];        
                 console.log(JSON.stringify(filenameParts));
                 console.log("dateraw: " + dateraw);
                 let parsedDate = Date.parse(dateraw);
                 console.log("dateparsed: " + parsedDate);
-                return filenameParts;
+                console.log("timeraw: " + timeraw);
+                let timeparts = timeraw.match(/.{2}/g);
+                let timefmtd = timeparts[0] + ":" + timeparts[1] + ":" + timeparts[2];
+                // for (let pair of timeparts) {
+                //     console.log("typeof pair: " + typeof pair);
+                //     pair += ":";
+                //     timefmtd.concat(pair);
+                // }
+                // timefmtd = timefmtd.slice(0, timefmtd.length);
+                console.log("timefmtd: " + timefmtd);
+                let parsedTime = new Date('1970-01-01T' + timefmtd + 'Z');
+                let timestamp = parsedDate + parsedTime.getTime();
+                console.log("timestamp: " + timestamp);
+                let parsedstamp = new Date(timestamp);
+                console.log("parsedstamp: " + parsedstamp);
+                result = filenameParts;
             }
         } catch (error) {
-            console.log(error);
+            console.log(error);            
         }
+        return result;
         
     }
     async ppjinfo(path) {
