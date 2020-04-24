@@ -1,5 +1,3 @@
-// src/models/image.js
-
 const mongoose = require('mongoose');
 
 /**
@@ -21,7 +19,22 @@ const imageSchema = new mongoose.Schema({
     gsd: { type: String, default: "Unknown" },
     points: { type: String},                                    // TODO: change this to a Map/Json type
     selected: {type: Boolean, default: false},                  // Determines if the image is marked selected for some action (e.g. generate thumbnails)
-    visible: {type: Boolean, default: true}
+    visible: {type: Boolean, default: true},
+
+    rgb_data: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "File", 
+        default: null
+    },
+    metadata: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "File"
+    }],
+    Thumbnail: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "File", 
+        default: null
+    }
 });
 
-module.exports = mongoose.model('image', imageSchema);
+module.exports = mongoose.model('Image', imageSchema);

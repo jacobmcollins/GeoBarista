@@ -1,5 +1,6 @@
 var path = require('path');
 const imageModel = require('../server/models/image');
+const fileModel = require('../server/models/file');
 var ppjParse = require('./ppjParse');
 
 // Since the ppj parser doesnt hold much state to it, we only need to declare it once to
@@ -14,18 +15,38 @@ class fileHandler {
     }
 
     async processList() {
+        let extDic = {};
         if(this.file_list.length >= 1) {
+            // create separate list by file extension
             for (const element of this.file_list) {
                 let fileext = path.extname(element.name);
-                switch (fileext) {
-                    case ".ppj":
+                if (extDic[fileext]) {
+                    extDic[fileext].push(element);
+                } else {
+                    extDic[fileext] = [element];
+                }                
+            }
+            // Loop through each extension found in extDic
+            for (const key in extDic) {
+                if(key == ".ppj") {
+                    console.log(key);
+                    console.log(JSON.stringify(extDic[key]));
+                    // Run appropriate action for all 
+                    // files of this extension 
+                    for (const element of extDic[key]) {
                         this.ppjinfo(element.path);
-                        break;
-                    default:
-                        break;
+                    }
                 }
+                // switch (fileext) {
+                //     case ".ppj":
+                //         this.ppjinfo(element.path);
+                //         break;
+                //     default:
+                //         break;
+                // }
             }
         }
+        console.log(JSON.stringify(Object.keys(extDic)));        
     }
 
     async ppjinfo(path) {
@@ -38,6 +59,15 @@ class fileHandler {
           points.push([coords[1], coords[0]]);
         }
         let base_name = metaData.fileName;
+        let filenameParts = base_name.split('_');
+        if (filenameParts.length > 0) {
+            let dateraw = filenameParts[0];        
+            console.log(JSON.stringify(filenameParts));
+            console.log("dateraw: " + dateraw);
+            let parsedDate = Date.parse(dateraw);
+            console.log("dateparsed: " + parsedDate);
+        }
+        
         await imageModel.create({
           '_id': path,
           'base_name': base_name,

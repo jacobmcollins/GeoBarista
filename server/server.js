@@ -11,10 +11,11 @@ function server(client_path) {
   const dbHandler = require('./db-handler');
   const imageService = require('./services/image');
   const imageModel = require('./models/image');
+  const fileModel = require('./models/file');
   dbHandler.connect();
 
   // Create the PPJ Parser early on
-  const ppjParser = new Parser()
+  const ppjParser = new Parser();
 
   // Express only serves static assets in production
   if(client_path != null) {
@@ -82,6 +83,7 @@ function server(client_path) {
     let file_list = req.body.file_obj;
     let file_list_obj = JSON.parse(file_list);
     let fileHandlerObj = new fileHandler(file_list_obj);
+    // console.log(JSON.stringify(fileHandlerObj.file_list));
     let results = await imageModel.find({});
     res.json(results);;
   });
