@@ -193,9 +193,10 @@ function Main() {
         // let res = await Client.get(filterParams, sortParams);
         console.log('Client load: ');
         console.log(data);
-        console.log('Client get: ');
-        console.log(res);
+        // console.log('Client get: ');
+        // console.log(res);
         setImages(data.data);
+        console.log(state);
     }
     const openDialog = async () => {
         // console.log(fileRef);

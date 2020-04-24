@@ -17,7 +17,7 @@ class fileHandler {
     async processList() {
         let extDic = {};
         if(this.file_list.length >= 1) {
-            // create separate list by file extension
+            // Group files by file extension into extDic
             for (const element of this.file_list) {
                 let fileext = path.extname(element.name);
                 if (extDic[fileext]) {
@@ -49,6 +49,22 @@ class fileHandler {
         console.log(JSON.stringify(Object.keys(extDic)));        
     }
 
+    parseFilename(filename) {
+        try {
+            let filenameParts = filename.split('_');
+            if (filenameParts.length > 0) {
+                let dateraw = filenameParts[0];        
+                console.log(JSON.stringify(filenameParts));
+                console.log("dateraw: " + dateraw);
+                let parsedDate = Date.parse(dateraw);
+                console.log("dateparsed: " + parsedDate);
+                return filenameParts;
+            }
+        } catch (error) {
+            console.log(error);
+        }
+        
+    }
     async ppjinfo(path) {
         var metaData = ppjParser.convertXml(path)
         var points = []
@@ -59,14 +75,8 @@ class fileHandler {
           points.push([coords[1], coords[0]]);
         }
         let base_name = metaData.fileName;
-        let filenameParts = base_name.split('_');
-        if (filenameParts.length > 0) {
-            let dateraw = filenameParts[0];        
-            console.log(JSON.stringify(filenameParts));
-            console.log("dateraw: " + dateraw);
-            let parsedDate = Date.parse(dateraw);
-            console.log("dateparsed: " + parsedDate);
-        }
+        // Parsing out metadata from filename
+        let filenameData = this.parseFilename(base_name);
         
         await imageModel.create({
           '_id': path,
