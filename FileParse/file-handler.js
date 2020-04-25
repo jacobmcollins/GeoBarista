@@ -2,10 +2,12 @@ var path = require('path');
 const imageModel = require('../server/models/image');
 const fileModel = require('../server/models/file');
 var ppjParse = require('./ppjParse');
+var csvParse = require('./csvParse');
 
 // Since the ppj parser doesnt hold much state to it, we only need to declare it once to
 // do all of our conversions
 var ppjParser = new ppjParse();
+var csvParser = new csvParse();
 
 class fileHandler {
     constructor(file_list) {        
@@ -27,28 +29,33 @@ class fileHandler {
                 }                
             }
             // Loop through each extension found in extDic
+            // TODO: make these work with different character cases in ext
             for (const key in extDic) {
                 if(key == ".ppj") {
-                    console.log(key);
+                    console.log("Parsing all .ppj files");
                     //console.log(JSON.stringify(extDic[key]));
-                    // Run appropriate action for all 
-                    // files of this extension 
+                    // Run appropriate action for all .ppj files
                     for (const element of extDic[key]) {
-                        this.ppjinfo(element.path);
+                        this.ppjinfo(element.path, element.name);
                     }
                 }
-                // switch (fileext) {
-                //     case ".ppj":
-                //         this.ppjinfo(element.path);
-                //         break;
-                //     default:
-                //         break;
-                // }
+                if(key == ".csv") {
+                    console.log("Parsing all .csv files");
+                    for (const element of extDic[key]) {
+                        this.csvinfo(element.path, element.name);
+                    }
+                }
             }
         }
         console.log(JSON.stringify(Object.keys(extDic)));        
     }
 
+    async csvinfo(filepath, filename) {
+        var metaData = csvParser.convertCSV(filepath);
+        //console.log(JSON.stringify("CSV metadata: " + JSON.stringify(metaData)));
+        let filenameData = this.parseFilename(filename);
+        console.log("filenameData: " + JSON.stringify(filenameData));
+    }
     // Parses files to see if they compy with the given datasets
     // naming rules, and extracts values into an object, which is
     // returned. If the filename does not match the format type, 
@@ -56,8 +63,10 @@ class fileHandler {
     parseFilename(filename) {
         let result = null;
         try {
-            let filenameParts = filename.split('_');
-            if (filenameParts.length >= 3) {
+            // Slice off extension from filename, split by underscores
+            let filenameParts = filename.slice(0, filename.length - 4).split('_');
+            // If filename has '_' and at least 3 parts, extract info
+            if (filenameParts && filenameParts.length >= 3) {
                 let dateraw = filenameParts[0];
                 let timeraw = filenameParts[1];
                 let camera = filenameParts[2];
@@ -77,19 +86,21 @@ class fileHandler {
                 let seconds = timeraw.slice(4, 6);
                 let subsecs = timeraw.slice(6, timeraw.length);
                 let timefmtd = hours + ":" + minutes + ":" + seconds;
+                // Add in fractional seconds, if they are there
                 if (timeraw.length > 6) {
                     timefmtd += "." + subsecs;
                 } 
-                console.log("timefmtd: " + timefmtd);
+                //console.log("timefmtd: " + timefmtd);
                 let parsedTime = new Date('1970-01-01T' + timefmtd + 'Z');
                 let timestamp = dateDateObj.getTime() + parsedTime.getTime();
-                console.log("timestamp: " + timestamp);
+                //console.log("timestamp: " + timestamp);
                 let parsedstamp = new Date(timestamp);
-                console.log("parsedstamp: " + parsedstamp);
+                //console.log("parsedstamp: " + parsedstamp);
                 var dataitems = {
                     date: dateDateObj,
                     time: parsedstamp,
                     camera: camera,
+                    // imgid does not exist in all filenames
                     imgid: imgid,
                     thumbnail: false
                 }                
@@ -105,12 +116,14 @@ class fileHandler {
                 result = dataitems;
             }
         } catch (error) {
-            console.log(error);            
+            console.log("Filename parse error: " + error);            
+            console.log("Filename attempted to parse: " + filename);
         }
         
         return result;
         
     }
+
     addFilenameImage(imgobject, filenamevalues) {
         var result = imgobject;
         if(filenamevalues) {
@@ -121,11 +134,29 @@ class fileHandler {
         return result;
     }
     addThumbnailImage(thumbnail) {
+        // TODO: add appropriate db calls for updating
+        // image record with link to thumbnail
+    }
+    // Adds a file to the file model
+    addFileToDB(filepath, extension, filename) {
+        let folder = path.dirname(filepath).split(path.sep).pop();
+        console.log("Folder name: " + folder);
+        let fileDBObj = {
+            'folder': folder,
+            'filename': filename,
+            'extension': [extension],
+            'path': filepath
+        };
+        //await fileModel.create(fileDBObj);
+        //let filequery = await fileModel.find({'folder': folder});
+        //console.log("filequery: " + JSON.stringify(filequery));
+
 
     }
-    async ppjinfo(path) {
-        var metaData = ppjParser.convertXml(path)
-        var points = []
+    async ppjinfo(filepath, filename) {
+        this.addFileToDB(filepath, ".ppj", filename);
+        var metaData = ppjParser.convertXml(filepath);
+        var points = [];
         var i;
         // Only go from 0 to i-1 because the last point is the center
         for(i=0; i < (metaData.pointMap.length - 1); i++) {
@@ -135,22 +166,24 @@ class fileHandler {
         let base_name = metaData.fileName;
         // Parsing out metadata from filename
         let filenameData = this.parseFilename(base_name);
-        console.log(JSON.stringify(filenameData));
+        //console.log(JSON.stringify(filenameData));
         let imgdbobj = {
-            '_id': path,
+            '_id': filepath,
             'base_name': base_name,
-            'file_path': path,
+            'file_path': filepath,
             'file_extension': 'ppj',
             'points': JSON.stringify(points),
-            'mission': this.getMissionName(path)
+            'mission': this.getMissionName(filepath)
           };
+        // Add metadata parsed from filename into object 
         let toInsert = this.addFilenameImage(imgdbobj, filenameData);
         //console.log(JSON.stringify(toInsert));
+        // Insert image object into db
         await imageModel.create(toInsert);
     }
 
-    getMissionName(path) {
-        var tempName = path.split('\\');
+    getMissionName(filepath) {
+        var tempName = filepath.split('\\');
         return tempName[tempName.length - 2];
     }
 }
