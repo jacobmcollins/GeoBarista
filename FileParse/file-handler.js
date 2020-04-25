@@ -30,7 +30,7 @@ class fileHandler {
             for (const key in extDic) {
                 if(key == ".ppj") {
                     console.log(key);
-                    console.log(JSON.stringify(extDic[key]));
+                    //console.log(JSON.stringify(extDic[key]));
                     // Run appropriate action for all 
                     // files of this extension 
                     for (const element of extDic[key]) {
@@ -49,42 +49,59 @@ class fileHandler {
         console.log(JSON.stringify(Object.keys(extDic)));        
     }
 
+    // Parses files to see if they compy with the given datasets
+    // naming rules, and extracts values into an object, which is
+    // returned. If the filename does not match the format type, 
+    // it returns null.
     parseFilename(filename) {
         let result = null;
         try {
             let filenameParts = filename.split('_');
-            if (filenameParts.length == 4) {
+            if (filenameParts.length >= 3) {
                 let dateraw = filenameParts[0];
                 let timeraw = filenameParts[1];
                 let camera = filenameParts[2];
                 let imgid = filenameParts[3];        
                 // console.log(JSON.stringify(filenameParts));
                 // console.log("dateraw: " + dateraw);
+                // Parsing date string into UNIX time
                 let parsedDate = Date.parse(dateraw);
+                // Create new Date obj from string
                 let dateDateObj = new Date(parsedDate);
                 // console.log("dateDateObj: " + dateDateObj);
                 // console.log("timeraw: " + timeraw);
-                let timeparts = timeraw.match(/.{2}/g);
-                let timefmtd = timeparts[0] + ":" + timeparts[1] + ":" + timeparts[2];
-                // console.log("timefmtd: " + timefmtd);
+                // Add in formatting marks to the timestamp so 
+                // it parses correctly
+                let hours = timeraw.slice(0, 2);
+                let minutes = timeraw.slice(2, 4);
+                let seconds = timeraw.slice(4, 6);
+                let subsecs = timeraw.slice(6, timeraw.length);
+                let timefmtd = hours + ":" + minutes + ":" + seconds;
+                if (timeraw.length > 6) {
+                    timefmtd += "." + subsecs;
+                } 
+                console.log("timefmtd: " + timefmtd);
                 let parsedTime = new Date('1970-01-01T' + timefmtd + 'Z');
                 let timestamp = dateDateObj.getTime() + parsedTime.getTime();
-                // console.log("timestamp: " + timestamp);
+                console.log("timestamp: " + timestamp);
                 let parsedstamp = new Date(timestamp);
-                // console.log("parsedstamp: " + parsedstamp);
+                console.log("parsedstamp: " + parsedstamp);
                 var dataitems = {
                     date: dateDateObj,
                     time: parsedstamp,
                     camera: camera,
                     imgid: imgid,
                     thumbnail: false
-                }
-                let last5 = imgid.slice(-5, imgid.length);
+                }                
+                // If last 5 letters of the filename are "thumb",
+                // it's a thumbnail
+                let last5 = filename.slice(-5, filename.length);
                 // console.log("last5: " + last5);
                 if (last5 == "thumb") {
                     dataitems.thumbnail = true;
                 }
                 // console.log("dataitems: " + JSON.stringify(dataitems));
+                          
                 result = dataitems;
             }
         } catch (error) {
@@ -128,7 +145,7 @@ class fileHandler {
             'mission': this.getMissionName(path)
           };
         let toInsert = this.addFilenameImage(imgdbobj, filenameData);
-        console.log(JSON.stringify(toInsert));
+        //console.log(JSON.stringify(toInsert));
         await imageModel.create(toInsert);
     }
 
