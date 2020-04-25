@@ -7,6 +7,7 @@ import { withStyles } from "@material-ui/core/styles";
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import SortIcon from '@material-ui/icons/Sort';
+import FileManipulationButton from './../FileManipulationButton';
 
 const defaultToolbarStyles = {
   iconButton: {
@@ -44,6 +45,7 @@ class ImageMenuToolbar extends React.Component {
           <IconButton className={classes.iconButton} onClick={() => { toggleSortDialogOpen(true) }}>
             <SortIcon className={classes.deleteIcon} />
           </IconButton>
+          <FileManipulationButton classes={classes} />
         </Tooltip>
       </React.Fragment>
     );
