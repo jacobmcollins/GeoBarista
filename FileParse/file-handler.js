@@ -58,32 +58,53 @@ class fileHandler {
                 let timeraw = filenameParts[1];
                 let camera = filenameParts[2];
                 let imgid = filenameParts[3];        
-                console.log(JSON.stringify(filenameParts));
-                console.log("dateraw: " + dateraw);
+                // console.log(JSON.stringify(filenameParts));
+                // console.log("dateraw: " + dateraw);
                 let parsedDate = Date.parse(dateraw);
-                console.log("dateparsed: " + parsedDate);
-                console.log("timeraw: " + timeraw);
+                let dateDateObj = new Date(parsedDate);
+                // console.log("dateDateObj: " + dateDateObj);
+                // console.log("timeraw: " + timeraw);
                 let timeparts = timeraw.match(/.{2}/g);
                 let timefmtd = timeparts[0] + ":" + timeparts[1] + ":" + timeparts[2];
-                // for (let pair of timeparts) {
-                //     console.log("typeof pair: " + typeof pair);
-                //     pair += ":";
-                //     timefmtd.concat(pair);
-                // }
-                // timefmtd = timefmtd.slice(0, timefmtd.length);
-                console.log("timefmtd: " + timefmtd);
+                // console.log("timefmtd: " + timefmtd);
                 let parsedTime = new Date('1970-01-01T' + timefmtd + 'Z');
-                let timestamp = parsedDate + parsedTime.getTime();
-                console.log("timestamp: " + timestamp);
+                let timestamp = dateDateObj.getTime() + parsedTime.getTime();
+                // console.log("timestamp: " + timestamp);
                 let parsedstamp = new Date(timestamp);
-                console.log("parsedstamp: " + parsedstamp);
-                result = filenameParts;
+                // console.log("parsedstamp: " + parsedstamp);
+                var dataitems = {
+                    date: dateDateObj,
+                    time: parsedstamp,
+                    camera: camera,
+                    imgid: imgid,
+                    thumbnail: false
+                }
+                let last5 = imgid.slice(-5, imgid.length);
+                // console.log("last5: " + last5);
+                if (last5 == "thumb") {
+                    dataitems.thumbnail = true;
+                }
+                // console.log("dataitems: " + JSON.stringify(dataitems));
+                result = dataitems;
             }
         } catch (error) {
             console.log(error);            
         }
+        
         return result;
         
+    }
+    addFilenameImage(imgobject, filenamevalues) {
+        var result = imgobject;
+        if(filenamevalues) {
+            result['time'] = filenamevalues.time,
+            result['camera'] = filenamevalues.camera,
+            result['imgid'] = filenamevalues.imgid
+        }
+        return result;
+    }
+    addThumbnailImage(thumbnail) {
+
     }
     async ppjinfo(path) {
         var metaData = ppjParser.convertXml(path)
@@ -97,7 +118,17 @@ class fileHandler {
         let base_name = metaData.fileName;
         // Parsing out metadata from filename
         let filenameData = this.parseFilename(base_name);
-        
+        console.log(JSON.stringify(filenameData));
+        let imgdbobj = {
+            '_id': path,
+            'base_name': base_name,
+            'file_path': path,
+            'file_extension': 'ppj',
+            'points': JSON.stringify(points),
+            'mission': this.getMissionName(path)
+          };
+        let toInsert = this.addFilenameImage(imgdbobj, filenameData);
+        console.log(JSON.stringify(toInsert));
         await imageModel.create({
           '_id': path,
           'base_name': base_name,

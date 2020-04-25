@@ -20,6 +20,7 @@ const imageSchema = new mongoose.Schema({
     points: { type: String},                                    // TODO: change this to a Map/Json type
     selected: {type: Boolean, default: false},                  // Determines if the image is marked selected for some action (e.g. generate thumbnails)
     visible: {type: Boolean, default: true},
+    imgid: {type: String, default: "Unknown"},                  // Unique camera id from filename
 
     rgb_data: {
         type: mongoose.Schema.Types.ObjectId,
