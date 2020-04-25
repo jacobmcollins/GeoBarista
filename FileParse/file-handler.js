@@ -129,14 +129,7 @@ class fileHandler {
           };
         let toInsert = this.addFilenameImage(imgdbobj, filenameData);
         console.log(JSON.stringify(toInsert));
-        await imageModel.create({
-          '_id': path,
-          'base_name': base_name,
-          'file_path': path,
-          'file_extension': 'ppj',
-          'points': JSON.stringify(points),
-          'mission': this.getMissionName(path)
-        });
+        await imageModel.create(toInsert);
     }
 
     getMissionName(path) {
