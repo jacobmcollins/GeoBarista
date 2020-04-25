@@ -22,7 +22,7 @@ class Parser {
     convertCSV(csvpath) {
         var csvString = fs.readFileSync(csvpath).toString()
 
-        console.log(csvString)
+        // console.log(csvString)
         var parsedObj = csvParser(csvString, {
             columns: true,
             skip_empty_lines: true

@@ -36,11 +36,11 @@ function server(client_path) {
   app.get('/api/v2/image', async function(req, res) {
     let filter = await JSON.parse(req.query.filter);
     let sort = await JSON.parse(req.query.sort);
-    console.log('filter', filter);
-    console.log('sort:', sort);
+    //console.log('filter', filter);
+    //console.log('sort:', sort);
     let selected = await imageModel.find(filter).sort(sort).exec();
-    console.log("Selected",selected);
-    console.log('sort:', sort);
+    //console.log("Selected",selected);
+    //console.log('sort:', sort);
     res.json(selected);
   });
 
