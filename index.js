@@ -20,7 +20,11 @@ if (!gotTheLock) {
   app.whenReady().then(() => {
     let url = (app.isPackaged ? 'resources/app/client/build' : 'client/build')
     server(url);
-    mainWindow = new BrowserWindow();
+    mainWindow = new BrowserWindow({
+      webPreferences: {
+        webSecurity: false
+      }
+    });
     mainWindow.loadURL(`http://localhost:3001`);
     mainWindow.on('close', event => {
       mainWindow = null
