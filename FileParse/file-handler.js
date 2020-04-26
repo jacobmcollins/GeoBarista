@@ -156,15 +156,12 @@ class fileHandler {
         });
         //console.log("Testprom: " + JSON.stringify(fileDBObj));
         //await fileModel.create(fileDBObj);
-        
-
-
     }
-    addImageToDB(imagedata) {
-        imageModel.create(imagedata);
+    async addImageToDB(imagedata) {
+        await imageModel.create(imagedata);
     }
     async ppjinfo(filepath, filename) {
-        await this.addFileToDB(filepath, ".ppj", filename);
+        //await this.addFileToDB(filepath, ".ppj", filename);
         let folder = path.dirname(filepath).split(path.sep).pop();
         
         
@@ -192,7 +189,7 @@ class fileHandler {
         let toInsert = this.addFilenameImage(imgdbobj, filenameData);
         //console.log(JSON.stringify(toInsert));
         // Insert image object into db
-        await this.addImageToDB(toInsert);
+        await imageModel.create(toInsert);
     }
 
     getMissionName(filepath) {
