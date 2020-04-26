@@ -15,6 +15,7 @@ import ImageMenu from './components/ImageMenu/ImageMenu';
 import Client from './Client';
 import ComLineOptions from './components/ComLineOptions';
 import { setLocStorage, thumbnails, geojson } from './Tools/initLocStorage';
+import FileManipulationButton from './components/FileManipulationButton';
 
 const fileRef = createRef();
 const useStyles = makeStyles((theme) => ({
@@ -259,6 +260,7 @@ function Main() {
                 setImageVisibleById={setImageVisibleById}
                 sortImages={sortImages}
                 filterImages={filterImages}
+                FileManipulationButton={FileManipulationButton}
             />
             <ComLineOptions
                 classes={classes}
@@ -270,7 +272,6 @@ function Main() {
                 handleGeoJSON={handleGeoJSON}
                 forceStateRefresh={forceStateRefresh}
             />
-
             <input directory="" webkitdirectory="" multiple="" type="file" id="file" ref={fileRef} onChange={onChange} style={{ display: "none" }} />
         </div>
     )

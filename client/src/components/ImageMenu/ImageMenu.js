@@ -1,13 +1,13 @@
 import React from 'react'
-import {Drawer, Toolbar, IconButton} from '@material-ui/core';
-import {Cancel as CancelIcon} from '@material-ui/icons';
+import { Drawer, Toolbar, IconButton } from '@material-ui/core';
+import { Cancel as CancelIcon } from '@material-ui/icons';
 import ImageTable from "./ImageTable";
 import ImageMenuToolbar from "./ImageMenuToolbar";
 import ImageMenuFilterDialog from "./ImageMenuFilterDialog";
 import ImageMenuSortDialog from "./ImageMenuSortDialog";
 
 export default function ImageMenu(props) {
-    const {classes, toggleImageMenu, open, images, openDialog, selectImageById, sortImages, setImageVisibleById, filterImages} = props;
+    const { classes, toggleImageMenu, open, images, openDialog, selectImageById, sortImages, setImageVisibleById, filterImages, FileManipulationButton } = props;
     const [filterDialogOpen, setFilterDialogOpen] = React.useState(false);
     const [sortDialogOpen, setSortDialogOpen] = React.useState(false);
 
@@ -62,27 +62,28 @@ export default function ImageMenu(props) {
                         <CancelIcon />
                     </IconButton >
                 </Toolbar>
-                <ImageMenuToolbar 
-                    openDialog={openDialog} 
+                <ImageMenuToolbar
+                    openDialog={openDialog}
                     toggleFilterDialogOpen={toggleFilterDialogOpen}
                     toggleSortDialogOpen={toggleSortDialogOpen}
+                    FileManipulationButton={FileManipulationButton}
                 />
-                <ImageTable 
-                    images={images} 
+                <ImageTable
+                    images={images}
                     columns={columns}
-                    selectImageById={selectImageById} 
+                    selectImageById={selectImageById}
                     setImageVisibleById={setImageVisibleById}
                     openDialog={openDialog}
                     sortImages={sortImages}
                 />
-                <ImageMenuFilterDialog 
-                    images={images} 
+                <ImageMenuFilterDialog
+                    images={images}
                     columns={columns}
                     filterImages={filterImages}
                     open={filterDialogOpen}
                     toggleFilterDialogOpen={toggleFilterDialogOpen}
                 />
-                <ImageMenuSortDialog 
+                <ImageMenuSortDialog
                     open={sortDialogOpen}
                     toggleSortDialogOpen={toggleSortDialogOpen}
                 />

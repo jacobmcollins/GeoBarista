@@ -352,9 +352,12 @@ export default function FileManipulationMenu(props) {
                 disabled={ManipulationProperties.action === 'Delete' ? true : false} >
                 <PermMediaIcon />
             </IconButton>
-            <input directory=""
-                webkitdirectory=""
-                type="file" ref={folderRef}
+            <input
+                directory=""
+                webkitdirectory="true"
+                type="file"
+                ref={folderRef}
+                id="dirs"
                 onChange={(e) => getFolder(e)}
                 style={{ display: "none" }} />
         </div>
