@@ -67,6 +67,7 @@ export default function ImageTableHead(props) {
                 <TableCell padding="checkbox">
                     <div style={{display: 'flex',alignItems: 'center'}} >
                         <Checkbox
+                            checked={images.every((image) => image.selected)}
                             onChange={((e) => {
                                 images.forEach((image) => {
                                     selectImageById(image._id, e.target.checked);
