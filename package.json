@@ -21,9 +21,10 @@
   },
   "build": {
     "appId": "GeoBarista",
-    "extraResources": [
-      "./client/build"
-    ]
+    "asar": false,
+    "win": {
+      "target": "nsis"
+    }
   },
   "scripts": {
     "setup": "yarn install && cd client && yarn install && cd ..",
