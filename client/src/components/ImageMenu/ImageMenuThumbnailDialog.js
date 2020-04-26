@@ -9,38 +9,39 @@ import { makeStyles } from '@material-ui/core/styles';
 
 
 const useStyles = makeStyles((theme) => ({
-    root: {
-      maxWidth: 345,
-    },
-    media: {
-      height: 300
-    }
-  }));
+  root: {
+    maxWidth: 345,
+  },
+  media: {
+    height: 300
+  }
+}));
 
 
 
-export default function ImageMenuThumbnailDialog(props) {
-    const classes = useStyles();
-    const {open, image, toggleThumbnailDialogOpen} = props;
-    return (
-            <Dialog fullWidth={true} maxWidth={'xs'}
-            open={open}
-            onClose={() => { toggleThumbnailDialogOpen(false) }}
-            >
-            <DialogContent>
-                <Card className={classes.root}>
-                    <CardMedia
-                    className={classes.media}
-                    //image={require(image.thumbnail_path)}
-                    >
-                    </CardMedia>
-                </Card>
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={() => { toggleThumbnailDialogOpen(false)}} color="primary" autoFocus>
-                Close
+export default function ImageMenuThumbnailDialog(props, event) {
+  const classes = useStyles();
+  const { open, image, toggleThumbnailDialogOpen } = props;
+  return (
+    <Dialog fullWidth={true} maxWidth={'xs'}
+      open={open}
+      onClose={() => { toggleThumbnailDialogOpen(false) }}
+    >
+      <DialogContent>
+        testing
+        <Card className={classes.root}>
+          <CardMedia
+            className={classes.media}
+          //image={require(image.thumbnail_path)}
+          >
+          </CardMedia>
+        </Card>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => { toggleThumbnailDialogOpen(false) }} color="primary" autoFocus>
+          Close
                 </Button>
-            </DialogActions>
-            </Dialog>
-    );
+      </DialogActions>
+    </Dialog>
+  );
 }
