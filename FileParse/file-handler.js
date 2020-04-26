@@ -138,19 +138,25 @@ class fileHandler {
         // image record with link to thumbnail
     }
     // Adds a file to the file model
-    addFileToDB(filepath, extension, filename) {
+    async addFileToDB(filepath, extension, filename) {
         let folder = path.dirname(filepath).split(path.sep).pop();
         console.log("Folder name: " + folder);
-        let fileDBObj = fileModel.create({
+        let fileDBObj = await fileModel.create({
             'folder': folder,
             'filename': filename,
             'extension': [extension],
             'path': filepath
+        }, async function (err, fileobj) {
+            if (err) {
+                console.log("error in filemodel creation: " + err);
+            }
+            console.log("fileobj: " + fileobj);
+            let filequery = await fileModel.find({}).exec();
+            console.log("filequery: " + filequery);
         });
-        console.log("Testprom: " + JSON.stringify(fileDBObj));
+        //console.log("Testprom: " + JSON.stringify(fileDBObj));
         //await fileModel.create(fileDBObj);
-        //let filequery = await fileModel.find({'folder': folder});
-        //console.log("filequery: " + JSON.stringify(filequery));
+        
 
 
     }
@@ -158,7 +164,7 @@ class fileHandler {
         imageModel.create(imagedata);
     }
     async ppjinfo(filepath, filename) {
-        this.addFileToDB(filepath, ".ppj", filename);
+        await this.addFileToDB(filepath, ".ppj", filename);
         let folder = path.dirname(filepath).split(path.sep).pop();
         
         
