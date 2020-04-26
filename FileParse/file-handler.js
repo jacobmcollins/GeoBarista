@@ -137,22 +137,24 @@ class fileHandler {
         // TODO: add appropriate db calls for updating
         // image record with link to thumbnail
     }
+    async queryFileModel(query) {
+        let result = await fileModel.find(query).exec();
+        return result;
+    }
     // Adds a file to the file model
     async addFileToDB(filepath, extension, filename) {
         let folder = path.dirname(filepath).split(path.sep).pop();
         console.log("Folder name: " + folder);
+        // Make test query in different method
+        let folderquery = this.queryFileModel({
+            'folder': folder
+        });
+        console.log("folderquery: " + folderquery)
         let fileDBObj = await fileModel.create({
             'folder': folder,
             'filename': filename,
             'extension': [extension],
             'path': filepath
-        }, async function (err, fileobj) {
-            if (err) {
-                console.log("error in filemodel creation: " + err);
-            }
-            console.log("fileobj: " + fileobj);
-            let filequery = await fileModel.find({}).exec();
-            console.log("filequery: " + filequery);
         });
         //console.log("Testprom: " + JSON.stringify(fileDBObj));
         //await fileModel.create(fileDBObj);
@@ -161,9 +163,11 @@ class fileHandler {
         await imageModel.create(imagedata);
     }
     async ppjinfo(filepath, filename) {
-        //await this.addFileToDB(filepath, ".ppj", filename);
+        this.addFileToDB(filepath, ".ppj", filename);
         let folder = path.dirname(filepath).split(path.sep).pop();
-        
+        // Test query, finds all records in file model
+        // let filequery = await fileModel.find({});
+        // console.log("filequery: " + filequery);
         
         var metaData = ppjParser.convertXml(filepath);
         var points = [];
