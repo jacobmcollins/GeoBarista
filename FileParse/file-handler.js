@@ -50,7 +50,7 @@ class fileHandler {
         console.log(JSON.stringify(Object.keys(extDic)));        
     }
 
-    async csvinfo(filepath, filename) {
+    csvinfo(filepath, filename) {
         var metaData = csvParser.convertCSV(filepath);
         //console.log(JSON.stringify("CSV metadata: " + JSON.stringify(metaData)));
         let filenameData = this.parseFilename(filename);
@@ -153,8 +153,18 @@ class fileHandler {
 
 
     }
+    addImageToDB(imagedata) {
+        imageModel.create(imagedata);
+    }
     async ppjinfo(filepath, filename) {
-        this.addFileToDB(filepath, ".ppj", filename);
+        //this.addFileToDB(filepath, ".ppj", filename);
+        let folder = path.dirname(filepath).split(path.sep).pop();
+        // let testprom = await new fileModel.create({
+        //     'folder': folder,
+        //     'filename': filename,
+        //     'extension': ['.ppj'],
+        //     'path': filepath
+        // });
         var metaData = ppjParser.convertXml(filepath);
         var points = [];
         var i;
@@ -179,7 +189,7 @@ class fileHandler {
         let toInsert = this.addFilenameImage(imgdbobj, filenameData);
         //console.log(JSON.stringify(toInsert));
         // Insert image object into db
-        await imageModel.create(toInsert);
+        await this.addImageToDB(toInsert);
     }
 
     getMissionName(filepath) {
