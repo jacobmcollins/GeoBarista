@@ -19,7 +19,6 @@ export default function FileManipulationMenu(props) {
     const classes = props.classes;
     const open = props.open;
     const onClose = props.onClose;
-    const folderRef = createRef();
     const [ManipulationProperties, SetManipulationProperties] = React.useState({
         action: 'Copy',
         thumbnailImages: false,
@@ -48,6 +47,7 @@ export default function FileManipulationMenu(props) {
         customCount: 0,
         selectedCount: 0,
     });
+    const {dialog} = window.require('electron').remote;
 
     const boarderDivStyle = {
         borderTop: '2px solid black',
@@ -72,17 +72,23 @@ export default function FileManipulationMenu(props) {
 
     //opens the file select dialog
     const openFolderDialog = async () => {
-        folderRef.current.click();
+        var dialogOut = await dialog.showOpenDialog({
+            properties: ['openDirectory']
+        });
+        SetManipulationProperties({
+            ...ManipulationProperties,
+            destinationDirectory: dialogOut.filePaths[0]
+        })
     }
     // gets file data from file select dialog
     // TODO find a way to be able to select folders and not files
-    const getFolder = async (e) => {
-        var folder = folderRef.current.files;
-        console.log('folder: ', folder);
-        var path = folder.path;
-        console.log("path :", path);
+    // const getFolder = async (e) => {
+    //     var folder = folderRef.current.files;
+    //     console.log('folder: ', folder);
+    //     var path = folder.path;
+    //     console.log("path :", path);
 
-    }
+    // }
 
     //when dialog opens get the total file count
     //TODO update file extension counts too 
@@ -352,14 +358,6 @@ export default function FileManipulationMenu(props) {
                 disabled={ManipulationProperties.action === 'Delete' ? true : false} >
                 <PermMediaIcon />
             </IconButton>
-            <input
-                directory=""
-                webkitdirectory="true"
-                type="file"
-                ref={folderRef}
-                id="dirs"
-                onChange={(e) => getFolder(e)}
-                style={{ display: "none" }} />
         </div>
     )
 

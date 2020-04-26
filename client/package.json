@@ -9,6 +9,7 @@
     "@material-ui/lab": "^4.0.0-alpha.50",
     "@turf/turf": "^5.1.6",
     "axios": "^0.19.2",
+    "electron": "^8.2.3",
     "leaflet": "^1.6.0",
     "leaflet-draw": "^1.0.4",
     "mui-datatables": "^2.14.0",
