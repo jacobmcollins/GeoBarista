@@ -13,12 +13,12 @@ const useStyles = makeStyles({
 });
 
 export default function ImageTable(props) {
-    const {images, columns, selectImageById, setImageVisibleById, openDialog, sortImages} = props;
+    const {images, columns, selectImageById, setImageVisibleById, openDialog, sortImages, toggleThumbnailDialogOpen} = props;
     const classes = useStyles();
    
     return (
     <TableContainer component={Paper}>
-        <Table className={classes.table} aria-label="simple table">
+        <Table className={classes.table} aria-label="simple table" >
             <ImageTableHead 
                 columns={columns}
                 images={images} 
@@ -32,6 +32,7 @@ export default function ImageTable(props) {
                 images={images} 
                 selectImageById={selectImageById} 
                 setImageVisibleById={setImageVisibleById}
+                toggleThumbnailDialogOpen={toggleThumbnailDialogOpen}
             />
         </Table>
     </TableContainer>

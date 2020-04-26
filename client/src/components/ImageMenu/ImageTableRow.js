@@ -7,10 +7,10 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import Tooltip from "@material-ui/core/Tooltip";
 
 export default function ImageTableRow(props) {
-    const {columns, image, selectImageById, setImageVisibleById} = props;
+    const {columns, image, selectImageById, setImageVisibleById, toggleThumbnailDialogOpen} = props;
     return (
-        <TableRow key={image._id} style={{height: 33}}>
-            <TableCell padding="checkbox">
+        <TableRow key={image._id} style={{height: 33}} onDoubleClick={() => { toggleThumbnailDialogOpen(true) }} >
+            <TableCell padding="checkbox" >
                     <Checkbox
                         checked={image.selected}
                         onChange={((e) => {

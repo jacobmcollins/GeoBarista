@@ -3,7 +3,7 @@ import TableBody from '@material-ui/core/TableBody';
 import ImageTableRow from './ImageTableRow';
 
 export default function ImageTableBody(props) {
-    const {columns, images, selectImageById, setImageVisibleById} = props;
+    const {columns, images, selectImageById, setImageVisibleById, toggleThumbnailDialogOpen} = props;
     return (
         <TableBody>
             {images.map((image) => (
@@ -12,6 +12,7 @@ export default function ImageTableBody(props) {
                     image={image} 
                     selectImageById={selectImageById}
                     setImageVisibleById={setImageVisibleById}
+                    toggleThumbnailDialogOpen={toggleThumbnailDialogOpen}
                 />
             ))}
         </TableBody>

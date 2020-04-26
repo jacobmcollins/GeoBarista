@@ -5,11 +5,13 @@ import ImageTable from "./ImageTable";
 import ImageMenuToolbar from "./ImageMenuToolbar";
 import ImageMenuFilterDialog from "./ImageMenuFilterDialog";
 import ImageMenuSortDialog from "./ImageMenuSortDialog";
+import ImageMenuThumbnailDialog from './ImageMenuThumbnailDialog';
 
 export default function ImageMenu(props) {
     const {classes, toggleImageMenu, open, images, openDialog, selectImageById, sortImages, setImageVisibleById, filterImages} = props;
     const [filterDialogOpen, setFilterDialogOpen] = React.useState(false);
     const [sortDialogOpen, setSortDialogOpen] = React.useState(false);
+    const [thumbnailDialogOpen, setThumbnailDialogOpen] = React.useState(false);
 
     const toggleFilterDialogOpen = (open) => {
         setFilterDialogOpen(open);
@@ -17,6 +19,10 @@ export default function ImageMenu(props) {
 
     const toggleSortDialogOpen = (open) => {
         setSortDialogOpen(open);
+    };
+
+    const toggleThumbnailDialogOpen = (open) => {
+        setThumbnailDialogOpen(open);
     };
 
     const columns = [
@@ -66,14 +72,21 @@ export default function ImageMenu(props) {
                     openDialog={openDialog} 
                     toggleFilterDialogOpen={toggleFilterDialogOpen}
                     toggleSortDialogOpen={toggleSortDialogOpen}
+                    toggleThumbnailDialogOpen={toggleThumbnailDialogOpen}
                 />
                 <ImageTable 
                     images={images} 
                     columns={columns}
                     selectImageById={selectImageById} 
                     setImageVisibleById={setImageVisibleById}
+                    toggleThumbnailDialogOpen={toggleThumbnailDialogOpen}
                     openDialog={openDialog}
                     sortImages={sortImages}
+                />
+                <ImageMenuThumbnailDialog
+                    open={thumbnailDialogOpen}
+                    toggleThumbnailDialogOpen={toggleThumbnailDialogOpen}
+                    images={images}
                 />
                 <ImageMenuFilterDialog 
                     images={images} 
