@@ -8,6 +8,8 @@ import VisibilityIcon from '@material-ui/icons/Visibility';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import SortIcon from '@material-ui/icons/Sort';
 import Switch from '@material-ui/core/Switch';
+import FileManipulationButton from './../FileManipulationButton';
+import { tooltip } from "leaflet";
 
 const defaultToolbarStyles = {
   iconButton: {
@@ -50,7 +52,7 @@ class ImageMenuToolbar extends React.Component {
   }
 
   render() {
-    const { classes, openDialog, toggleFilterDialogOpen, toggleSortDialogOpen } = this.props; 
+    const { classes, openDialog, toggleFilterDialogOpen, toggleSortDialogOpen, FileManipulationButton } = this.props;
 
     return (
       <React.Fragment>
@@ -88,6 +90,7 @@ class ImageMenuToolbar extends React.Component {
           name="toggleThumbnail"
           inputProps={{ 'aria-label': 'primary checkbox' }}
         />
+        <FileManipulationButton />
       </React.Fragment>
     );
   }

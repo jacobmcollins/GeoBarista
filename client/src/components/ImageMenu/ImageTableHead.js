@@ -17,15 +17,40 @@ import IconButton from "@material-ui/core/IconButton";
 export default function ImageTableHead(props) {
     const {columns, images, selectImageById, setImageVisibleById, openDialog, sortImages} = props;
     const [sortFields, setSortFields] = React.useState({
-        sortBy : 'base_name',
-        sortDirection : 1
+        sortBy : 'mission',
+        sortDirection : 1,
     });
+    //secondary DB sort fields
+    // *selected note a value of 1 sorts to bottom of list -1 to top of list
+    // this is because selected is a bool so false would end up on top of list
+    const [sortFieldsSecondary, setSortFieldsSecondary] = React.useState({
+        sortBy : 'selected',
+        sortDirection : 0
+    })
+    //gets the secondary sort information
+    // this currently is set to only work with selected
+    const selectedOnClick = async () => {
+        let selectSort = sortFieldsSecondary.sortDirection === 0
+            ? selectSort = 1 
+            : (sortFieldsSecondary.sortDirection === 1 
+                ? selectSort = -1
+                : selectSort = -0 );
+        setSortFieldsSecondary({
+            ...sortFieldsSecondary,
+            sortDirection : selectSort
+        })
+        selectSort === 0 ?
+            await sortImages(sortFields.sortBy, sortFields.sortDirection)
+            : await sortImages(sortFields.sortBy, sortFields.sortDirection, sortFieldsSecondary.sortBy, selectSort);
+    }
+    // gets the primary sort information gained by clicking on the column header
     const handleClick = async (column) => {
         let sendDirections = (sortFields.sortDirection === 1) ? -1 : 1;
         if(sortFields.sortBy == column) {
             setSortFields({
                 sortBy: column,
                 sortDirection: sendDirections
+
             })
         }
         else {
@@ -34,20 +59,32 @@ export default function ImageTableHead(props) {
                 sortDirection: 1
             })
         }
-        await sortImages(column, sendDirections);
+        sortFieldsSecondary.sortDirection === 0 ?
+         await sortImages(column, sendDirections)
+         : await sortImages(column, sendDirections, sortFieldsSecondary.sortBy, sortFieldsSecondary.sortDirection);
     }
     return (
         <TableHead>
             <TableRow>
                 <TableCell padding="checkbox">
-                    <Checkbox
-                        onChange={((e) => {
-                            images.forEach((image) => {
-                                selectImageById(image._id, e.target.checked);
-                            })
-                        })}
-                    />
-                </TableCell>
+                    <div style={{display: 'flex',alignItems: 'center'}} >
+                        <Checkbox
+                            checked={images.every((image) => image.selected)}
+                            onChange={((e) => {
+                                images.forEach((image) => {
+                                    selectImageById(image._id, e.target.checked);
+                                })
+                            })}
+                        />
+                        <IconButton onClick={() => selectedOnClick() } >
+                            {sortFieldsSecondary.sortDirection === 0 
+                                ? <ImportExportIcon /> 
+                                : (sortFieldsSecondary.sortDirection === 1 
+                                    ? <ArrowDownwardIcon/> 
+                                    : <ArrowUpwardIcon/> ) }
+                        </IconButton>
+                    </div>
+                </TableCell >
                 <TableCell padding="checkbox">
                     <Checkbox
                         color = {'default'}
@@ -77,7 +114,9 @@ export default function ImageTableHead(props) {
                             <div style={{display: 'flex',alignItems: 'center'}} >
                                 <span>{column.label} </span>
                                 {sortFields.sortBy === column.id
-                                    ? (sortFields.sortDirection === 1 ? <ArrowUpwardIcon/> : <ArrowDownwardIcon/>)
+                                    ? (sortFields.sortDirection === 1 
+                                        ? <ArrowUpwardIcon/> 
+                                        : <ArrowDownwardIcon/>)
                                     : <ImportExportIcon />}
                             </div>
 
