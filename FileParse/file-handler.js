@@ -141,12 +141,13 @@ class fileHandler {
     addFileToDB(filepath, extension, filename) {
         let folder = path.dirname(filepath).split(path.sep).pop();
         console.log("Folder name: " + folder);
-        let fileDBObj = {
+        let fileDBObj = fileModel.create({
             'folder': folder,
             'filename': filename,
             'extension': [extension],
             'path': filepath
-        };
+        });
+        console.log("Testprom: " + JSON.stringify(fileDBObj));
         //await fileModel.create(fileDBObj);
         //let filequery = await fileModel.find({'folder': folder});
         //console.log("filequery: " + JSON.stringify(filequery));
@@ -157,14 +158,10 @@ class fileHandler {
         imageModel.create(imagedata);
     }
     async ppjinfo(filepath, filename) {
-        //this.addFileToDB(filepath, ".ppj", filename);
+        this.addFileToDB(filepath, ".ppj", filename);
         let folder = path.dirname(filepath).split(path.sep).pop();
-        let testprom =  fileModel.create({
-            'folder': folder,
-            'filename': filename,
-            'extension': ['.ppj'],
-            'path': filepath
-        });
+        
+        
         var metaData = ppjParser.convertXml(filepath);
         var points = [];
         var i;
