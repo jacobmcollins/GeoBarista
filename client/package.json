@@ -12,6 +12,7 @@
     "electron": "^8.2.3",
     "leaflet": "^1.6.0",
     "leaflet-draw": "^1.0.4",
+    "leaflet-imageoverlay-rotated": "^0.2.1",
     "mui-datatables": "^2.14.0",
     "object-hash": "^2.0.3",
     "react": "^16.13.1",

@@ -25,7 +25,6 @@ export default function ImageMenuFilterDialog(props) {
         }
         get_fields();
     }, [images]);
-
     const render_items = (id) => {
         if(id in uniqueColumnData) {
             return uniqueColumnData[id].map((option) => (

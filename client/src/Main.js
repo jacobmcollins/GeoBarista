@@ -14,10 +14,14 @@ import MainMenu from './components/MainMenu';
 import ImageMenu from './components/ImageMenu/ImageMenu';
 import Client from './Client';
 import ComLineOptions from './components/ComLineOptions';
-import { setLocStorage, thumbnails, geojson } from './Tools/initLocStorage';
+import {setLocStorage, thumbnails, geojson} from './Tools/initLocStorage';
+import L from 'leaflet';
 import FileManipulationButton from './components/FileManipulationButton';
 
 const fileRef = createRef();
+const mapRef = createRef();
+const geoJsonRef = createRef();
+
 const useStyles = makeStyles((theme) => ({
     appbar: {
         position: 'absolute',
@@ -187,8 +191,8 @@ function Main() {
         console.log('files', files)
         var i;
         var fileObj = [];
-        for (i = 0; i < files.length; i++) {
-            console.log('file', files[i])
+        for (i=0; i < files.length; i++) {
+            //console.log('file', files[i])
             var name = files[i].name;
             var path = files[i].path;
             var fileData = {
@@ -233,13 +237,49 @@ function Main() {
             geoJSONData: e.target.value
         })
     }
+
+    const createOverlay = (file_path, points) =>{
+        //points format: Long, Lat instead of Lat, Long
+        let topleft    = L.latLng(points[0][1], points[0][0]),
+            topright   = L.latLng(points[1][1],points[1][0]),
+            bottomleft = L.latLng(points[3][1], points[3][0]);
+
+            //change file path to load thumbnail files from data folder
+            let url = file_path.slice(0,file_path.lastIndexOf(".")).replace(/\\/g,"\\\\")+"thumb.jpg"
+           
+            var overlay = L.imageOverlay.rotated(url, topleft, topright, bottomleft, {
+                opacity: 1,
+                interactive: true,
+            });
+            return overlay
+    }
+
+    const addOverlayToMap = (overlay) => {
+        mapRef.current.leafletElement.addLayer(overlay);
+    }
+
+    const removeOverlayOffMap = (overlay) => {
+        mapRef.current.leafletElement.removeLayer(overlay)
+    }
+
+    const zoomToImage = (image) => {
+        var points = JSON.parse(image.points);
+        var upperLeft = L.latLng(points[0][1], points[0][0]);
+        var bottomRight = L.latLng(points[2][1], points[2][0]);
+        var bounds = L.latLngBounds(upperLeft, bottomRight);
+        mapRef.current.leafletElement.fitBounds(bounds);
+    }
+
+
     return (
         <div className={classes.root} >
             <CssBaseline />
             <Header classes={classes} toggleMainMenu={toggleMainMenu} toggleImageMenu={toggleImageMenu} />
-            <GeoBaristaMap
-                classes={classes}
-                imageMenuOpen={state.imageMenuOpen}
+            <GeoBaristaMap 
+                mapRef={mapRef}
+                geoJsonRef={geoJsonRef}
+                classes={classes} 
+                imageMenuOpen={state.imageMenuOpen} 
                 images={images}
                 selectImageById={selectImageById}
                 selectImagesById={selectImagesById}
@@ -251,7 +291,8 @@ function Main() {
                 openDialog={openDialog}
                 toggleOptionsMenu={toggleOptionsMenu}
             />
-            <ImageMenu classes={classes}
+            <ImageMenu 
+                classes={classes}
                 open={state.imageMenuOpen}
                 toggleImageMenu={toggleImageMenu}
                 images={images}
@@ -260,6 +301,10 @@ function Main() {
                 setImageVisibleById={setImageVisibleById}
                 sortImages={sortImages}
                 filterImages={filterImages}
+                createOverlay={createOverlay}
+                addOverlayToMap={addOverlayToMap}
+                removeOverlayOffMap={removeOverlayOffMap}
+                zoomToImage={zoomToImage}
                 FileManipulationButton={FileManipulationButton}
             />
             <ComLineOptions
