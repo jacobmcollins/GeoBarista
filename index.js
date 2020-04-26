@@ -22,7 +22,8 @@ if (!gotTheLock) {
     server(url);
     mainWindow = new BrowserWindow({
       webPreferences: {
-        webSecurity: false
+        webSecurity: false,
+        nodeIntegration: true,
       }
     });
     mainWindow.loadURL(`http://localhost:3001`);
