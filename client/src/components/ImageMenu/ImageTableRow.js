@@ -9,13 +9,9 @@ import IconButton from "@material-ui/core/IconButton";
 import ZoomInIcon from '@material-ui/icons/ZoomIn';
 
 export default function ImageTableRow(props) {
-<<<<<<< HEAD
-    const { columns, image, selectImageById, setImageVisibleById, toggleThumbnailDialogOpen } = props;
-=======
-    const {columns, image, selectImageById, setImageVisibleById, zoomToImage} = props;
->>>>>>> 72aa38df1462d1f3140f8a6215915b795f91cff0
+    const { columns, image, updateThumbnail, selectImageById, setImageVisibleById, zoomToImage,toggleThumbnailDialogOpen } = props;
     return (
-        <TableRow key={image._id} style={{ height: 33 }} onDoubleClick={(event) => { toggleThumbnailDialogOpen(true, event); console.log("event target ", event.target.title) }} >
+        <TableRow key={image._id} style={{ height: 33 }} >
             <TableCell padding="checkbox" >
                 <Checkbox
                     checked={image.selected}
@@ -37,9 +33,6 @@ export default function ImageTableRow(props) {
                     })}
                 />
             </TableCell>
-<<<<<<< HEAD
-            {
-=======
             <TableCell padding="checkbox">
                 <Tooltip title={"Zoom to image"}>
                     <IconButton 
@@ -50,11 +43,10 @@ export default function ImageTableRow(props) {
                 </Tooltip>
             </TableCell>
             { 
->>>>>>> 72aa38df1462d1f3140f8a6215915b795f91cff0
                 columns.map((column) => {
                     return (
                         <Tooltip title={image.file_path}>
-                            <TableCell component="th" scope="row" >
+                            <TableCell component="th" scope="row" onDoubleClick={() => {updateThumbnail(image.base_name); toggleThumbnailDialogOpen(true);}}>
                                 {image[column.id]}
                             </TableCell>
                         </Tooltip>

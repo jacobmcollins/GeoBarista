@@ -19,20 +19,20 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-export default function ImageMenuThumbnailDialog(props, event) {
+export default function ImageMenuThumbnailDialog(props) {
   const classes = useStyles();
-  const { open, image, toggleThumbnailDialogOpen } = props;
+  const { open, toggleThumbnailDialogOpen, thumbPath } = props;
   return (
     <Dialog fullWidth={true} maxWidth={'xs'}
       open={open}
       onClose={() => { toggleThumbnailDialogOpen(false) }}
     >
       <DialogContent>
-        testing
+        {thumbPath}
         <Card className={classes.root}>
           <CardMedia
             className={classes.media}
-          //image={require(image.thumbnail_path)}
+            //image={require(thumbPath)}
           >
           </CardMedia>
         </Card>
