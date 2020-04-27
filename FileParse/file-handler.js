@@ -142,45 +142,72 @@ class fileHandler {
         return result;
     }
     // Adds a file to the file model
-    async addFileToDB(filepath, extension, filename) {
+    async addFileToDB(filepath, extension, filename, metaData) {
         let folder = path.dirname(filepath).split(path.sep).pop();
         console.log("Folder name: " + folder);
-        // Make test query in different method
-        // let folderquery = await this.queryFileModel({
-        //     'folder': folder
-        // });
-
-        //let querytext = await folderquery;
-        
         let fileDBObj = await fileModel.findOneAndUpdate(
+            // Search query
             {'path': filepath}, 
+            // Data to insert into record
             {$set: {
                 'folder': folder,
                 'filename': filename,
-                'extension': [extension],
-                'path': filepath
-            }         
-        }, {upsert: true}, function(err, doc) {
+                'extension': extension,
+                'path': filepath,
+                'JSONData': JSON.stringify(metaData)
+            }}, 
+            // Insert options
+            {
+                // Creates record if not found
+                upsert: true,
+                // This option is required by system
+                useFindAndModify: false,
+                // Returns newly created object
+                new: true
+            }, 
+            // Error handling
+            function(err) {
             if (err) console.log("Error inserting to file model" + err);
+            
             return console.log("File model saved, path " + filepath);
         });
-        //await fileDBObj.save();
-        let folderquery = await fileModel.find({'folder': folder});
-        console.log("folderquery: " + folderquery);
-        //console.log("Testprom: " + JSON.stringify(fileDBObj));
-        //await fileModel.create(fileDBObj);
+        //console.log('fileDBObj: ' + fileDBObj);
+        return fileDBObj;
     }
+    
+    // Adds image to image model
     async addImageToDB(imagedata) {
-        await imageModel.create(imagedata);
-    }
-    async ppjinfo(filepath, filename) {
-        await this.addFileToDB(filepath, ".ppj", filename);
-        let folder = path.dirname(filepath).split(path.sep).pop();
-        // Test query, finds all records in file model
-        // let filequery = await fileModel.find({});
-        // console.log("filequery: " + filequery);
+        // check if image is in db
+        // If so, update relevant info
+        // If not, create record with arg data
+        //let fileObjJson = JSON.stringify(fileInserted);
+        let imgQuery = await imageModel.find({'base_name': imagedata.base_name});
+        console.log("imgquery: " + imgQuery);
+        let imageDBObj = await imageModel.findOneAndUpdate(
+            // Search query
+            {'base_name': imagedata.base_name}, 
+            // Data to insert into record
+            {$set: imagedata}, 
+            // Insert options
+            {
+                upsert: true,
+                useFindAndModify: false
+            }, 
+            // Error handling
+            function(err) {
+            if (err) console.log("Error inserting to image model" + err);
+            
+            return console.log("image model saved, base_name " + imagedata.base_name);
+        });
+
         
+    }
+
+    // Creates file and image model records in db for a .ppj file
+    async ppjinfo(filepath, filename) {        
+        let folder = path.dirname(filepath).split(path.sep).pop();        
         var metaData = ppjParser.convertXml(filepath);
+        let fileInserted = await this.addFileToDB(filepath, ".ppj", filename, metaData);
         var points = [];
         var i;
         // Only go from 0 to i-1 because the last point is the center
@@ -198,13 +225,13 @@ class fileHandler {
             'file_path': filepath,
             'file_extension': 'ppj',
             'points': JSON.stringify(points),
-            'mission': this.getMissionName(filepath)
+            'mission': this.getMissionName(filepath),
+            'ppj_data': fileInserted
           };
         // Add metadata parsed from filename into object 
         let toInsert = this.addFilenameImage(imgdbobj, filenameData);
         //console.log(JSON.stringify(toInsert));
         // Insert image object into db
-        //await imageModel.create(toInsert);
         await this.addImageToDB(toInsert);
     }
 
