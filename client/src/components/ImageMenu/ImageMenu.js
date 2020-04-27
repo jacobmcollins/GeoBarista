@@ -1,6 +1,6 @@
 import React from 'react'
-import {Drawer, Toolbar, IconButton} from '@material-ui/core';
-import {Cancel as CancelIcon} from '@material-ui/icons';
+import { Drawer, Toolbar, IconButton } from '@material-ui/core';
+import { Cancel as CancelIcon } from '@material-ui/icons';
 import ImageTable from "./ImageTable";
 import ImageMenuToolbar from "./ImageMenuToolbar";
 import ImageMenuFilterDialog from "./ImageMenuFilterDialog";
@@ -8,7 +8,7 @@ import ImageMenuSortDialog from "./ImageMenuSortDialog";
 import ImageMenuThumbnailDialog from './ImageMenuThumbnailDialog';
 
 export default function ImageMenu(props) {
-    const {classes, toggleImageMenu, open, images, openDialog, selectImageById, sortImages, setImageVisibleById, filterImages} = props;
+    const {classes, toggleImageMenu, open, images, openDialog, selectImageById, sortImages, setImageVisibleById, filterImages, createOverlay, addOverlayToMap, removeOverlayOffMap, zoomToImage, FileManipulationButton} = props;
     const [filterDialogOpen, setFilterDialogOpen] = React.useState(false);
     const [sortDialogOpen, setSortDialogOpen] = React.useState(false);
     const [thumbnailDialogOpen, setThumbnailDialogOpen] = React.useState(false);
@@ -69,20 +69,30 @@ export default function ImageMenu(props) {
                     </IconButton >
                 </Toolbar>
                 <ImageMenuToolbar 
+                    images={images} 
                     openDialog={openDialog} 
                     toggleFilterDialogOpen={toggleFilterDialogOpen}
                     toggleSortDialogOpen={toggleSortDialogOpen}
+<<<<<<< HEAD
                     toggleThumbnailDialogOpen={toggleThumbnailDialogOpen}
+=======
+                    createOverlay={createOverlay}
+                    addOverlayToMap={addOverlayToMap}
+                    removeOverlayOffMap={removeOverlayOffMap}
+                    FileManipulationButton={FileManipulationButton}
+>>>>>>> 72aa38df1462d1f3140f8a6215915b795f91cff0
                 />
-                <ImageTable 
-                    images={images} 
+                <ImageTable
+                    images={images}
                     columns={columns}
-                    selectImageById={selectImageById} 
+                    selectImageById={selectImageById}
                     setImageVisibleById={setImageVisibleById}
                     toggleThumbnailDialogOpen={toggleThumbnailDialogOpen}
                     openDialog={openDialog}
                     sortImages={sortImages}
+                    zoomToImage={zoomToImage}
                 />
+<<<<<<< HEAD
                 <ImageMenuThumbnailDialog
                     open={thumbnailDialogOpen}
                     toggleThumbnailDialogOpen={toggleThumbnailDialogOpen}
@@ -90,12 +100,16 @@ export default function ImageMenu(props) {
                 />
                 <ImageMenuFilterDialog 
                     images={images} 
+=======
+                <ImageMenuFilterDialog
+                    images={images}
+>>>>>>> 72aa38df1462d1f3140f8a6215915b795f91cff0
                     columns={columns}
                     filterImages={filterImages}
                     open={filterDialogOpen}
                     toggleFilterDialogOpen={toggleFilterDialogOpen}
                 />
-                <ImageMenuSortDialog 
+                <ImageMenuSortDialog
                     open={sortDialogOpen}
                     toggleSortDialogOpen={toggleSortDialogOpen}
                 />

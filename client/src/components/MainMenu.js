@@ -3,6 +3,7 @@ import {Drawer, Toolbar, IconButton} from '@material-ui/core';
 import {List, ListItem, ListItemText, ListItemIcon} from '@material-ui/core';
 import {Cancel as CancelIcon, Add as AddIcon} from '@material-ui/icons';
 
+
 export default function MainMenu(props) {
     const {classes, toggleMainMenu, open, openDialog, toggleOptionsMenu} = props;
     return (

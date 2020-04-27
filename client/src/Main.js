@@ -15,8 +15,13 @@ import ImageMenu from './components/ImageMenu/ImageMenu';
 import Client from './Client';
 import ComLineOptions from './components/ComLineOptions';
 import {setLocStorage, thumbnails, geojson} from './Tools/initLocStorage';
+import L from 'leaflet';
+import FileManipulationButton from './components/FileManipulationButton';
 
 const fileRef = createRef();
+const mapRef = createRef();
+const geoJsonRef = createRef();
+
 const useStyles = makeStyles((theme) => ({
     appbar: {
         position: 'absolute',
@@ -75,7 +80,15 @@ const useStyles = makeStyles((theme) => ({
     },
     grow: {
         flexGrow: 1,
+    },
+    FileManipulationButton: {
+        paper: {
+            background: "white",
+        },
+        height: '100vh',
+        zIndex: 2,
     }
+
 }));
 
 function Main() {
@@ -83,7 +96,7 @@ function Main() {
     const [optionsMenuOpen, setOptionsMenuOpen] = React.useState(false)
     const [images, setImages] = React.useState(Array());
     const [sortParams, setSortParams] = React.useState({
-        'mission' : 1,
+        'mission': 1,
     });
     const [filterParams, setFilterParams] = React.useState({});
     const [state, setState] = React.useState({
@@ -127,17 +140,17 @@ function Main() {
     }
     const selectImageById = async (id, value) => {
         let success = await Client.update(id, 'selected', value);
-        if(success) {
+        if (success) {
             let res = await Client.get(filterParams, sortParams);
             setImages(res.data);
         }
     }
     const selectImagesById = async (id_map) => {
         let i;
-        for(i=0;i<id_map.select.length;i++) {
+        for (i = 0; i < id_map.select.length; i++) {
             await Client.update(id_map.select[i], 'selected', true);
         }
-        for(i=0;i<id_map.unselect.length;i++) {
+        for (i = 0; i < id_map.unselect.length; i++) {
             await Client.update(id_map.unselect[i], 'selected', false);
         }
         let res = await Client.get(filterParams, sortParams);
@@ -145,23 +158,23 @@ function Main() {
     }
     const setImageVisibleById = async (id, value) => {
         let success = await Client.update(id, 'visible', value);
-        if(success) {
+        if (success) {
             let res = await Client.get(filterParams, sortParams);
             setImages(res.data);
         }
     }
     const sortImages = async (field, direction, fieldSecondary, directionSecondary) => {
         // if there is a secondary sort
-        if (directionSecondary){
-            let res = await Client.get(filterParams, {[field]: direction, [fieldSecondary] : directionSecondary});
+        if (directionSecondary) {
+            let res = await Client.get(filterParams, { [field]: direction, [fieldSecondary]: directionSecondary });
             setImages(res.data);
             await setSortParams({
-                [field]: direction, [fieldSecondary] : directionSecondary
+                [field]: direction, [fieldSecondary]: directionSecondary
             });
         }
         // if there is only a primary sort
         else {
-            let res = await Client.get(filterParams, {[field]: direction});
+            let res = await Client.get(filterParams, { [field]: direction });
             setImages(res.data);
             await setSortParams({
                 [field]: direction
@@ -179,7 +192,7 @@ function Main() {
         var i;
         var fileObj = [];
         for (i=0; i < files.length; i++) {
-            console.log('file', files[i])
+            //console.log('file', files[i])
             var name = files[i].name;
             var path = files[i].path;
             var fileData = {
@@ -194,14 +207,14 @@ function Main() {
         setImages(res.data);
     }
     const openDialog = async () => {
-        console.log(fileRef);
+        console.log("fileref: ", fileRef);
         fileRef.current.click();
     }
     const getTextToDisplay = (toDisplay) => {
         return (toDisplay[0] + ": ");
     }
     const forceStateRefresh = () => {
-        setState({...state});
+        setState({ ...state });
     }
     const saveData = () => {
         if (state.thumbnailsData !== '') {
@@ -224,11 +237,47 @@ function Main() {
             geoJSONData: e.target.value
         })
     }
+
+    const createOverlay = (file_path, points) =>{
+        //points format: Long, Lat instead of Lat, Long
+        let topleft    = L.latLng(points[0][1], points[0][0]),
+            topright   = L.latLng(points[1][1],points[1][0]),
+            bottomleft = L.latLng(points[3][1], points[3][0]);
+
+            //change file path to load thumbnail files from data folder
+            let url = file_path.slice(0,file_path.lastIndexOf(".")).replace(/\\/g,"\\\\")+"thumb.jpg"
+           
+            var overlay = L.imageOverlay.rotated(url, topleft, topright, bottomleft, {
+                opacity: 1,
+                interactive: true,
+            });
+            return overlay
+    }
+
+    const addOverlayToMap = (overlay) => {
+        mapRef.current.leafletElement.addLayer(overlay);
+    }
+
+    const removeOverlayOffMap = (overlay) => {
+        mapRef.current.leafletElement.removeLayer(overlay)
+    }
+
+    const zoomToImage = (image) => {
+        var points = JSON.parse(image.points);
+        var upperLeft = L.latLng(points[0][1], points[0][0]);
+        var bottomRight = L.latLng(points[2][1], points[2][0]);
+        var bounds = L.latLngBounds(upperLeft, bottomRight);
+        mapRef.current.leafletElement.fitBounds(bounds);
+    }
+
+
     return (
         <div className={classes.root} >
             <CssBaseline />
             <Header classes={classes} toggleMainMenu={toggleMainMenu} toggleImageMenu={toggleImageMenu} />
             <GeoBaristaMap 
+                mapRef={mapRef}
+                geoJsonRef={geoJsonRef}
                 classes={classes} 
                 imageMenuOpen={state.imageMenuOpen} 
                 images={images}
@@ -242,15 +291,21 @@ function Main() {
                 openDialog={openDialog}
                 toggleOptionsMenu={toggleOptionsMenu}
             />
-            <ImageMenu classes={classes}
-                       open={state.imageMenuOpen}
-                       toggleImageMenu={toggleImageMenu}
-                       images={images}
-                       openDialog={openDialog}
-                       selectImageById={selectImageById}
-                       setImageVisibleById={setImageVisibleById}
-                       sortImages={sortImages}
-                       filterImages={filterImages}
+            <ImageMenu 
+                classes={classes}
+                open={state.imageMenuOpen}
+                toggleImageMenu={toggleImageMenu}
+                images={images}
+                openDialog={openDialog}
+                selectImageById={selectImageById}
+                setImageVisibleById={setImageVisibleById}
+                sortImages={sortImages}
+                filterImages={filterImages}
+                createOverlay={createOverlay}
+                addOverlayToMap={addOverlayToMap}
+                removeOverlayOffMap={removeOverlayOffMap}
+                zoomToImage={zoomToImage}
+                FileManipulationButton={FileManipulationButton}
             />
             <ComLineOptions
                 classes={classes}
@@ -262,7 +317,7 @@ function Main() {
                 handleGeoJSON={handleGeoJSON}
                 forceStateRefresh={forceStateRefresh}
             />
-        <input directory="" webkitdirectory="" multiple="" type="file" id="file" ref={fileRef} onChange={onChange} style={{display: "none"}}/>
+            <input directory="" webkitdirectory="" multiple="" type="file" id="file" ref={fileRef} onChange={onChange} style={{ display: "none" }} />
         </div>
     )
 }
