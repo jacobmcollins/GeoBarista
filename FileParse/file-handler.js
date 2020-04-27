@@ -164,8 +164,8 @@ class fileHandler {
             if (err) console.log("Error inserting to file model" + err);
             return console.log("File model saved, path " + filepath);
         });
-        await fileDBObj.save();
-        let folderquery = await fileModel.find();
+        //await fileDBObj.save();
+        let folderquery = await fileModel.find({'folder': folder});
         console.log("folderquery: " + folderquery);
         //console.log("Testprom: " + JSON.stringify(fileDBObj));
         //await fileModel.create(fileDBObj);
@@ -204,7 +204,8 @@ class fileHandler {
         let toInsert = this.addFilenameImage(imgdbobj, filenameData);
         //console.log(JSON.stringify(toInsert));
         // Insert image object into db
-        await imageModel.create(toInsert);
+        //await imageModel.create(toInsert);
+        await this.addImageToDB(toInsert);
     }
 
     getMissionName(filepath) {
