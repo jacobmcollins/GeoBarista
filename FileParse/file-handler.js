@@ -50,12 +50,7 @@ class fileHandler {
         console.log(JSON.stringify(Object.keys(extDic)));        
     }
 
-    async csvinfo(filepath, filename) {
-        var metaData = csvParser.convertCSV(filepath);
-        //console.log(JSON.stringify("CSV metadata: " + JSON.stringify(metaData)));
-        let filenameData = this.parseFilename(filename);
-        console.log("filenameData: " + JSON.stringify(filenameData));
-    }
+   
     // Parses files to see if they compy with the given datasets
     // naming rules, and extracts values into an object, which is
     // returned. If the filename does not match the format type, 
@@ -63,6 +58,7 @@ class fileHandler {
     parseFilename(filename) {
         let result = null;
         try {
+            
             // Slice off extension from filename, split by underscores
             let filenameParts = filename.slice(0, filename.length - 4).split('_');
             // If filename has '_' and at least 3 parts, extract info
@@ -220,10 +216,10 @@ class fileHandler {
         let filenameData = this.parseFilename(base_name);
         //console.log(JSON.stringify(filenameData));
         let imgdbobj = {
-            '_id': filepath,
+            //'_id': filepath,
             'base_name': base_name,
-            'file_path': filepath,
-            'file_extension': 'ppj',
+            //'file_path': filepath,
+            //'file_extension': 'ppj',
             'points': JSON.stringify(points),
             'mission': this.getMissionName(filepath),
             'ppj_data': fileInserted
@@ -235,6 +231,12 @@ class fileHandler {
         await this.addImageToDB(toInsert);
     }
 
+    async csvinfo(filepath, filename) {
+        var metaData = csvParser.convertCSV(filepath);
+        //console.log(JSON.stringify("CSV metadata: " + JSON.stringify(metaData)));
+        let filenameData = this.parseFilename(filename);
+        console.log("filenameData: " + JSON.stringify(filenameData));
+    }
     getMissionName(filepath) {
         var tempName = filepath.split('\\');
         return tempName[tempName.length - 2];
