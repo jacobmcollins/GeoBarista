@@ -83,6 +83,7 @@ function server(client_path) {
     let file_list = req.body.file_obj;
     let file_list_obj = JSON.parse(file_list);
     let fileHandlerObj = new fileHandler(file_list_obj);
+    await fileHandlerObj.processList();
     // console.log(JSON.stringify(fileHandlerObj.file_list));
     let results = await imageModel.find({});
     res.json(results);;

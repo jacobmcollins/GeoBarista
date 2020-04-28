@@ -12,7 +12,7 @@ var csvParser = new csvParse();
 class fileHandler {
     constructor(file_list) {        
         this.file_list = file_list;
-        this.processList();
+        //this.processList();
         
     }
 
@@ -36,13 +36,13 @@ class fileHandler {
                     //console.log(JSON.stringify(extDic[key]));
                     // Run appropriate action for all .ppj files
                     for (const element of extDic[key]) {
-                        this.ppjinfo(element.path, element.name);
+                        await this.ppjinfo(element.path, element.name);
                     }
                 }
                 if(key == ".csv") {
                     console.log("Parsing all .csv files");
                     for (const element of extDic[key]) {
-                        this.csvinfo(element.path, element.name);
+                        await this.csvinfo(element.path, element.name);
                     }
                 }
             }
@@ -50,7 +50,7 @@ class fileHandler {
         console.log(JSON.stringify(Object.keys(extDic)));        
     }
 
-    csvinfo(filepath, filename) {
+    async csvinfo(filepath, filename) {
         var metaData = csvParser.convertCSV(filepath);
         //console.log(JSON.stringify("CSV metadata: " + JSON.stringify(metaData)));
         let filenameData = this.parseFilename(filename);
@@ -146,7 +146,7 @@ class fileHandler {
         let folder = path.dirname(filepath).split(path.sep).pop();
         console.log("Folder name: " + folder);
         // Make test query in different method
-        let folderquery = this.queryFileModel({
+        let folderquery = await this.queryFileModel({
             'folder': folder
         });
         console.log("folderquery: " + folderquery)
@@ -163,7 +163,7 @@ class fileHandler {
         await imageModel.create(imagedata);
     }
     async ppjinfo(filepath, filename) {
-        this.addFileToDB(filepath, ".ppj", filename);
+        await this.addFileToDB(filepath, ".ppj", filename);
         let folder = path.dirname(filepath).split(path.sep).pop();
         // Test query, finds all records in file model
         // let filequery = await fileModel.find({});
