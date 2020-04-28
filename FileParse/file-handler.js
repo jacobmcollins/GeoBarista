@@ -52,6 +52,12 @@ class fileHandler {
                         await this.ntfinfo(element.path, element.name);
                     }
                 }
+                if(key == ".jpg") {
+                    console.log("Parsing all .jpg files");
+                    for (const element of extDic[key]) {
+                        await this.jpginfo(element.path, element.name);
+                    }
+                }
             }
         }
         console.log(JSON.stringify(Object.keys(extDic)));        
@@ -283,7 +289,7 @@ class fileHandler {
     async ntfinfo(filepath, filename) {
         let folder = path.dirname(filepath).split(path.sep).pop();
         var metaData = runsync.exec("gdalinfo -json " + filepath);
-        console.log("ntf metadata: " + metaData);
+        // console.log("ntf metadata: " + metaData);
         let fileInserted = await this.addFileToDB(filepath, ".ntf", filename, metaData);
         let base_name = this.chopfilename(filename);
         let filenameData = this.parseFilename(filename);
@@ -298,6 +304,43 @@ class fileHandler {
         }
         let toInsert = this.addFilenameImage(imgdbobj, filenameData);
         await this.addImageToDB(toInsert);
+    }
+
+    // Creates file and image model records in db for a .jpg file
+    async jpginfo(filepath, filename) {
+        let filenameData = this.parseFilename(filename);
+        let folder = path.dirname(filepath).split(path.sep).pop();
+        let fileInserted = await this.addFileToDB(filepath, ".jpg", filename, {});
+        // Handle .jpgs differently depending on whether they
+        // are a thumbnail
+        if (!(filenameData.thumbnail)) {          
+            let base_name = this.chopfilename(filename);
+            var imgdbobj = {
+                'base_name': base_name,
+                'mission': folder,
+                'rgb_data': fileInserted,
+                'rgb_data_path': filepath,
+                'jpg_data': fileInserted,
+                'jpg_data_path': filepath 
+            };
+
+        } else {
+            let base_name = this.chopfilename(filename).slice(0, -5);
+            var imgdbobj = {
+                'base_name': base_name,
+                'mission': folder,
+                'thumbnail_bool': true,
+                'rgb_data': fileInserted,
+                'rgb_data_path': filepath,
+                'thumbnail_path': filepath,
+                'thumbnail_extension': path.extname(filename)
+            }
+        }            
+        console.log("imgobjdb: " + imgdbobj);
+        let toInsert = this.addFilenameImage(imgdbobj, filenameData);
+        console.log("toinsert: " + toInsert);
+        await this.addImageToDB(toInsert);       
+        
     }
     // Check last 5 chars of filename for an extension
     // Chop it off if found
