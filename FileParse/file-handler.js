@@ -58,15 +58,19 @@ class fileHandler {
     parseFilename(filename) {
         let result = null;
         try {
-            
-            // Slice off extension from filename, split by underscores
-            let filenameParts = filename.slice(0, filename.length - 4).split('_');
+            // Check last 5 chars of filename for an extension
+            // Chop if off if found
+            let last5 = filename.slice(-5, filename.length);
+            if (last5 && last5.includes('.')) {
+                filename = filename.substring(0, filename.lastIndexOf('.'));
+            }
+            // Split filename by underscores
+            let filenameParts = filename.split('_');
             // If filename has '_' and at least 3 parts, extract info
             if (filenameParts && filenameParts.length >= 3) {
                 let dateraw = filenameParts[0];
                 let timeraw = filenameParts[1];
-                let camera = filenameParts[2];
-                let imgid = filenameParts[3];        
+                let camera = filenameParts[2];   
                 // console.log(JSON.stringify(filenameParts));
                 // console.log("dateraw: " + dateraw);
                 // Parsing date string into UNIX time
@@ -96,15 +100,18 @@ class fileHandler {
                     date: dateDateObj,
                     time: parsedstamp,
                     camera: camera,
-                    // imgid does not exist in all filenames
-                    imgid: imgid,
                     thumbnail: false
                 }                
+                // imgid does not exist in all filenames
+                if(filenameParts.length >3) {
+                    let imgid = filenameParts[3]; 
+                    dataitems['imgid'] = imgid;
+                }  
                 // If last 5 letters of the filename are "thumb",
                 // it's a thumbnail
                 let last5 = filename.slice(-5, filename.length);
                 // console.log("last5: " + last5);
-                if (last5 == "thumb") {
+                if (last5 && last5 == "thumb") {
                     dataitems.thumbnail = true;
                 }
                 // console.log("dataitems: " + JSON.stringify(dataitems));
@@ -123,9 +130,12 @@ class fileHandler {
     addFilenameImage(imgobject, filenamevalues) {
         var result = imgobject;
         if(filenamevalues) {
-            result['time'] = filenamevalues.time,
-            result['camera'] = filenamevalues.camera,
-            result['imgid'] = filenamevalues.imgid
+            result['time'] = filenamevalues.time;
+            result['camera'] = filenamevalues.camera;
+            if (filenamevalues.imgid) {
+                result['imgid'] = filenamevalues.imgid;
+            }
+            
         }
         return result;
     }
@@ -140,7 +150,7 @@ class fileHandler {
     // Adds a file to the file model
     async addFileToDB(filepath, extension, filename, metaData) {
         let folder = path.dirname(filepath).split(path.sep).pop();
-        console.log("Folder name: " + folder);
+        //console.log("Folder name: " + folder);
         let fileDBObj = await fileModel.findOneAndUpdate(
             // Search query
             {'path': filepath}, 
@@ -149,7 +159,7 @@ class fileHandler {
                 'folder': folder,
                 'filename': filename,
                 'extension': extension,
-                'path': filepath,
+                'path': filepath,                
                 'JSONData': JSON.stringify(metaData)
             }}, 
             // Insert options
@@ -186,8 +196,12 @@ class fileHandler {
             {$set: imagedata}, 
             // Insert options
             {
+                // Creates record if not found
                 upsert: true,
-                useFindAndModify: false
+                // This option is required by system
+                useFindAndModify: false,
+                // Returns newly created object
+                new: true
             }, 
             // Error handling
             function(err) {
@@ -195,7 +209,7 @@ class fileHandler {
             
             return console.log("image model saved, base_name " + imagedata.base_name);
         });
-
+        console.log("Image after update: " + imageDBObj);
         
     }
 
@@ -211,31 +225,60 @@ class fileHandler {
           let coords = metaData.pointMap[i].wgsCoordinates;
           points.push([coords[1], coords[0]]);
         }
-        let base_name = metaData.fileName;
+        let base_name = metaData.fileName;        
         // Parsing out metadata from filename
         let filenameData = this.parseFilename(base_name);
-        //console.log(JSON.stringify(filenameData));
+        console.log("ppj filepath: " + filepath);
         let imgdbobj = {
             //'_id': filepath,
             'base_name': base_name,
             //'file_path': filepath,
             //'file_extension': 'ppj',
             'points': JSON.stringify(points),
-            'mission': this.getMissionName(filepath),
-            'ppj_data': fileInserted
+            //'mission': this.getMissionName(filepath),
+            'ppj_data': fileInserted,
+            'ppj_data_path': filepath            
           };
         // Add metadata parsed from filename into object 
         let toInsert = this.addFilenameImage(imgdbobj, filenameData);
+        // Overwrite timestamp in filename with timestamp from .ppj file
+        imgdbobj['time'] = metaData.gpsTimeStamp;
         //console.log(JSON.stringify(toInsert));
         // Insert image object into db
         await this.addImageToDB(toInsert);
     }
 
     async csvinfo(filepath, filename) {
-        var metaData = csvParser.convertCSV(filepath);
+        let folder = path.dirname(filepath).split(path.sep).pop();
+        var metaData = csvParser.convertCSV_stripped(filepath);
         //console.log(JSON.stringify("CSV metadata: " + JSON.stringify(metaData)));
+        let fileInserted = await this.addFileToDB(filepath, ".csv", filename, metaData);
+        let base_name = this.chopfilename(filename);
         let filenameData = this.parseFilename(filename);
-        console.log("filenameData: " + JSON.stringify(filenameData));
+        let imgdbobj = {
+            'base_name': base_name,
+            'fov': metaData.lensFOV_H,
+            'lla': metaData.centerPnt_Lat,
+            'velocity': metaData.velNorth,
+            'gsd': metaData.groundSpd,
+            // 'fov': JSON.stringify(metaData.lensFOV_H["Value"]).replace(/^"(.*)"$/, '$1'),
+            // 'lla': JSON.stringify(metaData.centerPnt_Lat["Value"]).replace(/^"(.*)"$/, '$1'),
+            'csv_data': fileInserted,
+            'csv_data_path': filepath
+        }
+        // Add metadata parsed from filename into object 
+        let toInsert = this.addFilenameImage(imgdbobj, filenameData);
+        await this.addImageToDB(toInsert);
+        console.log("metaData.lendFOV_HJSON: " + metaData.lensFOV_H);
+    }
+    chopfilename(filename) {
+        // Check last 5 chars of filename for an extension
+        // Chop if off if found
+        let last5 = filename.slice(-5, filename.length);
+        if (last5 && last5.includes('.')) {
+            filename = filename.substring(0, filename.lastIndexOf('.'));
+        }
+        return filename;
     }
     getMissionName(filepath) {
         var tempName = filepath.split('\\');

@@ -9,7 +9,7 @@ const fileSchema = new mongoose.Schema( {
         type: String,
         required: true
     },
-    extension: [String],
+    extension: String,
     path: {
         type: String,
         unique: true,
