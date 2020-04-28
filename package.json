@@ -17,7 +17,8 @@
     "mongoose": "^5.9.9",
     "sql.js": "0.3.2",
     "util": "^0.12.2",
-    "xml2js": "^0.4.23"
+    "xml2js": "^0.4.23",
+    "runsync": "0.1.8"
   },
   "build": {
     "appId": "GeoBarista",

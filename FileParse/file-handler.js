@@ -3,6 +3,7 @@ const imageModel = require('../server/models/image');
 const fileModel = require('../server/models/file');
 var ppjParse = require('./ppjParse');
 var csvParse = require('./csvParse');
+const runsync = require("runsync");
 
 // Since the ppj parser doesnt hold much state to it, we only need to declare it once to
 // do all of our conversions
@@ -43,6 +44,12 @@ class fileHandler {
                     console.log("Parsing all .csv files");
                     for (const element of extDic[key]) {
                         await this.csvinfo(element.path, element.name);
+                    }
+                }
+                if(key == ".ntf") {
+                    console.log("Parsing all .ntf files");
+                    for (const element of extDic[key]) {
+                        await this.ntfinfo(element.path, element.name);
                     }
                 }
             }
@@ -188,7 +195,7 @@ class fileHandler {
         // If not, create record with arg data
         //let fileObjJson = JSON.stringify(fileInserted);
         let imgQuery = await imageModel.find({'base_name': imagedata.base_name});
-        console.log("imgquery: " + imgQuery);
+        //console.log("imgquery: " + imgQuery);
         let imageDBObj = await imageModel.findOneAndUpdate(
             // Search query
             {'base_name': imagedata.base_name}, 
@@ -209,7 +216,7 @@ class fileHandler {
             
             return console.log("image model saved, base_name " + imagedata.base_name);
         });
-        console.log("Image after update: " + imageDBObj);
+        //console.log("Image after update: " + imageDBObj);
         
     }
 
@@ -248,8 +255,8 @@ class fileHandler {
         await this.addImageToDB(toInsert);
     }
 
-    async csvinfo(filepath, filename) {
-        let folder = path.dirname(filepath).split(path.sep).pop();
+    // Creates file and image model records in db for a .csv file
+    async csvinfo(filepath, filename) {        
         var metaData = csvParser.convertCSV_stripped(filepath);
         //console.log(JSON.stringify("CSV metadata: " + JSON.stringify(metaData)));
         let fileInserted = await this.addFileToDB(filepath, ".csv", filename, metaData);
@@ -257,32 +264,50 @@ class fileHandler {
         let filenameData = this.parseFilename(filename);
         let imgdbobj = {
             'base_name': base_name,
+            // TODO: There are 2 fields of view, x and y. Do we average them? Make a string of both?
             'fov': metaData.lensFOV_H,
+            // TODO: Concat a lat and long string, or alter front end to hold separate lat/long
             'lla': metaData.centerPnt_Lat,
+            // TODO: Calculate velocity vector from xyz values
             'velocity': metaData.velNorth,
             'gsd': metaData.groundSpd,
-            // 'fov': JSON.stringify(metaData.lensFOV_H["Value"]).replace(/^"(.*)"$/, '$1'),
-            // 'lla': JSON.stringify(metaData.centerPnt_Lat["Value"]).replace(/^"(.*)"$/, '$1'),
             'csv_data': fileInserted,
+            
             'csv_data_path': filepath
         }
         // Add metadata parsed from filename into object 
         let toInsert = this.addFilenameImage(imgdbobj, filenameData);
         await this.addImageToDB(toInsert);
-        console.log("metaData.lendFOV_HJSON: " + metaData.lensFOV_H);
     }
+    // Creates file and image model records in db for a .csv file
+    async ntfinfo(filepath, filename) {
+        let folder = path.dirname(filepath).split(path.sep).pop();
+        var metaData = runsync.exec("gdalinfo -json " + filepath);
+        console.log("ntf metadata: " + metaData);
+        let fileInserted = await this.addFileToDB(filepath, ".ntf", filename, metaData);
+        let base_name = this.chopfilename(filename);
+        let filenameData = this.parseFilename(filename);
+        let imgdbobj = {
+            'base_name': base_name,
+            'mission': folder,            
+            'ntf_data': fileInserted,
+            'ntf_data_path': filepath,
+            'rgb_data': fileInserted,
+            'rgb_data_path': filepath,
+
+        }
+        let toInsert = this.addFilenameImage(imgdbobj, filenameData);
+        await this.addImageToDB(toInsert);
+    }
+    // Check last 5 chars of filename for an extension
+    // Chop it off if found
     chopfilename(filename) {
-        // Check last 5 chars of filename for an extension
-        // Chop if off if found
+        
         let last5 = filename.slice(-5, filename.length);
         if (last5 && last5.includes('.')) {
             filename = filename.substring(0, filename.lastIndexOf('.'));
         }
         return filename;
-    }
-    getMissionName(filepath) {
-        var tempName = filepath.split('\\');
-        return tempName[tempName.length - 2];
     }
 }
 
