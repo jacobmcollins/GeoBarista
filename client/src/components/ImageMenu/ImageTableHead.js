@@ -9,7 +9,9 @@ import { ContactSupportOutlined } from '@material-ui/icons';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ImportExportIcon from '@material-ui/icons/ImportExport';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
-import { IconButton } from '@material-ui/core';
+import ZoomInIcon from '@material-ui/icons/ZoomIn';
+import Tooltip from "@material-ui/core/Tooltip";
+import IconButton from "@material-ui/core/IconButton";
 
 
 export default function ImageTableHead(props) {
@@ -67,6 +69,7 @@ export default function ImageTableHead(props) {
                 <TableCell padding="checkbox">
                     <div style={{display: 'flex',alignItems: 'center'}} >
                         <Checkbox
+                            checked={images.every((image) => image.selected)}
                             onChange={((e) => {
                                 images.forEach((image) => {
                                     selectImageById(image._id, e.target.checked);
@@ -94,6 +97,15 @@ export default function ImageTableHead(props) {
                             })
                         })}
                     />
+                </TableCell>
+                {/* This zoom to images is not working currently, could be implemented */}
+                <TableCell padding="checkbox">
+                    <Tooltip title={"Zoom to images"}>
+                        <IconButton 
+                        >
+                            <ZoomInIcon />
+                        </IconButton>
+                    </Tooltip>
                 </TableCell>
                 {
                     columns.map((column) => {
