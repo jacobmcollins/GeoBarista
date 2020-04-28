@@ -11,10 +11,11 @@ function server(client_path) {
   const dbHandler = require('./db-handler');
   const imageService = require('./services/image');
   const imageModel = require('./models/image');
+  const fileModel = require('./models/file');
   dbHandler.connect();
 
   // Create the PPJ Parser early on
-  const ppjParser = new Parser()
+  const ppjParser = new Parser();
 
   // Express only serves static assets in production
   if(client_path != null) {
@@ -35,11 +36,11 @@ function server(client_path) {
   app.get('/api/v2/image', async function(req, res) {
     let filter = await JSON.parse(req.query.filter);
     let sort = await JSON.parse(req.query.sort);
-    console.log('filter', filter);
-    console.log('sort:', sort);
+    //console.log('filter', filter);
+    //console.log('sort:', sort);
     let selected = await imageModel.find(filter).sort(sort).exec();
-    console.log("Selected",selected);
-    console.log('sort:', sort);
+    //console.log("Selected",selected);
+    //console.log('sort:', sort);
     res.json(selected);
   });
 
@@ -81,12 +82,11 @@ function server(client_path) {
   app.post('/api/v2/image', async function(req, res) {
     let file_list = req.body.file_obj;
     let file_list_obj = JSON.parse(file_list);
-    let success = false;
     let fileHandlerObj = new fileHandler(file_list_obj);
-    success = true;
-    res.json({
-       success: success
-    });
+    await fileHandlerObj.processList();
+    // console.log(JSON.stringify(fileHandlerObj.file_list));
+    let results = await imageModel.find({});
+    res.json(results);;
   });
 
   app.get('/api/v2/images/unique', async function (req, res) {

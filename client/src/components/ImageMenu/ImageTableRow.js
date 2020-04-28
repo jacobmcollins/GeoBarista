@@ -45,11 +45,9 @@ export default function ImageTableRow(props) {
             { 
                 columns.map((column) => {
                     return (
-                        <Tooltip title={image.file_path}>
-                            <TableCell component="th" scope="row" onDoubleClick={() => {updateThumbnail(image.thumbnail_path); toggleThumbnailDialogOpen(true);}}>
-                                {image[column.id]}
-                            </TableCell>
-                        </Tooltip>
+                        <TableCell component="th" scope="row" onDoubleClick={() => {updateThumbnail(image.thumbnail_path); toggleThumbnailDialogOpen(true);}}>
+                            {image[column.id]}
+                        </TableCell>
                     )
                 })
             }
