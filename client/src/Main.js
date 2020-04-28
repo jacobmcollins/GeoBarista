@@ -188,11 +188,11 @@ function Main() {
     }
     const onChange = async (e) => {
         var files = fileRef.current.files;
-        console.log('files', files)
+        // console.log('files', files)
         var i;
         var fileObj = [];
         for (i=0; i < files.length; i++) {
-            //console.log('file', files[i])
+            // console.log('file', files[i])
             var name = files[i].name;
             var path = files[i].path;
             var fileData = {
@@ -203,8 +203,13 @@ function Main() {
         }
         //var payload = JSON.stringify(fileObj);
         var data = await Client.load(fileObj);
-        let res = await Client.get(filterParams, sortParams);
-        setImages(res.data);
+        // let res = await Client.get(filterParams, sortParams);
+        console.log('Client load: ');
+        console.log(data);
+        // console.log('Client get: ');
+        // console.log(res);
+        setImages(data.data);
+        console.log(state);
     }
     const openDialog = async () => {
         console.log("fileref: ", fileRef);

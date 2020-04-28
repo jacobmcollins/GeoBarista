@@ -5,7 +5,7 @@ async function load(file) {
   var res = await axios.post("/api/v2/image", {
       file_obj: file_obj
   });  
-  return res.data;
+  return res;
 }
 
 async function get(filter, sort) {
