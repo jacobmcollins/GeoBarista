@@ -119,51 +119,6 @@ export default function GeoBaristaMap(props) {
         return style;
     }
 
-// EXAMPLE thumbnail vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-
-    
-
-    // this imageDisplayed state helps us only display once, which should only be for this hard coded example
-    const [imageDisplayed, setImageDisplayed] =  React.useState(false);
-    
-    
-    // logic for adding the overlays to the map needs to go in this effect,
-    // this effect will only trigger if images changes, hence the [images]
-    /*React.useEffect(() => {
-        //console.log('images changed');
-        // logic that we need:
-        // if image.display_thumbnail and image.visible:
-        //    display_thumbnail
-        // else if image.visible:
-        //    display geojson
-        console.log('images changed = ' + imageDisplayed)
-        //if(!imageDisplayed) {
-            
-            for (const image of images) {
-                if(image.visible){
-                    if (!(image._id in overlays)) {
-                        overlays[image._id] = createOverlay(image.file_path, JSON.parse(image.points))      //The order of four points in image.point?
-                        setOverlays(overlays)
-                    }
-                    addOverlayToMap(overlays[image._id])
-                } else{
-                    removeOverlayOffMap(overlays[image._id])
-                }
-
-                  
-
-            //})
-            console.log(overlays)
-            /*console.log(overlays.length)
-            const result = Object.values(overlays).length;
-            console.log(result)
-        //}
-        } 
-
-    }, [images]);*/
-
-// Code for displaying thumbnail ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^The order of four points in image.point?
-
     return (
         <React.Fragment>
             <main className={imageMenuOpen ? classes.mainShifted : classes.main}>

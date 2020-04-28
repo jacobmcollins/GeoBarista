@@ -27,27 +27,27 @@ class ImageMenuToolbar extends React.Component {
   }
 
   handleChange = (event) => {
-    this.setState({checked: event.target.checked });
-    console.log("toggle: " + event.target.checked);
+    // this.setState({checked: event.target.checked });
+    // console.log("toggle: " + event.target.checked);
     
-    let currentOverlays = this.state.overlays
-    if(event.target.checked){
-      for (const image of this.props.images) {
-          if (!(image._id in this.state.overlays)) {
-            var overlay = this.props.createOverlay(image.file_path, JSON.parse(image.points))      //The order of four points from DB: topLeft,topRight,bottomRight,bottomLeft
-            currentOverlays[image._id] = overlay
-            this.setState({
-              overlays: currentOverlays
-            })
-        }
-        this.props.addOverlayToMap(currentOverlays[image._id])
-      }      
-    } 
-    else {
-      for (let [key, value] of Object.entries(this.state.overlays)) {
-        this.props.removeOverlayOffMap(value)
-      }
-    }
+    // let currentOverlays = this.state.overlays
+    // if(event.target.checked){
+    //   for (const image of this.props.images) {
+    //       if (!(image._id in this.state.overlays)) {
+    //         var overlay = this.props.createOverlay(image.file_path, JSON.parse(image.points))      //The order of four points from DB: topLeft,topRight,bottomRight,bottomLeft
+    //         currentOverlays[image._id] = overlay
+    //         this.setState({
+    //           overlays: currentOverlays
+    //         })
+    //     }
+    //     this.props.addOverlayToMap(currentOverlays[image._id])
+    //   }      
+    // } 
+    // else {
+    //   for (let [key, value] of Object.entries(this.state.overlays)) {
+    //     this.props.removeOverlayOffMap(value)
+    //   }
+    // }
     
   }
 
