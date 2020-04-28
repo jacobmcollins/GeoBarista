@@ -57,7 +57,13 @@ const imageSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "File", 
         default: null
-    }
+    },
+    tiff_data_path: {type: String, default: "Unknown"},
+    tiff_data: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "File", 
+        default: null
+    },
 });
 
 module.exports = mongoose.model('Image', imageSchema);

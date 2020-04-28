@@ -58,7 +58,15 @@ class fileHandler {
                         await this.jpginfo(element.path, element.name);
                     }
                 }
+                if(key == ".tif" || key == ".TIF") {
+                    console.log("Parsing all .tif files");
+                    for (const element of extDic[key]) {
+                        // This is causing the front end to crash
+                        //await this.tiffinfo(element.path, element.name);
+                    }
+                }
             }
+            
         }
         console.log(JSON.stringify(Object.keys(extDic)));        
     }
@@ -201,7 +209,7 @@ class fileHandler {
         // If not, create record with arg data
         //let fileObjJson = JSON.stringify(fileInserted);
         let imgQuery = await imageModel.find({'base_name': imagedata.base_name});
-        //console.log("imgquery: " + imgQuery);
+        console.log("imgquery: " + imgQuery);
         let imageDBObj = await imageModel.findOneAndUpdate(
             // Search query
             {'base_name': imagedata.base_name}, 
@@ -222,7 +230,7 @@ class fileHandler {
             
             return console.log("image model saved, base_name " + imagedata.base_name);
         });
-        //console.log("Image after update: " + imageDBObj);
+        console.log("Image after update: " + imageDBObj);
         
     }
 
@@ -308,6 +316,7 @@ class fileHandler {
 
     // Creates file and image model records in db for a .jpg file
     async jpginfo(filepath, filename) {
+        
         let filenameData = this.parseFilename(filename);
         let folder = path.dirname(filepath).split(path.sep).pop();
         let fileInserted = await this.addFileToDB(filepath, ".jpg", filename, {});
@@ -339,6 +348,27 @@ class fileHandler {
         console.log("imgobjdb: " + imgdbobj);
         let toInsert = this.addFilenameImage(imgdbobj, filenameData);
         console.log("toinsert: " + toInsert);
+        await this.addImageToDB(toInsert);       
+        
+    }
+
+    // Creates file and image model records in db for a .tif file
+    async tiffinfo(filepath, filename) {        
+        let filenameData = this.parseFilename(filename);
+        let folder = path.dirname(filepath).split(path.sep).pop();
+        let fileInserted = await this.addFileToDB(filepath, ".tif", filename, {});  
+        let base_name = this.chopfilename(filename);
+        var imgdbobj = {
+            'base_name': base_name,
+            'mission': folder,
+            'rgb_data': fileInserted,
+            'rgb_data_path': filepath,
+            'tiff_data': fileInserted,
+            'tiff_data_path': filepath 
+        };
+        //console.log("imgobjdb: " + imgdbobj);
+        let toInsert = this.addFilenameImage(imgdbobj, filenameData);
+        console.log("toinsert: " + JSON.stringify(toInsert));
         await this.addImageToDB(toInsert);       
         
     }
