@@ -79,6 +79,9 @@ class fileHandler {
                     }
                 }
             }
+            // TODO: Loop through all images, make sure any
+            // that have thumbnail_bool == true and rgb == null
+            // get rgb values set to thumbnail values
             
         }
         console.log(JSON.stringify(Object.keys(extDic)));        
