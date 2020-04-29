@@ -23,7 +23,7 @@ class fileHandler {
         if(this.file_list.length >= 1) {
             // Group files by file extension into extDic
             for (const element of this.file_list) {
-                let fileext = path.extname(element.name);
+                let fileext = path.extname(element.name).toLowerCase();
                 if (extDic[fileext]) {
                     extDic[fileext].push(element);
                 } else {
@@ -57,19 +57,25 @@ class fileHandler {
                         await this.ntfinfo(element.path, element.name);
                     }
                 }
-                if(key.match(/\.(jpe?g)$/i)) {
+                if(key.match(/\.(jpeg|jpg)$/i)) {
                 // if(key == ".jpg") {
                     console.log("Parsing all .jpg files");
                     for (const element of extDic[key]) {
                         await this.jpginfo(element.path, element.name);
                     }
-                }
-                
+                }                
                 if(key.match(/\.(tif|tiff)$/i)) {
                 // if(key == ".tif") {
                     console.log("Parsing all .tif files");
                     for (const element of extDic[key]) {
                         await this.tiffinfo(element.path, element.name);
+                    }
+                }
+                if(key.match(/\.(urw)$/i)) {
+                    // if(key == ".urw") {
+                    console.log("Parsing all .urw files");
+                    for (const element of extDic[key]) {
+                        await this.urwinfo(element.path, element.name);
                     }
                 }
             }
@@ -130,11 +136,6 @@ class fileHandler {
                     camera: camera,
                     thumbnail: false
                 }                
-                // imgid does not exist in all filenames
-                if(filenameParts.length >3) {
-                    let imgid = filenameParts[3]; 
-                    dataitems['imgid'] = imgid;
-                }  
                 // If last 5 letters of the filename are "thumb",
                 // it's a thumbnail
                 let last5 = filename.slice(-5, filename.length);
@@ -142,6 +143,17 @@ class fileHandler {
                 if (last5 && last5 == "thumb") {
                     dataitems.thumbnail = true;
                 }
+                // imgid does not exist in all filenames
+                if(filenameParts.length > 3) {
+                    let imgid = filenameParts[3]; 
+                    // If it's a thumbnail, slice off 'thumb' from id
+                    if (dataitems.thumbnail && imgid.length > 5) {
+                        dataitems['imgid'] = imgid.slice(0, imgid.length - 5);
+                    } else {
+                        dataitems['imgid'] = imgid;
+                    }                    
+                }  
+                
                 // console.log("dataitems: " + JSON.stringify(dataitems));
                           
                 result = dataitems;
@@ -200,9 +212,38 @@ class fileHandler {
                 new: true
             }, 
             // Error handling
-            function(err) {
+            async function(err) {
             if (err) console.log("Error inserting to file model" + err);
-            
+            // If query fails due to stupid Mongoose bug...
+            if (err && err.code === 11000) {
+                // Just run it again
+                fileDBObj = await fileModel.findOneAndUpdate(
+                    // Search query
+                    {'path': filepath}, 
+                    // Data to insert into record
+                    {$set: {
+                        'folder': folder,
+                        'filename': filename,
+                        'extension': extension,
+                        'path': filepath,                
+                        'JSONData': JSON.stringify(metaData)
+                    }}, 
+                    // Insert options
+                    {
+                        // Creates record if not found
+                        upsert: true,
+                        // This option is required by system
+                        useFindAndModify: false,
+                        // Returns newly created object
+                        new: true
+                    }, 
+                    // Error handling
+                    function(err) {
+                    if (err) console.log("Error inserting to file model on second try" + err);
+                    
+                    return console.log("File model saved on second try, path " + filepath);
+                });
+            }
             return console.log("File model saved, path " + filepath);
         });
         //console.log('fileDBObj: ' + fileDBObj);
@@ -372,6 +413,27 @@ class fileHandler {
             'rgb_data_path': filepath,
             'tiff_data': fileInserted,
             'tiff_data_path': filepath 
+        };
+        //console.log("imgobjdb: " + imgdbobj);
+        let toInsert = this.addFilenameImage(imgdbobj, filenameData);
+        //console.log("toinsert: " + JSON.stringify(toInsert));
+        await this.addImageToDB(toInsert);       
+        
+    }
+
+    // Creates file and image model records in db for a .urw file
+    async urwinfo(filepath, filename) {        
+        let filenameData = this.parseFilename(filename);
+        let folder = path.dirname(filepath).split(path.sep).pop();
+        let fileInserted = await this.addFileToDB(filepath, ".urw", filename, {});  
+        let base_name = this.chopfilename(filename);
+        var imgdbobj = {
+            'base_name': base_name,
+            'mission': folder,
+            'rgb_data': fileInserted,
+            'rgb_data_path': filepath,
+            'urw_data': fileInserted,
+            'urw_data_path': filepath 
         };
         //console.log("imgobjdb: " + imgdbobj);
         let toInsert = this.addFilenameImage(imgdbobj, filenameData);

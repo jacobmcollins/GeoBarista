@@ -64,6 +64,12 @@ const imageSchema = new mongoose.Schema({
         ref: "File", 
         default: null
     },
+    urw_data_path: {type: String, default: "Unknown"},
+    urw_data: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "File", 
+        default: null
+    },
 });
 
 module.exports = mongoose.model('Image', imageSchema);
