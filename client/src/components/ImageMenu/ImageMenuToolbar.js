@@ -61,27 +61,11 @@ class ImageMenuToolbar extends React.Component {
             <AddIcon className={classes.deleteIcon} />
           </IconButton>
         </Tooltip>
-        <Tooltip title={"Remove Selected Image"}>
-          <IconButton className={classes.iconButton}>
-            <DeleteIcon className={classes.deleteIcon} />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title={"View Selected Image Overlays"}>
-          <IconButton className={classes.iconButton}>
-            <VisibilityIcon className={classes.deleteIcon} />
-          </IconButton>
-        </Tooltip>
         <Tooltip title={"Filter Images"}>
           <IconButton className={classes.iconButton} onClick={() => { toggleFilterDialogOpen(true) }}>
             <FilterListIcon className={classes.deleteIcon} />
           </IconButton>
         </Tooltip>
-        <Tooltip title={"Sort Images"}>
-          <IconButton className={classes.iconButton} onClick={() => { toggleSortDialogOpen(true) }}>
-            <SortIcon className={classes.deleteIcon} />
-          </IconButton>
-        </Tooltip>
-
         <Switch
           title={"Display Thumbnail"}
           checked={this.state.checked}

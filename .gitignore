@@ -4,3 +4,4 @@ npm-debug.log
 yarn.lock
 client/yarn.lock
 tests/data
+dist
