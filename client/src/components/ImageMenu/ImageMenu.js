@@ -4,22 +4,16 @@ import { Cancel as CancelIcon } from '@material-ui/icons';
 import ImageTable from "./ImageTable";
 import ImageMenuToolbar from "./ImageMenuToolbar";
 import ImageMenuFilterDialog from "./ImageMenuFilterDialog";
-import ImageMenuSortDialog from "./ImageMenuSortDialog";
 import ImageMenuThumbnailDialog from './ImageMenuThumbnailDialog';
 
 export default function ImageMenu(props) {
     const {classes, toggleImageMenu, open, images, openDialog, selectImageById, sortImages, setImageVisibleById, filterImages, createOverlay, addOverlayToMap, removeOverlayOffMap, zoomToImage, FileManipulationButton} = props;
     const [filterDialogOpen, setFilterDialogOpen] = React.useState(false);
-    const [sortDialogOpen, setSortDialogOpen] = React.useState(false);
     const [thumbnailDialogOpen, setThumbnailDialogOpen] = React.useState(false);
     const [thumbnailPathState, setThumbnailPathState] = React.useState("");
 
     const toggleFilterDialogOpen = (open) => {
         setFilterDialogOpen(open);
-    };
-
-    const toggleSortDialogOpen = (open) => {
-        setSortDialogOpen(open);
     };
 
     const toggleThumbnailDialogOpen = (open) => {
@@ -77,7 +71,6 @@ export default function ImageMenu(props) {
                     images={images} 
                     openDialog={openDialog} 
                     toggleFilterDialogOpen={toggleFilterDialogOpen}
-                    toggleSortDialogOpen={toggleSortDialogOpen}
                     createOverlay={createOverlay}
                     addOverlayToMap={addOverlayToMap}
                     removeOverlayOffMap={removeOverlayOffMap}
@@ -106,10 +99,6 @@ export default function ImageMenu(props) {
                     filterImages={filterImages}
                     open={filterDialogOpen}
                     toggleFilterDialogOpen={toggleFilterDialogOpen}
-                />
-                <ImageMenuSortDialog
-                    open={sortDialogOpen}
-                    toggleSortDialogOpen={toggleSortDialogOpen}
                 />
             </div>
         </Drawer>
