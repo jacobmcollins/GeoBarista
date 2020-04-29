@@ -33,7 +33,9 @@ class fileHandler {
             // Loop through each extension found in extDic
             // TODO: make these work with different character cases in ext
             for (const key in extDic) {
-                if(key == ".ppj") {
+                
+                if(key.match(/\.(ppj)$/i)) {
+                // if(key == ".ppj") {
                     console.log("Parsing all .ppj files");
                     //console.log(JSON.stringify(extDic[key]));
                     // Run appropriate action for all .ppj files
@@ -41,28 +43,32 @@ class fileHandler {
                         await this.ppjinfo(element.path, element.name);
                     }
                 }
-                if(key == ".csv") {
+                if(key.match(/\.(csv)$/i)) {
+                // if(key == ".csv") {
                     console.log("Parsing all .csv files");
                     for (const element of extDic[key]) {
                         await this.csvinfo(element.path, element.name);
                     }
                 }
-                if(key == ".ntf") {
+                if(key.match(/\.(ntf)$/i)) {
+                // if(key == ".ntf") {
                     console.log("Parsing all .ntf files");
                     for (const element of extDic[key]) {
                         await this.ntfinfo(element.path, element.name);
                     }
                 }
-                if(key == ".jpg") {
+                if(key.match(/\.(jpe?g)$/i)) {
+                // if(key == ".jpg") {
                     console.log("Parsing all .jpg files");
                     for (const element of extDic[key]) {
                         await this.jpginfo(element.path, element.name);
                     }
                 }
-                if(key == ".tif" || key == ".TIF") {
+                
+                if(key.match(/\.(tif|tiff)$/i)) {
+                // if(key == ".tif") {
                     console.log("Parsing all .tif files");
                     for (const element of extDic[key]) {
-                        // This is causing the front end to crash
                         await this.tiffinfo(element.path, element.name);
                     }
                 }
