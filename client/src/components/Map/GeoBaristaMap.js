@@ -92,8 +92,10 @@ export default function GeoBaristaMap(props) {
             });
         } catch (error) {
             console.log("Error parsing JSON for points " + error);
-            console.log("bad image.points: " + JSON.stringify(image));
+            console.log("bad image: " + JSON.stringify(image));
             console.log("bad points: " + JSON.stringify(polyPoints));
+            console.log("main images: ");
+            console.log(images);
             var poly = [[[-5, 52], [-4, 56], [-2, 51], [-7, 54], [-5, 52]]];
         }
         

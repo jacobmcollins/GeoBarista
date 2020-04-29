@@ -3,7 +3,8 @@ const imageModel = require('../server/models/image');
 const fileModel = require('../server/models/file');
 var ppjParse = require('./ppjParse');
 var csvParse = require('./csvParse');
-const runsync = require("runsync");
+//const runsync = require("runsync");
+const child_process = require('child_process');
 
 // Since the ppj parser doesnt hold much state to it, we only need to declare it once to
 // do all of our conversions
@@ -62,7 +63,7 @@ class fileHandler {
                     console.log("Parsing all .tif files");
                     for (const element of extDic[key]) {
                         // This is causing the front end to crash
-                        //await this.tiffinfo(element.path, element.name);
+                        await this.tiffinfo(element.path, element.name);
                     }
                 }
             }
@@ -209,7 +210,7 @@ class fileHandler {
         // If not, create record with arg data
         //let fileObjJson = JSON.stringify(fileInserted);
         let imgQuery = await imageModel.find({'base_name': imagedata.base_name});
-        console.log("imgquery: " + imgQuery);
+        //console.log("imgquery: " + imgQuery);
         let imageDBObj = await imageModel.findOneAndUpdate(
             // Search query
             {'base_name': imagedata.base_name}, 
@@ -230,7 +231,7 @@ class fileHandler {
             
             return console.log("image model saved, base_name " + imagedata.base_name);
         });
-        console.log("Image after update: " + imageDBObj);
+        //console.log("Image after update: " + imageDBObj);
         
     }
 
@@ -246,7 +247,7 @@ class fileHandler {
           let coords = metaData.pointMap[i].wgsCoordinates;
           points.push([coords[1], coords[0]]);
         }
-        let base_name = metaData.fileName;        
+        let base_name = this.chopfilename(filename);        
         // Parsing out metadata from filename
         let filenameData = this.parseFilename(base_name);
         console.log("ppj filepath: " + filepath);
@@ -264,7 +265,7 @@ class fileHandler {
         let toInsert = this.addFilenameImage(imgdbobj, filenameData);
         // Overwrite timestamp in filename with timestamp from .ppj file
         imgdbobj['time'] = metaData.gpsTimeStamp;
-        //console.log(JSON.stringify(toInsert));
+        console.log(JSON.stringify(toInsert));
         // Insert image object into db
         await this.addImageToDB(toInsert);
     }
@@ -296,7 +297,7 @@ class fileHandler {
     // Creates file and image model records in db for a .csv file
     async ntfinfo(filepath, filename) {
         let folder = path.dirname(filepath).split(path.sep).pop();
-        var metaData = runsync.exec("gdalinfo -json " + filepath);
+        var metaData = child_process.execSync("gdalinfo -json " + filepath);
         // console.log("ntf metadata: " + metaData);
         let fileInserted = await this.addFileToDB(filepath, ".ntf", filename, metaData);
         let base_name = this.chopfilename(filename);
@@ -345,9 +346,9 @@ class fileHandler {
                 'thumbnail_extension': path.extname(filename)
             }
         }            
-        console.log("imgobjdb: " + imgdbobj);
+        //console.log("imgobjdb: " + imgdbobj);
         let toInsert = this.addFilenameImage(imgdbobj, filenameData);
-        console.log("toinsert: " + toInsert);
+        //console.log("toinsert: " + toInsert);
         await this.addImageToDB(toInsert);       
         
     }
@@ -368,7 +369,7 @@ class fileHandler {
         };
         //console.log("imgobjdb: " + imgdbobj);
         let toInsert = this.addFilenameImage(imgdbobj, filenameData);
-        console.log("toinsert: " + JSON.stringify(toInsert));
+        //console.log("toinsert: " + JSON.stringify(toInsert));
         await this.addImageToDB(toInsert);       
         
     }
