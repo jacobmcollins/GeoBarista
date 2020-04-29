@@ -9,29 +9,29 @@ import IconButton from "@material-ui/core/IconButton";
 import ZoomInIcon from '@material-ui/icons/ZoomIn';
 
 export default function ImageTableRow(props) {
-    const {columns, image, selectImageById, setImageVisibleById, zoomToImage} = props;
+    const { columns, image, updateThumbnail, selectImageById, setImageVisibleById, zoomToImage,toggleThumbnailDialogOpen } = props;
     return (
-        <TableRow key={image._id} style={{height: 33}}>
-            <TableCell padding="checkbox">
-                    <Checkbox
-                        checked={image.selected}
-                        onChange={((e) => {
-                            selectImageById(image._id, e.target.checked);
-                            console.log("selected: " + image.selected)
-                        })}
-                    />
+        <TableRow key={image._id} style={{ height: 33 }} >
+            <TableCell padding="checkbox" >
+                <Checkbox
+                    checked={image.selected}
+                    onChange={((e) => {
+                        selectImageById(image._id, e.target.checked);
+                        console.log("selected: " + image.selected)
+                    })}
+                />
             </TableCell>
             <TableCell padding="checkbox">
-                    <Checkbox
-                        color = {'default'}
-                        checkedIcon = {<VisibilityIcon/>}
-                        icon = {<VisibilityOffIcon color = {'secondary'}/>}
-                        checked={image.visible}
-                        onChange={((e) => {
-                            setImageVisibleById(image._id, e.target.checked);
-                            console.log("visible: " + image.visible)
-                        })}
-                    />
+                <Checkbox
+                    color={'default'}
+                    checkedIcon={<VisibilityIcon />}
+                    icon={<VisibilityOffIcon color={'secondary'} />}
+                    checked={image.visible}
+                    onChange={((e) => {
+                        setImageVisibleById(image._id, e.target.checked);
+                        console.log("visible: " + image.visible)
+                    })}
+                />
             </TableCell>
             <TableCell padding="checkbox">
                 <Tooltip title={"Zoom to image"}>
@@ -45,7 +45,7 @@ export default function ImageTableRow(props) {
             { 
                 columns.map((column) => {
                     return (
-                        <TableCell component="th" scope="row" >
+                        <TableCell component="th" scope="row" onDoubleClick={() => {updateThumbnail(image.thumbnail_path); toggleThumbnailDialogOpen(true);}}>
                             {image[column.id]}
                         </TableCell>
                     )

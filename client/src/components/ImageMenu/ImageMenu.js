@@ -5,11 +5,14 @@ import ImageTable from "./ImageTable";
 import ImageMenuToolbar from "./ImageMenuToolbar";
 import ImageMenuFilterDialog from "./ImageMenuFilterDialog";
 import ImageMenuSortDialog from "./ImageMenuSortDialog";
+import ImageMenuThumbnailDialog from './ImageMenuThumbnailDialog';
 
 export default function ImageMenu(props) {
     const {classes, toggleImageMenu, open, images, openDialog, selectImageById, sortImages, setImageVisibleById, filterImages, createOverlay, addOverlayToMap, removeOverlayOffMap, zoomToImage, FileManipulationButton} = props;
     const [filterDialogOpen, setFilterDialogOpen] = React.useState(false);
     const [sortDialogOpen, setSortDialogOpen] = React.useState(false);
+    const [thumbnailDialogOpen, setThumbnailDialogOpen] = React.useState(false);
+    const [thumbnailPathState, setThumbnailPathState] = React.useState("");
 
     const toggleFilterDialogOpen = (open) => {
         setFilterDialogOpen(open);
@@ -18,6 +21,14 @@ export default function ImageMenu(props) {
     const toggleSortDialogOpen = (open) => {
         setSortDialogOpen(open);
     };
+
+    const toggleThumbnailDialogOpen = (open) => {
+        setThumbnailDialogOpen(open);
+    };
+
+    const updateThumbnail = (thumbPath) => {
+        setThumbnailPathState(thumbPath);
+    }
 
     const columns = [
         {
@@ -77,9 +88,17 @@ export default function ImageMenu(props) {
                     columns={columns}
                     selectImageById={selectImageById}
                     setImageVisibleById={setImageVisibleById}
+                    toggleThumbnailDialogOpen={toggleThumbnailDialogOpen}
+                    thumbPath={thumbnailPathState}
+                    updateThumbnail={updateThumbnail}
                     openDialog={openDialog}
                     sortImages={sortImages}
                     zoomToImage={zoomToImage}
+                />
+                <ImageMenuThumbnailDialog
+                    open={thumbnailDialogOpen}
+                    toggleThumbnailDialogOpen={toggleThumbnailDialogOpen}
+                    thumbPath={thumbnailPathState}
                 />
                 <ImageMenuFilterDialog
                     images={images}
