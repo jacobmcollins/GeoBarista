@@ -81,14 +81,23 @@ export default function GeoBaristaMap(props) {
     // input  -> an image
     // output -> polygon in GeoJSON
     const get_poly_from_image = (image) => {
-        let points = JSON.parse(image.points);
-        points.push(points[0])
-        let polyPoints = [];
-        polyPoints.push(points);
-        let poly = polygon(polyPoints, {
-            id: image._id,
-            selected: image.selected
-        });
+        try {
+            var points = JSON.parse(image.points);
+            points.push(points[0])
+            var polyPoints = [];
+            polyPoints.push(points);
+            var poly = polygon(polyPoints, {
+                id: image._id,
+                selected: image.selected
+            });
+        } catch (error) {
+            console.log("Error parsing JSON for points " + error);
+            console.log("bad image.points: " + JSON.stringify(image));
+            console.log("bad points: " + JSON.stringify(polyPoints));
+            var poly = [[[-5, 52], [-4, 56], [-2, 51], [-7, 54], [-5, 52]]];
+        }
+        
+        
         return poly;
     }
     // input  -> images from DB
