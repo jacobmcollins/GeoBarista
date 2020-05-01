@@ -12,15 +12,15 @@ var ppjParser = new ppjParse();
 var csvParser = new csvParse();
 
 class fileHandler {
-    constructor(file_list) {        
+    constructor(file_list) {
         this.file_list = file_list;
         //this.processList();
-        
+
     }
 
     async processList() {
         let extDic = {};
-        if(this.file_list.length >= 1) {
+        if (this.file_list.length >= 1) {
             // Group files by file extension into extDic
             for (const element of this.file_list) {
                 let fileext = path.extname(element.name).toLowerCase();
@@ -28,14 +28,14 @@ class fileHandler {
                     extDic[fileext].push(element);
                 } else {
                     extDic[fileext] = [element];
-                }                
+                }
             }
             // Loop through each extension found in extDic
             // TODO: make these work with different character cases in ext
             for (const key in extDic) {
-                
-                if(key.match(/\.(ppj)$/i)) {
-                // if(key == ".ppj") {
+
+                if (key.match(/\.(ppj)$/i)) {
+                    // if(key == ".ppj") {
                     console.log("Parsing all .ppj files");
                     //console.log(JSON.stringify(extDic[key]));
                     // Run appropriate action for all .ppj files
@@ -43,35 +43,35 @@ class fileHandler {
                         await this.ppjinfo(element.path, element.name);
                     }
                 }
-                if(key.match(/\.(csv)$/i)) {
-                // if(key == ".csv") {
+                if (key.match(/\.(csv)$/i)) {
+                    // if(key == ".csv") {
                     console.log("Parsing all .csv files");
                     for (const element of extDic[key]) {
                         await this.csvinfo(element.path, element.name);
                     }
                 }
-                if(key.match(/\.(ntf)$/i)) {
-                // if(key == ".ntf") {
+                if (key.match(/\.(ntf)$/i)) {
+                    // if(key == ".ntf") {
                     console.log("Parsing all .ntf files");
                     for (const element of extDic[key]) {
                         await this.ntfinfo(element.path, element.name);
                     }
                 }
-                if(key.match(/\.(jpeg|jpg)$/i)) {
-                // if(key == ".jpg") {
+                if (key.match(/\.(jpeg|jpg)$/i)) {
+                    // if(key == ".jpg") {
                     console.log("Parsing all .jpg files");
                     for (const element of extDic[key]) {
                         await this.jpginfo(element.path, element.name);
                     }
-                }                
-                if(key.match(/\.(tif|tiff)$/i)) {
-                // if(key == ".tif") {
+                }
+                if (key.match(/\.(tif|tiff)$/i)) {
+                    // if(key == ".tif") {
                     console.log("Parsing all .tif files");
                     for (const element of extDic[key]) {
                         await this.tiffinfo(element.path, element.name);
                     }
                 }
-                if(key.match(/\.(urw)$/i)) {
+                if (key.match(/\.(urw)$/i)) {
                     // if(key == ".urw") {
                     console.log("Parsing all .urw files");
                     for (const element of extDic[key]) {
@@ -82,12 +82,12 @@ class fileHandler {
             // TODO: Loop through all images, make sure any
             // that have thumbnail_bool == true and rgb == null
             // get rgb values set to thumbnail values
-            
+
         }
-        console.log(JSON.stringify(Object.keys(extDic)));        
+        console.log(JSON.stringify(Object.keys(extDic)));
     }
 
-   
+
     // Parses files to see if they compy with the given datasets
     // naming rules, and extracts values into an object, which is
     // returned. If the filename does not match the format type, 
@@ -107,7 +107,7 @@ class fileHandler {
             if (filenameParts && filenameParts.length >= 3) {
                 let dateraw = filenameParts[0];
                 let timeraw = filenameParts[1];
-                let camera = filenameParts[2];   
+                let camera = filenameParts[2];
                 // console.log(JSON.stringify(filenameParts));
                 // console.log("dateraw: " + dateraw);
                 // Parsing date string into UNIX time
@@ -126,7 +126,7 @@ class fileHandler {
                 // Add in fractional seconds, if they are there
                 if (timeraw.length > 6) {
                     timefmtd += "." + subsecs;
-                } 
+                }
                 //console.log("timefmtd: " + timefmtd);
                 let parsedTime = new Date('1970-01-01T' + timefmtd + 'Z');
                 let timestamp = dateDateObj.getTime() + parsedTime.getTime();
@@ -138,7 +138,7 @@ class fileHandler {
                     time: parsedstamp,
                     camera: camera,
                     thumbnail: false
-                }                
+                }
                 // If last 5 letters of the filename are "thumb",
                 // it's a thumbnail
                 let last5 = filename.slice(-5, filename.length);
@@ -147,38 +147,38 @@ class fileHandler {
                     dataitems.thumbnail = true;
                 }
                 // imgid does not exist in all filenames
-                if(filenameParts.length > 3) {
-                    let imgid = filenameParts[3]; 
+                if (filenameParts.length > 3) {
+                    let imgid = filenameParts[3];
                     // If it's a thumbnail, slice off 'thumb' from id
                     if (dataitems.thumbnail && imgid.length > 5) {
                         dataitems['imgid'] = imgid.slice(0, imgid.length - 5);
                     } else {
                         dataitems['imgid'] = imgid;
-                    }                    
-                }  
-                
+                    }
+                }
+
                 // console.log("dataitems: " + JSON.stringify(dataitems));
-                          
+
                 result = dataitems;
             }
         } catch (error) {
-            console.log("Filename parse error: " + error);            
+            console.log("Filename parse error: " + error);
             console.log("Filename attempted to parse: " + filename);
         }
-        
+
         return result;
-        
+
     }
 
     addFilenameImage(imgobject, filenamevalues) {
         var result = imgobject;
-        if(filenamevalues) {
+        if (filenamevalues) {
             result['time'] = filenamevalues.time;
             result['camera'] = filenamevalues.camera;
             if (filenamevalues.imgid) {
                 result['imgid'] = filenamevalues.imgid;
             }
-            
+
         }
         return result;
     }
@@ -193,18 +193,20 @@ class fileHandler {
     // Adds a file to the file model
     async addFileToDB(filepath, extension, filename, metaData) {
         let folder = path.dirname(filepath).split(path.sep).pop();
-        //console.log("Folder name: " + folder);
+        console.log("ADD TO DB Folder name: " + folder);
         let fileDBObj = await fileModel.findOneAndUpdate(
             // Search query
-            {'path': filepath}, 
+            { 'path': filepath },
             // Data to insert into record
-            {$set: {
-                'folder': folder,
-                'filename': filename,
-                'extension': extension,
-                'path': filepath,                
-                'JSONData': JSON.stringify(metaData)
-            }}, 
+            {
+                $set: {
+                    'folder': folder,
+                    'filename': filename,
+                    'extension': extension,
+                    'path': filepath,
+                    'JSONData': JSON.stringify(metaData)
+                }
+            },
             // Insert options
             {
                 // Creates record if not found
@@ -213,59 +215,65 @@ class fileHandler {
                 useFindAndModify: false,
                 // Returns newly created object
                 new: true
-            }, 
+            },
             // Error handling
-            async function(err) {
-            if (err) console.log("Error inserting to file model" + err);
-            // If query fails due to stupid Mongoose bug...
-            if (err && err.code === 11000) {
-                // Just run it again
-                fileDBObj = await fileModel.findOneAndUpdate(
-                    // Search query
-                    {'path': filepath}, 
-                    // Data to insert into record
-                    {$set: {
-                        'folder': folder,
-                        'filename': filename,
-                        'extension': extension,
-                        'path': filepath,                
-                        'JSONData': JSON.stringify(metaData)
-                    }}, 
-                    // Insert options
-                    {
-                        // Creates record if not found
-                        upsert: true,
-                        // This option is required by system
-                        useFindAndModify: false,
-                        // Returns newly created object
-                        new: true
-                    }, 
-                    // Error handling
-                    function(err) {
-                    if (err) console.log("Error inserting to file model on second try" + err);
-                    
-                    return console.log("File model saved on second try, path " + filepath);
-                });
-            }
-            return console.log("File model saved, path " + filepath);
-        });
+            async function (err) {
+                if (err) console.log("Error inserting to file model" + err);
+                // If query fails due to stupid Mongoose bug...
+                if (err && err.code === 11000) {
+                    // Just run it again
+                    fileDBObj = await fileModel.findOneAndUpdate(
+                        // Search query
+                        { 'path': filepath },
+                        // Data to insert into record
+                        {
+                            $set: {
+                                'folder': folder,
+                                'filename': filename,
+                                'extension': extension,
+                                'path': filepath,
+                                'JSONData': JSON.stringify(metaData)
+                            }
+                        },
+                        // Insert options
+                        {
+                            // Creates record if not found
+                            upsert: true,
+                            // This option is required by system
+                            useFindAndModify: false,
+                            // Returns newly created object
+                            new: true
+                        },
+                        // Error handling
+                        function (err) {
+                            if (err) console.log("Error inserting to file model on second try" + err);
+
+                            return console.log("File model saved on second try, path " + filepath);
+                        });
+                }
+                return console.log("File model saved, path " + filepath);
+            });
         //console.log('fileDBObj: ' + fileDBObj);
         return fileDBObj;
     }
-    
+
     // Adds image to image model
     async addImageToDB(imagedata) {
         // check if image is in db
         // If so, update relevant info
         // If not, create record with arg data
         //let fileObjJson = JSON.stringify(fileInserted);
-        let imgQuery = await imageModel.find({'base_name': imagedata.base_name});
+        console.log("IMAGEDATA BASE: ", imagedata.base_name);
+        console.log("IMAGEDATA PATH: ", imagedata.base_path);
+        let noThumb = this.chopfilethumb(imagedata.base_path);
+        console.log("IMAGEDATA nothumb: ", noThumb);
+        let imgQuery = await imageModel.find({ 'base_name': imagedata.base_name });
         //console.log("imgquery: " + imgQuery);
         let imageDBObj = await imageModel.findOneAndUpdate(
             // Search query
-            {'base_name': imagedata.base_name}, 
+            { 'base_path': noThumb },
             // Data to insert into record
-            {$set: imagedata}, 
+            { $set: imagedata },
             // Insert options
             {
                 // Creates record if not found
@@ -274,43 +282,49 @@ class fileHandler {
                 useFindAndModify: false,
                 // Returns newly created object
                 new: true
-            }, 
+            },
             // Error handling
-            function(err) {
-            if (err) console.log("Error inserting to image model" + err);
-            
-            return console.log("image model saved, base_name " + imagedata.base_name);
-        });
-        //console.log("Image after update: " + imageDBObj);
-        
+            function (err) {
+                if (err) console.log("Error inserting to image model" + err);
+
+                return console.log("image model saved, base_name " + imagedata.base_path);
+            });
+        console.log("Image after update: " + imageDBObj);
+
     }
 
     // Creates file and image model records in db for a .ppj file
-    async ppjinfo(filepath, filename) {        
-        let folder = path.dirname(filepath).split(path.sep).pop();        
+    async ppjinfo(filepath, filename) {
+        let folder = path.dirname(filepath).split(path.sep).pop();
         var metaData = ppjParser.convertXml(filepath);
         let fileInserted = await this.addFileToDB(filepath, ".ppj", filename, metaData);
         var points = [];
         var i;
         // Only go from 0 to i-1 because the last point is the center
-        for(i=0; i < (metaData.pointMap.length - 1); i++) {
-          let coords = metaData.pointMap[i].wgsCoordinates;
-          points.push([coords[1], coords[0]]);
+        for (i = 0; i < (metaData.pointMap.length - 1); i++) {
+            let coords = metaData.pointMap[i].wgsCoordinates;
+            points.push([coords[1], coords[0]]);
         }
-        let base_name = this.chopfilename(filename);        
+        let base_name = this.chopfilename(filename);
+        let base_path = this.chopfilename(filepath);
+        let test = this.chopfilename(filepath);
         // Parsing out metadata from filename
         let filenameData = this.parseFilename(base_name);
-        console.log("ppj filepath: " + filepath);
+        console.log("!___PPJ PPJ PPJ ppj filepath: " + filepath);
+        console.log("!___PPJ PPJ PPJ ppj basename: " + base_name);
+        console.log("!___PPJ PPJ PPJ ppj basename: " + test);
+
         let imgdbobj = {
             //'_id': filepath,
             'base_name': base_name,
+            'base_path': base_path,
             //'file_path': filepath,
             //'file_extension': 'ppj',
             'points': JSON.stringify(points),
             //'mission': this.getMissionName(filepath),
             'ppj_data': fileInserted,
-            'ppj_data_path': filepath            
-          };
+            'ppj_data_path': filepath
+        };
         // Add metadata parsed from filename into object 
         let toInsert = this.addFilenameImage(imgdbobj, filenameData);
         // Overwrite timestamp in filename with timestamp from .ppj file
@@ -321,14 +335,16 @@ class fileHandler {
     }
 
     // Creates file and image model records in db for a .csv file
-    async csvinfo(filepath, filename) {        
+    async csvinfo(filepath, filename) {
         var metaData = csvParser.convertCSV_stripped(filepath);
         //console.log(JSON.stringify("CSV metadata: " + JSON.stringify(metaData)));
         let fileInserted = await this.addFileToDB(filepath, ".csv", filename, metaData);
         let base_name = this.chopfilename(filename);
+        let base_path = this.chopfilename(filepath);
         let filenameData = this.parseFilename(filename);
         let imgdbobj = {
             'base_name': base_name,
+            'base_path': base_path,
             // TODO: There are 2 fields of view, x and y. Do we average them? Make a string of both?
             'fov': metaData.lensFOV_H,
             // TODO: Concat a lat and long string, or alter front end to hold separate lat/long
@@ -337,7 +353,7 @@ class fileHandler {
             'velocity': metaData.velNorth,
             'gsd': metaData.groundSpd,
             'csv_data': fileInserted,
-            
+
             'csv_data_path': filepath
         }
         // Add metadata parsed from filename into object 
@@ -351,10 +367,12 @@ class fileHandler {
         // console.log("ntf metadata: " + metaData);
         let fileInserted = await this.addFileToDB(filepath, ".ntf", filename, metaData);
         let base_name = this.chopfilename(filename);
+        let base_path = this.chopfilename(filepath);
         let filenameData = this.parseFilename(filename);
         let imgdbobj = {
             'base_name': base_name,
-            'mission': folder,            
+            'base_path': base_path,
+            'mission': folder,
             'ntf_data': fileInserted,
             'ntf_data_path': filepath,
             'rgb_data': fileInserted,
@@ -367,27 +385,32 @@ class fileHandler {
 
     // Creates file and image model records in db for a .jpg file
     async jpginfo(filepath, filename) {
-        
+
         let filenameData = this.parseFilename(filename);
         let folder = path.dirname(filepath).split(path.sep).pop();
         let fileInserted = await this.addFileToDB(filepath, ".jpg", filename, {});
         // Handle .jpgs differently depending on whether they
         // are a thumbnail
-        if (!(filenameData.thumbnail)) {          
+        if (!(filenameData.thumbnail)) {
             let base_name = this.chopfilename(filename);
+            let base_path = this.chopfilename(filepath);
             var imgdbobj = {
                 'base_name': base_name,
+                'base_path': base_path,
                 'mission': folder,
                 'rgb_data': fileInserted,
                 'rgb_data_path': filepath,
                 'jpg_data': fileInserted,
-                'jpg_data_path': filepath 
+                'jpg_data_path': filepath
             };
 
         } else {
             let base_name = this.chopfilename(filename).slice(0, -5);
+            let base_path = this.chopfilename(filepath);
+            let noThumb = this.chopfilethumb(base_path)
             var imgdbobj = {
                 'base_name': base_name,
+                'base_path': noThumb,
                 'mission': folder,
                 'thumbnail_bool': true,
                 'rgb_data': fileInserted,
@@ -395,62 +418,77 @@ class fileHandler {
                 'thumbnail_path': filepath,
                 'thumbnail_extension': path.extname(filename)
             }
-        }            
+        }
         //console.log("imgobjdb: " + imgdbobj);
         let toInsert = this.addFilenameImage(imgdbobj, filenameData);
         //console.log("toinsert: " + toInsert);
-        await this.addImageToDB(toInsert);       
-        
+        await this.addImageToDB(toInsert);
+
     }
 
     // Creates file and image model records in db for a .tif file
-    async tiffinfo(filepath, filename) {        
+    async tiffinfo(filepath, filename) {
         let filenameData = this.parseFilename(filename);
         let folder = path.dirname(filepath).split(path.sep).pop();
-        let fileInserted = await this.addFileToDB(filepath, ".tif", filename, {});  
+        let fileInserted = await this.addFileToDB(filepath, ".tif", filename, {});
         let base_name = this.chopfilename(filename);
+        let base_path = this.chopfilename(filepath);
         var imgdbobj = {
             'base_name': base_name,
+            'base_path': base_path,
             'mission': folder,
             'rgb_data': fileInserted,
             'rgb_data_path': filepath,
             'tiff_data': fileInserted,
-            'tiff_data_path': filepath 
+            'tiff_data_path': filepath
         };
         //console.log("imgobjdb: " + imgdbobj);
         let toInsert = this.addFilenameImage(imgdbobj, filenameData);
         //console.log("toinsert: " + JSON.stringify(toInsert));
-        await this.addImageToDB(toInsert);       
-        
+        await this.addImageToDB(toInsert);
+
     }
 
     // Creates file and image model records in db for a .urw file
-    async urwinfo(filepath, filename) {        
+    async urwinfo(filepath, filename) {
         let filenameData = this.parseFilename(filename);
         let folder = path.dirname(filepath).split(path.sep).pop();
-        let fileInserted = await this.addFileToDB(filepath, ".urw", filename, {});  
+        let fileInserted = await this.addFileToDB(filepath, ".urw", filename, {});
         let base_name = this.chopfilename(filename);
+        let base_path = this.chopfilename(filepath);
         var imgdbobj = {
             'base_name': base_name,
+            'base_path': base_path,
             'mission': folder,
             'rgb_data': fileInserted,
             'rgb_data_path': filepath,
             'urw_data': fileInserted,
-            'urw_data_path': filepath 
+            'urw_data_path': filepath
         };
         //console.log("imgobjdb: " + imgdbobj);
         let toInsert = this.addFilenameImage(imgdbobj, filenameData);
         //console.log("toinsert: " + JSON.stringify(toInsert));
-        await this.addImageToDB(toInsert);       
-        
+        await this.addImageToDB(toInsert);
+
     }
     // Check last 5 chars of filename for an extension
     // Chop it off if found
     chopfilename(filename) {
-        
+
         let last5 = filename.slice(-5, filename.length);
         if (last5 && last5.includes('.')) {
             filename = filename.substring(0, filename.lastIndexOf('.'));
+        }
+        return filename;
+    }
+
+    chopfilethumb(filename) {
+
+        if (filename.length > 5) {
+            let last5 = filename.slice(-5, filename.length);
+            if (last5 && last5.includes('thumb')) {
+                filename = filename.substring(0, filename.lastIndexOf('thumb'));
+            }
         }
         return filename;
     }
