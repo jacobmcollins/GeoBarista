@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const fileSchema = new mongoose.Schema( {
+const fileSchema = new mongoose.Schema({
     folder: {
         type: String,
         required: true

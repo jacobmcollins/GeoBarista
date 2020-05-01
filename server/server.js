@@ -18,13 +18,13 @@ function server(client_path) {
   const ppjParser = new Parser();
 
   // Express only serves static assets in production
-  if(client_path != null) {
+  if (client_path != null) {
     app.use(express.static(client_path));
   }
 
   // FileHandler components
   const fileHandler = require('../FileParse/file-handler');
-  
+
   var rawBodySaver = function (req, res, buf, encoding) {
     if (buf && buf.length) {
       req.rawBody = buf.toString(encoding || 'utf8');
@@ -33,7 +33,7 @@ function server(client_path) {
 
   app.use(bodyParser.json({ limit: '50mb', verify: rawBodySaver }));
 
-  app.get('/api/v2/image', async function(req, res) {
+  app.get('/api/v2/image', async function (req, res) {
     let filter = await JSON.parse(req.query.filter);
     let sort = await JSON.parse(req.query.sort);
     //console.log('filter', filter);
@@ -44,32 +44,33 @@ function server(client_path) {
     res.json(selected);
   });
 
-  app.put('/api/v2/image', async function(req, res) {
+  app.put('/api/v2/image', async function (req, res) {
     const id = req.body._id;
     const field = req.body.field;
     const value = req.body.value;
     let response = null;
     let success = false;
+    console.log("adding file");
     try {
-      switch(field) {
+      switch (field) {
         case 'selected':
-          response = await imageModel.findByIdAndUpdate(id, {selected: value});
+          response = await imageModel.findByIdAndUpdate(id, { selected: value });
           success = true;
           break;
         case 'visible':
-          response = await imageModel.findByIdAndUpdate(id, {visible: value});
+          response = await imageModel.findByIdAndUpdate(id, { visible: value });
           success = true;
           break;
         case 'thumbnail_path':
-          response = await imageModel.findByIdAndUpdate(id, {thumbnail_path: value});
+          response = await imageModel.findByIdAndUpdate(id, { thumbnail_path: value });
           success = true;
           break;
         default:
           success = false;
           break;
-      } 
+      }
     }
-    catch(e) {
+    catch (e) {
       success = false;
     }
     finally {
@@ -79,7 +80,7 @@ function server(client_path) {
     }
   });
 
-  app.post('/api/v2/image', async function(req, res) {
+  app.post('/api/v2/image', async function (req, res) {
     let file_list = req.body.file_obj;
     let file_list_obj = JSON.parse(file_list);
     let fileHandlerObj = new fileHandler(file_list_obj);
@@ -89,11 +90,32 @@ function server(client_path) {
     res.json(results);;
   });
 
+  app.get('/api/v2/fileManip', async function (req, res) {
+    /*
+    let filter = await JSON.parse(req.query.filter);
+    console.log('filter', filter);
+    let selected = await imageModel.find(filter).exec();
+    console.log("Selected", selected);
+    */
+    var jpgcount = await imageModel.find({ 'selected': true });
+    var test = await fileModel.find({}, { filename: 1 });
+    console.log(JSON.stringify(test));
+    res.json(jpgcount);
+  });
+
+  app.put('/api/v2/fileManip', async function (req, res) {
+    const testreq = req.body.clientTest;
+    console.log(JSON.stringify(testreq));
+    let testRes = "return from server";
+
+    res.json(testRes);
+  });
+
   app.get('/api/v2/images/unique', async function (req, res) {
     let all = {};
     let keys = Object.keys(imageModel.schema.paths);
     let i;
-    for(i=0; i < keys.length; i++) {
+    for (i = 0; i < keys.length; i++) {
       all[keys[i]] = await imageModel.distinct(keys[i]).exec();
     }
     res.json(all);

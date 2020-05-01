@@ -6,6 +6,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 import PermMediaIcon from '@material-ui/icons/PermMedia';
+import Client from '../Client';
 
 // not yet implemented :
 //  get destination directory
@@ -47,7 +48,7 @@ export default function FileManipulationMenu(props) {
         customCount: 0,
         selectedCount: 0,
     });
-    const {dialog} = window.require('electron').remote;
+    const { dialog } = window.require('electron').remote;
 
     const boarderDivStyle = {
         borderTop: '2px solid black',
@@ -92,7 +93,9 @@ export default function FileManipulationMenu(props) {
 
     //when dialog opens get the total file count
     //TODO update file extension counts too 
-    const handleOpen = () => {
+    const handleOpen = async () => {
+        const test = await Client.fileManip();
+        console.log("file manip return : ", test);
         SetManipulationCount({
             ...ManipulationCount,
             allFilesCount: getTotalCount(),
