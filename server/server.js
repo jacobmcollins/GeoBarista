@@ -96,15 +96,16 @@ function server(client_path) {
   // query filemodel for each selected image
   // return results
   app.get('/api/v2/fileManip', async function (req, res) {
+    // query imageModel for selected
     var getSelected = await imageModel.find({ 'selected': true }, { _id: 0, base_path: 1 });
     console.log("MANIP All selected : ", JSON.stringify(getSelected));
     var fileQuery = [];
+    //put selected base paths into arry
     for (i = 0; i < getSelected.length; i++) {
-      console.log("MANIP selected : ", JSON.stringify(getSelected[i].base_path));
       fileQuery.push(getSelected[i].base_path);
     }
+    // query filemodel with fileQuery array
     var getFiles = await fileModel.find({ 'base_path': { $in: fileQuery } }, { _id: 0, extension: 1, path: 1, thumb: 1 });
-    console.log("MANIP test get files : ", getFiles);
     res.json(getFiles);
   });
 
