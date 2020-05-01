@@ -194,6 +194,7 @@ class fileHandler {
     async addFileToDB(filepath, extension, filename, metaData) {
         let folder = path.dirname(filepath).split(path.sep).pop();
         console.log("ADD TO DB Folder name: " + folder);
+        let base_path = this.chopfilethumb(this.chopfilename(filepath));
         let fileDBObj = await fileModel.findOneAndUpdate(
             // Search query
             { 'path': filepath },
@@ -204,6 +205,7 @@ class fileHandler {
                     'filename': filename,
                     'extension': extension,
                     'path': filepath,
+                    'base_path': base_path,
                     'JSONData': JSON.stringify(metaData)
                 }
             },
@@ -232,6 +234,7 @@ class fileHandler {
                                 'filename': filename,
                                 'extension': extension,
                                 'path': filepath,
+                                'base_path': base_path,
                                 'JSONData': JSON.stringify(metaData)
                             }
                         },

@@ -15,6 +15,10 @@ const fileSchema = new mongoose.Schema({
         unique: true,
         required: true
     },
+    base_path: {
+        type: String,
+        required: true,
+    },
     JSONData: String
 });
 

@@ -2,6 +2,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 var Parser = require('../FileParse/ppjParse')
 
+// import { chopfilename, chopfilepath } from ('../FileParse/file-handler');
+
 function server(client_path) {
   const app = express();
 
@@ -90,6 +92,11 @@ function server(client_path) {
     res.json(results);;
   });
 
+  // get selected images from imageModel
+  // TODO
+  // quary filemodel for base_path of selected images
+
+
   app.get('/api/v2/fileManip', async function (req, res) {
     /*
     let filter = await JSON.parse(req.query.filter);
@@ -97,8 +104,9 @@ function server(client_path) {
     let selected = await imageModel.find(filter).exec();
     console.log("Selected", selected);
     */
-    var jpgcount = await imageModel.find({ 'selected': true });
-    var test = await fileModel.find({}, { filename: 1 });
+    var jpgcount = await imageModel.find({ 'selected': true }, { base_path: 1 });
+    console.log("MANIP JPG: ", JSON.stringify(jpgcount[0].base_path));
+    var test = await fileModel.find({}, { base_path: 1 });
     console.log(JSON.stringify(test));
     res.json(jpgcount);
   });
