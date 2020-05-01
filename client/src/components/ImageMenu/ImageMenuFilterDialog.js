@@ -19,12 +19,12 @@ export default function ImageMenuFilterDialog(props) {
     const [uniqueColumnData, setUniqueColumnData] = React.useState({});
 
     React.useEffect(() => {
-        const get_fields = async () => {
-            const res = await Client.get_unique_fields()
-            setUniqueColumnData(res)
+        for(const column of columns){
+            uniqueColumnData[column.id] = [...new Set(images.map(item => item[column.id]))]
+            setUniqueColumnData(uniqueColumnData)
         }
-        get_fields();
     }, [images]);
+
     const render_items = (id) => {
         if(id in uniqueColumnData) {
             return uniqueColumnData[id].map((option) => (
@@ -72,7 +72,14 @@ export default function ImageMenuFilterDialog(props) {
             <DialogActions>
                 <Button onClick={() => { 
                     toggleFilterDialogOpen(false)
-                    filterImages(filterParams);
+                    setFilterParams({});
+                    filterImages(images,filterParams);
+                }} color="secondary" autoFocus>
+                Reset Filter
+                </Button>
+                <Button onClick={() => { 
+                    toggleFilterDialogOpen(false)
+                    filterImages(images,filterParams);
                     setFilterParams({});
                 }} color="primary" autoFocus>
                 Submit
