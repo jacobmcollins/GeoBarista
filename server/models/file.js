@@ -10,6 +10,10 @@ const fileSchema = new mongoose.Schema({
         required: true
     },
     extension: String,
+    thumb: {
+        type: Boolean,
+        default: false
+    },
     path: {
         type: String,
         unique: true,

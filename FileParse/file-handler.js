@@ -195,6 +195,7 @@ class fileHandler {
         let folder = path.dirname(filepath).split(path.sep).pop();
         console.log("ADD TO DB Folder name: " + folder);
         let base_path = this.chopfilethumb(this.chopfilename(filepath));
+        let isThumb = this.isfilethumb(this.chopfilename(filename));
         let fileDBObj = await fileModel.findOneAndUpdate(
             // Search query
             { 'path': filepath },
@@ -206,7 +207,8 @@ class fileHandler {
                     'extension': extension,
                     'path': filepath,
                     'base_path': base_path,
-                    'JSONData': JSON.stringify(metaData)
+                    'JSONData': JSON.stringify(metaData),
+                    'thumb': isThumb
                 }
             },
             // Insert options
@@ -490,6 +492,17 @@ class fileHandler {
             }
         }
         return filename;
+    }
+    // returns true or false if the last 5 character are 'thumb'
+    isfilethumb(filename) {
+        let toRet = false;
+        if (filename.length > 5) {
+            let last5 = filename.slice(-5, filename.length);
+            if (last5 && last5.includes('thumb')) {
+                toRet = true;
+            }
+        }
+        return toRet;
     }
 }
 
