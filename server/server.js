@@ -93,22 +93,21 @@ function server(client_path) {
   });
 
   // get selected images from imageModel
-  // TODO
-  // quary filemodel for base_path of selected images
-
-
+  // query filemodel for each selected image
+  // store filemodel results in list 
+  // TODO re-organize list
+  // return list
   app.get('/api/v2/fileManip', async function (req, res) {
-    /*
-    let filter = await JSON.parse(req.query.filter);
-    console.log('filter', filter);
-    let selected = await imageModel.find(filter).exec();
-    console.log("Selected", selected);
-    */
-    var jpgcount = await imageModel.find({ 'selected': true }, { base_path: 1 });
-    console.log("MANIP JPG: ", JSON.stringify(jpgcount[0].base_path));
-    var test = await fileModel.find({}, { base_path: 1 });
-    console.log(JSON.stringify(test));
-    res.json(jpgcount);
+    var getSelected = await imageModel.find({ 'selected': true }, { _id: 0, base_path: 1 });
+    console.log("MANIP All selected : ", JSON.stringify(getSelected));
+    var toRet = [];
+    for (i = 0; i < getSelected.length; i++) {
+      console.log("MANIP selected : ", JSON.stringify(getSelected[i].base_path));
+      var getFiles = await fileModel.find({ 'base_path': getSelected[i].base_path }, { _id: 0, extension: 1, path: 1 });
+      toRet.push(getFiles);
+    }
+    console.log("MANIP toRet : ", toRet);
+    res.json(toRet)
   });
 
   app.put('/api/v2/fileManip', async function (req, res) {
