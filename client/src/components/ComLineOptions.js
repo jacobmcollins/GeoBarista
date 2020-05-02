@@ -13,7 +13,7 @@ import Divider from '@material-ui/core/Divider';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItem from '@material-ui/core/ListItem';
 
-import { initLocStorage, getLocStorage, thumbnails, geojson } from '../Tools/initLocStorage';
+import { initLocStorage, getLocStorage, thumbnails, imgEXT, externalViewer } from '../Tools/initLocStorage';
 
 /* for development purposes
 Remove:
@@ -25,7 +25,7 @@ not useful outside development, probably -> to discuss in future
 */
 
 export default function ComLineOptions(props) {
-    const {classes, optionsMenuOpen, getTextToDisplay, toggleOptionsMenu, saveData, handleThumbnails, handleGeoJSON, forceStateRefresh} = props;
+    const {classes, optionsMenuOpen, getTextToDisplay, toggleOptionsMenu, saveData, handleThumbnails, handleImgEXT, handleExtViewer, forceStateRefresh} = props;
 
     return (
         <Dialog fullScreen={true} open={optionsMenuOpen} onClose={toggleOptionsMenu(false)}>
@@ -50,12 +50,20 @@ export default function ComLineOptions(props) {
     <ListItem>
     <TextField id="thumbnails" fullWidth label={getLocStorage(thumbnails)} onChange={handleThumbnails} variant="filled"/>
         </ListItem>
-        <Divider/>
+        <div className={classes.optionsMenuSpacing}>
         <ListItem>
-        <ListItemText primary={getTextToDisplay(geojson)}/>
+        <ListItemText primary={getTextToDisplay(imgEXT)}/>
     </ListItem>
     <ListItem>
-    <TextField id="geojson" fullWidth label={getLocStorage(geojson)} onChange={handleGeoJSON} variant="filled"/>
+    <TextField id="imgExtension" label={getLocStorage(imgEXT)} onChange={handleImgEXT} variant="filled"/>
+        </ListItem>
+        </div>
+        <Divider/>
+        <ListItem>
+        <ListItemText primary={getTextToDisplay(externalViewer)}/>
+    </ListItem>
+    <ListItem>
+    <TextField id="geojson" fullWidth label={getLocStorage(externalViewer)} onChange={handleExtViewer} variant="filled"/>
         </ListItem>
         </List>
         </Dialog>
