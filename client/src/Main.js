@@ -14,7 +14,7 @@ import MainMenu from './components/MainMenu';
 import ImageMenu from './components/ImageMenu/ImageMenu';
 import Client from './Client';
 import ComLineOptions from './components/ComLineOptions';
-import {setLocStorage, thumbnails, geojson} from './Tools/initLocStorage';
+import {setLocStorage, thumbnails, imgEXT, externalViewer} from './Tools/initLocStorage';
 import L from 'leaflet';
 import FileManipulationButton from './components/FileManipulationButton';
 
@@ -87,8 +87,10 @@ const useStyles = makeStyles((theme) => ({
         },
         height: '100vh',
         zIndex: 2,
+    },
+    optionsMenuSpacing: {
+        paddingLeft: '6.5%'
     }
-
 }));
 
 function Main() {
@@ -116,7 +118,8 @@ function Main() {
         },
         images: [],
         thumbnailsData: '',
-        geoJSONData: ''
+        imgExtension: '',
+        extViewer: ''
     });
     const toggleMainMenu = (open) => error => {
         setState({
@@ -129,7 +132,8 @@ function Main() {
         setState({
             ...state,
             thumbnailsData: '',
-            geoJSONData: ''
+            imgExtension: '',
+            extViewer: ''
         })
     }
     const toggleImageMenu = (open) => error => {
@@ -225,8 +229,11 @@ function Main() {
         if (state.thumbnailsData !== '') {
             setLocStorage(thumbnails, state.thumbnailsData);
         }
-        if (state.geoJSONData !== '') {
-            setLocStorage(geojson, state.geoJSONData);
+        if (state.imgExtension !== '') {
+            setLocStorage(imgEXT, state.imgExtension);
+        }
+        if (state.extViewer !== '') {
+            setLocStorage(externalViewer, state.extViewer);
         }
         forceStateRefresh();
     }
@@ -236,13 +243,18 @@ function Main() {
             thumbnailsData: e.target.value
         })
     }
-    const handleGeoJSON = (e) => {
+    const handleImgEXT = (e) => {
         setState({
             ...state,
-            geoJSONData: e.target.value
+            imgExtension: e.target.value
         })
     }
-
+    const handleExtViewer = (e) => {
+        setState({
+            ...state,
+            extViewer: e.target.value
+        })
+    }
     const createOverlay = (file_path, points) =>{
         //points format: Long, Lat instead of Lat, Long
         let topleft    = L.latLng(points[0][1], points[0][0]),
@@ -319,7 +331,8 @@ function Main() {
                 toggleOptionsMenu={toggleOptionsMenu}
                 saveData={saveData}
                 handleThumbnails={handleThumbnails}
-                handleGeoJSON={handleGeoJSON}
+                handleImgEXT={handleImgEXT}
+                handleExtViewer={handleExtViewer}
                 forceStateRefresh={forceStateRefresh}
             />
             <input directory="" webkitdirectory="" multiple="" type="file" id="file" ref={fileRef} onChange={onChange} style={{ display: "none" }} />
