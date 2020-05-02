@@ -6,9 +6,10 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 import PermMediaIcon from '@material-ui/icons/PermMedia';
+import Client from '../Client';
+import { destination } from '@turf/turf';
 
 // not yet implemented :
-//  get destination directory
 //  get count of file extensions from inputFiles
 //  get count of custom file extension
 //  perform action *currently only displays manipulation properties state
@@ -19,6 +20,7 @@ export default function FileManipulationMenu(props) {
     const classes = props.classes;
     const open = props.open;
     const onClose = props.onClose;
+    const [selectedFiles, setSelectedFiles] = React.useState();
     const [ManipulationProperties, SetManipulationProperties] = React.useState({
         action: 'Copy',
         thumbnailImages: false,
@@ -35,19 +37,19 @@ export default function FileManipulationMenu(props) {
         destinationDirectory: ''
     });
     const [ManipulationCount, SetManipulationCount] = React.useState({
-        thumbnailImagesCount: 1,
-        CR2Count: 2,
-        TIFCount: 3,
-        URWCount: 4,
-        NTFCount: 5,
-        JPGCount: 6,
-        CSVCount: 7,
-        PPJCount: 8,
+        thumbnailImagesCount: 0,
+        CR2Count: 0,
+        TIFCount: 0,
+        URWCount: 0,
+        NTFCount: 0,
+        JPGCount: 0,
+        CSVCount: 0,
+        PPJCount: 0,
         allFilesCount: 0,
         customCount: 0,
         selectedCount: 0,
     });
-    const {dialog} = window.require('electron').remote;
+    const { dialog } = window.require('electron').remote;
 
     const boarderDivStyle = {
         borderTop: '2px solid black',
@@ -62,12 +64,65 @@ export default function FileManipulationMenu(props) {
         alignItems: 'center'
     }
 
+    // todo where the Actions calls to be executed will be called
+    const executeAction = (action, actionDirectory, actionFiles) => {
+        console.log("Performing : ", action);
+        if (action != "Delete") {
+            console.log("Destination :", actionDirectory);
+        }
+        console.log("On", actionFiles.length, " files");
+
+    }
+
     // handles sending the manipulation state to where the
     // manipulation will be performed
     const performAction = () => {
-        console.log("perform action: ", ManipulationProperties)
-
-        handleClose();
+        let action = ManipulationProperties.action;
+        let actionDirectory = ManipulationProperties.destinationDirectory;
+        let actionFiles = [];
+        if ((actionDirectory === "" || actionDirectory === undefined) && action != "Delete") {
+            alert("A Destination Directory must be selected to perfom action");
+        }
+        else {
+            if (ManipulationProperties.allFiles === true) {
+                for (var i in selectedFiles) {
+                    actionFiles.push(selectedFiles[i].path);
+                }
+            }
+            else {
+                for (var i in selectedFiles) {
+                    if (selectedFiles[i].thumb === true && ManipulationProperties.thumbnailImages === true) {
+                        actionFiles.push(selectedFiles[i].path);
+                    }
+                    else if (selectedFiles[i].extension === '.cr2' && ManipulationProperties.CR2 === true) {
+                        actionFiles.push(selectedFiles[i].path);
+                    }
+                    else if (selectedFiles[i].extension === '.tif' && ManipulationProperties.TIF === true) {
+                        actionFiles.push(selectedFiles[i].path);
+                    }
+                    else if (selectedFiles[i].extension === '.urw' && ManipulationProperties.URW === true) {
+                        actionFiles.push(selectedFiles[i].path);
+                    }
+                    else if (selectedFiles[i].extension === '.ntf' && ManipulationProperties.NTF === true) {
+                        actionFiles.push(selectedFiles[i].path);
+                    }
+                    else if (selectedFiles[i].extension === '.jpg' && ManipulationProperties.JPG === true) {
+                        actionFiles.push(selectedFiles[i].path);
+                    }
+                    else if (selectedFiles[i].extension === '.csv' && ManipulationProperties.CSV === true) {
+                        actionFiles.push(selectedFiles[i].path);
+                    }
+                    else if (selectedFiles[i].extension === '.ppj' && ManipulationProperties.PPJ === true) {
+                        actionFiles.push(selectedFiles[i].path);
+                    }
+                    else if (selectedFiles[i].extension === ManipulationProperties.customText && ManipulationProperties.custom === true) {
+                        actionFiles.push(selectedFiles[i].path);
+                    }
+                }
+            }
+            executeAction(action, actionDirectory, actionFiles);
+            handleClose();
+        }
     }
 
     //opens the file select dialog
@@ -92,10 +147,65 @@ export default function FileManipulationMenu(props) {
 
     //when dialog opens get the total file count
     //TODO update file extension counts too 
-    const handleOpen = () => {
-        SetManipulationCount({
+    const handleOpen = async () => {
+        const returnedFiles = await Client.fileManip();
+        await setSelectedFiles(returnedFiles.data);
+        await getCounts(returnedFiles.data);
+    }
+    const getCounts = async (files) => {
+        let thumbnailImagesCount = 0;
+        let CR2Count = 0;
+        let TIFCount = 0;
+        let URWCount = 0;
+        let NTFCount = 0;
+        let JPGCount = 0;
+        let CSVCount = 0;
+        let PPJCount = 0;
+        let customCount = 0;
+        for (var i in files) {
+            if (files[i].thumb) {
+                thumbnailImagesCount++;
+            }
+            else {
+                if (files[i].extension === '.cr2' && !files[i].thumb) {
+                    CR2Count++;
+                }
+                else if (files[i].extension === '.tif' && !files[i].thumb) {
+                    TIFCount++;
+                }
+                else if (files[i].extension === '.urw' && !files[i].thumb) {
+                    URWCount++;
+                }
+                else if (files[i].extension === '.ntf' && !files[i].thumb) {
+                    NTFCount++;
+                }
+                else if (files[i].extension === '.jpg' && !files[i].thumb) {
+                    JPGCount++;
+                }
+                else if (files[i].extension === '.csv' && !files[i].thumb) {
+                    CSVCount++;
+                }
+                else if (files[i].extension === '.ppj' && !files[i].thumb) {
+                    PPJCount++;
+                }
+                else if (!files[i].thumb) {
+                    console.log("CUSTOM : ", files[i].extension)
+                    customCount++;
+                }
+            }
+        }
+        await SetManipulationCount({
             ...ManipulationCount,
-            allFilesCount: getTotalCount(),
+            thumbnailImagesCount: thumbnailImagesCount,
+            CR2Count: CR2Count,
+            TIFCount: TIFCount,
+            URWCount: URWCount,
+            NTFCount: NTFCount,
+            JPGCount: JPGCount,
+            CSVCount: CSVCount,
+            PPJCount: PPJCount,
+            customCount: customCount,
+            allFilesCount: files.length,
         })
     }
 
@@ -145,21 +255,6 @@ export default function FileManipulationMenu(props) {
         })
     }
 
-    // returns the count of all the file extensions 
-    const getTotalCount = () => {
-        let totalcount = 0;
-        totalcount += ManipulationCount.thumbnailImagesCount;
-        totalcount += ManipulationCount.CR2Count;
-        totalcount += ManipulationCount.TIFCount;
-        totalcount += ManipulationCount.URWCount;
-        totalcount += ManipulationCount.NTFCount;
-        totalcount += ManipulationCount.JPGCount;
-        totalcount += ManipulationCount.CSVCount;
-        totalcount += ManipulationCount.PPJCount;
-        totalcount += ManipulationCount.customCount;
-        return totalcount;
-
-    }
     // returns the count of all selected file properties
     const getTotalSelectedCount = (field, value) => {
         let totalcount = ManipulationCount.selectedCount;

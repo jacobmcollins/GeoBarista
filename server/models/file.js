@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const fileSchema = new mongoose.Schema( {
+const fileSchema = new mongoose.Schema({
     folder: {
         type: String,
         required: true
@@ -10,10 +10,18 @@ const fileSchema = new mongoose.Schema( {
         required: true
     },
     extension: String,
+    thumb: {
+        type: Boolean,
+        default: false
+    },
     path: {
         type: String,
         unique: true,
         required: true
+    },
+    base_path: {
+        type: String,
+        required: true,
     },
     JSONData: String
 });

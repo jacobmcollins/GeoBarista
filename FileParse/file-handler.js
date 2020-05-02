@@ -194,6 +194,8 @@ class fileHandler {
     async addFileToDB(filepath, extension, filename, metaData) {
         let folder = path.dirname(filepath).split(path.sep).pop();
         console.log("ADD TO DB Folder name: " + folder);
+        let base_path = this.chopfilethumb(this.chopfilename(filepath));
+        let isThumb = this.isfilethumb(this.chopfilename(filename));
         let fileDBObj = await fileModel.findOneAndUpdate(
             // Search query
             { 'path': filepath },
@@ -204,7 +206,9 @@ class fileHandler {
                     'filename': filename,
                     'extension': extension,
                     'path': filepath,
-                    'JSONData': JSON.stringify(metaData)
+                    'base_path': base_path,
+                    'JSONData': JSON.stringify(metaData),
+                    'thumb': isThumb
                 }
             },
             // Insert options
@@ -232,7 +236,9 @@ class fileHandler {
                                 'filename': filename,
                                 'extension': extension,
                                 'path': filepath,
-                                'JSONData': JSON.stringify(metaData)
+                                'base_path': base_path,
+                                'JSONData': JSON.stringify(metaData),
+                                'thumb': isThumb
                             }
                         },
                         // Insert options
@@ -307,12 +313,8 @@ class fileHandler {
         }
         let base_name = this.chopfilename(filename);
         let base_path = this.chopfilename(filepath);
-        let test = this.chopfilename(filepath);
         // Parsing out metadata from filename
         let filenameData = this.parseFilename(base_name);
-        console.log("!___PPJ PPJ PPJ ppj filepath: " + filepath);
-        console.log("!___PPJ PPJ PPJ ppj basename: " + base_name);
-        console.log("!___PPJ PPJ PPJ ppj basename: " + test);
 
         let imgdbobj = {
             //'_id': filepath,
@@ -491,6 +493,17 @@ class fileHandler {
             }
         }
         return filename;
+    }
+    // returns true or false if the last 5 character are 'thumb'
+    isfilethumb(filename) {
+        let toRet = false;
+        if (filename.length > 5) {
+            let last5 = filename.slice(-5, filename.length);
+            if (last5 && last5.includes('thumb')) {
+                toRet = true;
+            }
+        }
+        return toRet;
     }
 }
 
