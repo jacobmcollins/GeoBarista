@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-var Parser = require('../FileParse/ppjParse')
+var Parser = require('../FileParse/ppjParse');
+var ThumbnailUtility = require('../FileParse/ThumbnailUtility');
 
 // import { chopfilename, chopfilepath } from ('../FileParse/file-handler');
 
@@ -18,6 +19,7 @@ function server(client_path) {
 
   // Create the PPJ Parser early on
   const ppjParser = new Parser();
+  const thumbnailGen = new ThumbnailUtility();
 
   // Express only serves static assets in production
   if (client_path != null) {
@@ -125,6 +127,28 @@ function server(client_path) {
 
   s = app.listen(app.get("port"), () => {
     console.log(`Find the server at: http://localhost:${app.get("port")}/`); // eslint-disable-line no-console
+  });
+
+  //Thumbnail Generation calls
+  app.put('/api/v2/images/allThumbnails', async function(req, res){
+    const command = req.body.thumbCommand;
+    const imgext = req.body.extension;
+    let newPaths, response;
+    try {
+      newPaths = await thumbnailGen.generateAllThumbnails(command, imgext, await imageModel.find({}).sort({}).exec());
+      if(newPaths !== null) {
+        for (var key in newPaths) {
+          response = await imageModel.findByIdAndUpdate(key, {"thumbnail_path": newPaths[key]});
+        }
+      }
+    }
+    catch (e) {
+      console.log(e);
+    }
+
+    res.json({
+      newPaths: newPaths
+    });
   });
 
   return s;
