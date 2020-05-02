@@ -151,6 +151,23 @@ function server(client_path) {
     });
   });
 
+  app.put('/api/v2/images/oneThumbnails', async function(req, res){
+    const command = req.body.thumbCommand;
+    const imgext = req.body.extension;
+    const imagePath = req.body.imgPath;
+    let newPath, response;
+    try {
+      newPath = await thumbnailGen.generateThumbnail(command, imgext, imagePath);
+    }
+    catch (e) {
+      console.log(e);
+    }
+
+    res.json({
+      newPath: newPath
+    });
+  });
+
   return s;
 }
 

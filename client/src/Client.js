@@ -60,5 +60,14 @@ async function generateAllThumbnails(command, imgext){
   return res.data.newPaths;
 };
 
-const Client = { load, update, get, get_unique_fields, fileManip };
+async function generateThumbnail(command, imgext, imagePath){
+  var res = await axios.put("/api/v2/images/oneThumbnails", {
+    thumbCommand: command,
+    extension: imgext,
+    imgPath: imagePath
+  });
+  return res.data.newPath;
+}
+
+const Client = { load, update, get, get_unique_fields, fileManip, generateAllThumbnails, generateThumbnail };
 export default Client;

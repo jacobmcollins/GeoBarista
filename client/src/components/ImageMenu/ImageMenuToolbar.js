@@ -6,6 +6,8 @@ import { withStyles } from "@material-ui/core/styles";
 import FilterListIcon from '@material-ui/icons/FilterList';
 import Switch from '@material-ui/core/Switch';
 import FileManipulationButton from './../FileManipulationButton';
+
+import Client from '../../Client';
 import {getLocStorage, thumbnails, imgEXT} from '../../Tools/initLocStorage';
 
 
@@ -24,7 +26,7 @@ class ImageMenuToolbar extends React.Component {
     };
   }
 
-  handleChange = (event) => {
+  handleChange = async (event) => {
      this.setState({checked: event.target.checked });
      console.log("toggle: " + event.target.checked);
     

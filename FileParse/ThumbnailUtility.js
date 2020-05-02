@@ -10,17 +10,28 @@ class ThumbnailUtility{
     //command - The command in order to make the thumbnail with two '{}' to be replaced
     //              with imagePath and a new filePath for new thumbnail
     //imageExt - The extension the new thumbnail should be
-    generateThumbnail(imagePath, command, imageEXT){
-        let newPath = imagePath.replace(path.extname(imagePath), imageEXT);
+    async generateThumbnail(command, imageExt, imagePath){
+        let thumbnailPath, newCommand;
+        let output;
 
-        let newCommand = command.replace('{}', imagePath);
-        newCommand = newCommand.replace('{}', newPath);
+        if(imagePath !== undefined) {
+            //ToDo - remove '.ntf' and replace with some sort of image extension, might need server work.
+            //if passing in just imagePath from base_path then no need for replace, just add +'thumb'+imageExt
+            //However, will need to add +img ext to the imagePath where img ext is something like '.ntf'...
+            thumbnailPath = imagePath.replace(path.extname(imagePath), 'thumb'+imageExt);
 
-        //Can be parsed in order to determine if an error occured. However, this error
-        //relies on the specific command. I.E. gets tricky to implement correctly.
-        let output = execSync(newCommand);
+            newCommand = command.replace('{}', imagePath);
+            newCommand = newCommand.replace('{}', thumbnailPath);
 
-        return newPath;
+            try {
+                output = execSync(newCommand);
+                console.log("made single thumbnail");
+            } catch (err) {
+                console.log("error in generating thumbnails:");
+                console.log(err);
+            }
+        }
+        return thumbnailPath;
     }
 
     async generateAllThumbnails(command, imageExt, allImagePaths){
@@ -38,8 +49,9 @@ class ThumbnailUtility{
                     //Todo change imagePath to this once server is updated.
                     //imagePath = imageList[i].replace(path.extname(imageList[i].file_path), imageList[i].file_extension);
 
-                    imagePath = imageList[i].file_path.replace(path.extname(imageList[i].file_path), '.ntf');
-                    thumbnailPath = imagePath.replace(path.extname(imagePath), imageExt);
+                    //ToDo - remove '.ntf' and replace with some sort of image extension, might need server work.
+                    imagePath = imageList[i].base_path + '.ntf'; //.replace(path.extname(imageList[i].file_path), '.ntf');
+                    thumbnailPath = imagePath.replace(path.extname(imagePath), 'thumb'+imageExt);
 
                     newCommand = command.replace('{}', imagePath);
                     newCommand = newCommand.replace('{}', thumbnailPath);
@@ -53,13 +65,9 @@ class ThumbnailUtility{
                     }
 
                     newThumbList[imageList[i]._id] = thumbnailPath;
-                    //let temp = await Client.update(imageList[i].base_name, 'thumbnail_path', Thumbnail.generateThumbnails(imageList[i].file_path.split('.')[0]+'.ntf', ))
                 }
             }
         }
-
-        //ToDo return a key value pair of basname of image with new thumbnail path so calling function can assign those new paths to the server with client.update
-        //ToDo actually have this return the key value pairs to the server call and update in there so no client side updating is needed
         return newThumbList;
     }
 };
