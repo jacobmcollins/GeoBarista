@@ -206,11 +206,25 @@ export default function FileManipulationMenu(props) {
             PPJCount: PPJCount,
             customCount: customCount,
             allFilesCount: files.length,
+            selectedCount: 0,
         })
     }
 
     // close dialog by -- switching open state in finalManipulationButton to false
     const handleClose = () => {
+        SetManipulationProperties({
+            ...ManipulationProperties,
+            thumbnailImages: false,
+            CR2: false,
+            TIF: false,
+            URW: false,
+            NTF: false,
+            JPG: false,
+            CSV: false,
+            PPJ: false,
+            allFiles: false,
+            custom: false,
+        })
         onClose();
     };
 
@@ -225,11 +239,11 @@ export default function FileManipulationMenu(props) {
     //sets the selected flag for file extension checkboxes
     const setFileTypes = async (field, value) => {
         let select = await getTotalSelectedCount(field, value);
-        SetManipulationProperties({
+        await SetManipulationProperties({
             ...ManipulationProperties,
             [field]: value,
         });
-        SetManipulationCount({
+        await SetManipulationCount({
             ...ManipulationCount,
             selectedCount: select
 
