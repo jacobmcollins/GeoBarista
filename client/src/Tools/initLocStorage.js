@@ -4,8 +4,9 @@ const initExec = "initializedExecs"
 //Hard coded because these shouldn't change (much, if at all)
 //after being set
 //[task, command]
-const thumbnails = ["Thumbnails", "gdal_translate -ot Byte -of JPEG -scale 0 4095 0 255 -outsize 5% 5%"];
-const geojson = ["geoJSON", "gdalinfo -json"];
+const thumbnails = ["Thumbnails", "gdal_translate -ot Byte -of JPEG -scale 0 4095 0 255 -outsize 5% 5% {} {}"];
+const imgEXT = ["imageExt", ".jpeg"];
+const externalViewer = ["externalViewer", "C:\\Program Files (x86)\\Windows Media Player"];
 
 //Initializes localStorage with default commands for things such as
 //creating thumbnails with GDAL.
@@ -13,7 +14,9 @@ function init() {
     try {
         localStorage.setItem(initExec, "true");
         localStorage.setItem(thumbnails[0], thumbnails[1]);
-        localStorage.setItem(geojson[0], geojson[1]);
+        localStorage.setItem(imgEXT[0], imgEXT[1]);
+        localStorage.setItem(externalViewer[0], externalViewer[1]);
+
         return true;
     } catch(err) {
         console.error(err.message);
@@ -56,4 +59,4 @@ function setLocStorage(toSet, data) {
 }
 
 //export constants for other functions to be able to access the options
-export {initLocStorage, getLocStorage, setLocStorage, thumbnails, geojson};
+export {initLocStorage, getLocStorage, setLocStorage, thumbnails, imgEXT, externalViewer};
