@@ -237,7 +237,8 @@ class fileHandler {
                                 'extension': extension,
                                 'path': filepath,
                                 'base_path': base_path,
-                                'JSONData': JSON.stringify(metaData)
+                                'JSONData': JSON.stringify(metaData),
+                                'thumb': isThumb
                             }
                         },
                         // Insert options
