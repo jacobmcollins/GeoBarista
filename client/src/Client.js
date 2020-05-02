@@ -52,5 +52,13 @@ async function get_unique_fields() {
   return res.data;
 }
 
+async function generateAllThumbnails(command, imgext){
+  var res = await axios.put("/api/v2/images/allThumbnails", {
+    thumbCommand: command,
+    extension: imgext
+  });
+  return res.data.newPaths;
+};
+
 const Client = { load, update, get, get_unique_fields, fileManip };
 export default Client;
