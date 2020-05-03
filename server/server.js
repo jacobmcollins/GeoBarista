@@ -105,7 +105,7 @@ function server(client_path) {
       fileQuery.push(getSelected[i].base_path);
     }
     // query filemodel with fileQuery array
-    var getFiles = await fileModel.find({ 'base_path': { $in: fileQuery } }, { _id: 0, extension: 1, path: 1, thumb: 1 });
+    var getFiles = await fileModel.find({ 'base_path': { $in: fileQuery } }, { _id: 0, extension: 1, path: 1, thumb: 1, filename: 1 });
     res.json(getFiles);
   });
 
