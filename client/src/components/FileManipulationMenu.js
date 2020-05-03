@@ -8,6 +8,7 @@ import TextField from '@material-ui/core/TextField';
 import PermMediaIcon from '@material-ui/icons/PermMedia';
 import Client from '../Client';
 import { destination } from '@turf/turf';
+import fileManipulation from './FileManipulationActions';
 
 // not yet implemented :
 //  get count of file extensions from inputFiles
@@ -71,6 +72,11 @@ export default function FileManipulationMenu(props) {
             console.log("Destination :", actionDirectory);
         }
         console.log("On", actionFiles.length, " files");
+        if (action === "Delete") {
+            for (var file in actionFiles) {
+                fileManipulation.deleteFile(actionFiles[file]);
+            }
+        }
 
     }
 
