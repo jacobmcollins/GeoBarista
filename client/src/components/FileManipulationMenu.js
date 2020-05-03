@@ -18,7 +18,6 @@ import fileManipulation from './FileManipulationActions';
 //
 
 export default function FileManipulationMenu(props) {
-    const path = window.require('path')
     const inputFiles = props.inputFiles;
     const classes = props.classes;
     const open = props.open;
@@ -69,15 +68,19 @@ export default function FileManipulationMenu(props) {
     }
 
     // todo where the Actions calls to be executed will be called
-    const executeAction = (action, actionDirectory, actionFiles) => {
+    const executeAction = async (action, actionDirectory, actionFiles) => {
         console.log("Performing : ", action);
+        let success = false;
         if (action != "Delete") {
             console.log("Destination :", actionDirectory);
         }
         console.log("On", actionFiles.length, " files");
         if (action === "Delete") {
-            for (var file in actionFiles) {
-                fileManipulation.deleteFile(actionFiles[file].path);
+            success = await Client.removeFilesByBasePath(actionFiles);
+            if (success) {
+                for (var file in actionFiles) {
+                    fileManipulation.deleteFile(actionFiles[file].path);
+                }
             }
         }
         else if (action === "Copy") {
@@ -88,9 +91,12 @@ export default function FileManipulationMenu(props) {
             }
         }
         else if (action === "Move") {
-            for (var file in actionFiles) {
-                console.log("action name :", actionFiles[file].name);
-                fileManipulation.moveFile(actionFiles[file].path, actionDirectory, actionFiles[file].name);
+            success = await Client.removeFilesByBasePath(actionFiles);
+            if (success) {
+                for (var file in actionFiles) {
+                    console.log("action name :", actionFiles[file].name);
+                    fileManipulation.moveFile(actionFiles[file].path, actionDirectory, actionFiles[file].name);
+                }
             }
         }
 
@@ -108,37 +114,37 @@ export default function FileManipulationMenu(props) {
         else {
             if (ManipulationProperties.allFiles === true) {
                 for (var i in selectedFiles) {
-                    actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename });
+                    actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename, base_path: selectedFiles[i].base_path });
                 }
             }
             else {
                 for (var i in selectedFiles) {
                     if (selectedFiles[i].thumb === true && ManipulationProperties.thumbnailImages === true) {
-                        actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename });
+                        actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename, base_path: selectedFiles[i].base_path });
                     }
                     else if (selectedFiles[i].extension === '.cr2' && ManipulationProperties.CR2 === true) {
-                        actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename });
+                        actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename, base_path: selectedFiles[i].base_path });
                     }
                     else if (selectedFiles[i].extension === '.tif' && ManipulationProperties.TIF === true) {
-                        actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename });
+                        actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename, base_path: selectedFiles[i].base_path });
                     }
                     else if (selectedFiles[i].extension === '.urw' && ManipulationProperties.URW === true) {
-                        actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename });
+                        actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename, base_path: selectedFiles[i].base_path });
                     }
                     else if (selectedFiles[i].extension === '.ntf' && ManipulationProperties.NTF === true) {
-                        actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename });
+                        actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename, base_path: selectedFiles[i].base_path });
                     }
                     else if (selectedFiles[i].extension === '.jpg' && ManipulationProperties.JPG === true) {
-                        actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename });
+                        actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename, base_path: selectedFiles[i].base_path });
                     }
                     else if (selectedFiles[i].extension === '.csv' && ManipulationProperties.CSV === true) {
-                        actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename });
+                        actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename, base_path: selectedFiles[i].base_path });
                     }
                     else if (selectedFiles[i].extension === '.ppj' && ManipulationProperties.PPJ === true) {
-                        actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename });
+                        actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename, base_path: selectedFiles[i].base_path });
                     }
                     else if (selectedFiles[i].extension === ManipulationProperties.customText && ManipulationProperties.custom === true) {
-                        actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename });
+                        actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename, base_path: selectedFiles[i].base_path });
                     }
                 }
             }
