@@ -8,6 +8,8 @@ import TextField from '@material-ui/core/TextField';
 import PermMediaIcon from '@material-ui/icons/PermMedia';
 import Client from '../Client';
 import { destination } from '@turf/turf';
+import fileManipulation from './FileManipulationActions';
+
 
 // not yet implemented :
 //  get count of file extensions from inputFiles
@@ -21,6 +23,7 @@ export default function FileManipulationMenu(props) {
     const open = props.open;
     const onClose = props.onClose;
     const [selectedFiles, setSelectedFiles] = React.useState();
+    const { dialog } = window.require('electron').remote;
     const [ManipulationProperties, SetManipulationProperties] = React.useState({
         action: 'Copy',
         thumbnailImages: false,
@@ -49,7 +52,7 @@ export default function FileManipulationMenu(props) {
         customCount: 0,
         selectedCount: 0,
     });
-    const { dialog } = window.require('electron').remote;
+
 
     const boarderDivStyle = {
         borderTop: '2px solid black',
@@ -65,12 +68,37 @@ export default function FileManipulationMenu(props) {
     }
 
     // todo where the Actions calls to be executed will be called
-    const executeAction = (action, actionDirectory, actionFiles) => {
+    const executeAction = async (action, actionDirectory, actionFiles) => {
         console.log("Performing : ", action);
+        let success = false;
         if (action != "Delete") {
             console.log("Destination :", actionDirectory);
         }
         console.log("On", actionFiles.length, " files");
+        if (action === "Delete") {
+            success = await Client.removeFilesByBasePath(actionFiles);
+            if (success) {
+                for (var file in actionFiles) {
+                    fileManipulation.deleteFile(actionFiles[file].path);
+                }
+            }
+        }
+        else if (action === "Copy") {
+            for (var file in actionFiles) {
+                console.log("action name :", actionFiles[file].name);
+                fileManipulation.copyFile(actionFiles[file].path, actionDirectory, actionFiles[file].name);
+
+            }
+        }
+        else if (action === "Move") {
+            success = await Client.removeFilesByBasePath(actionFiles);
+            if (success) {
+                for (var file in actionFiles) {
+                    console.log("action name :", actionFiles[file].name);
+                    fileManipulation.moveFile(actionFiles[file].path, actionDirectory, actionFiles[file].name);
+                }
+            }
+        }
 
     }
 
@@ -86,37 +114,37 @@ export default function FileManipulationMenu(props) {
         else {
             if (ManipulationProperties.allFiles === true) {
                 for (var i in selectedFiles) {
-                    actionFiles.push(selectedFiles[i].path);
+                    actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename, base_path: selectedFiles[i].base_path });
                 }
             }
             else {
                 for (var i in selectedFiles) {
                     if (selectedFiles[i].thumb === true && ManipulationProperties.thumbnailImages === true) {
-                        actionFiles.push(selectedFiles[i].path);
+                        actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename, base_path: selectedFiles[i].base_path });
                     }
                     else if (selectedFiles[i].extension === '.cr2' && ManipulationProperties.CR2 === true) {
-                        actionFiles.push(selectedFiles[i].path);
+                        actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename, base_path: selectedFiles[i].base_path });
                     }
                     else if (selectedFiles[i].extension === '.tif' && ManipulationProperties.TIF === true) {
-                        actionFiles.push(selectedFiles[i].path);
+                        actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename, base_path: selectedFiles[i].base_path });
                     }
                     else if (selectedFiles[i].extension === '.urw' && ManipulationProperties.URW === true) {
-                        actionFiles.push(selectedFiles[i].path);
+                        actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename, base_path: selectedFiles[i].base_path });
                     }
                     else if (selectedFiles[i].extension === '.ntf' && ManipulationProperties.NTF === true) {
-                        actionFiles.push(selectedFiles[i].path);
+                        actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename, base_path: selectedFiles[i].base_path });
                     }
                     else if (selectedFiles[i].extension === '.jpg' && ManipulationProperties.JPG === true) {
-                        actionFiles.push(selectedFiles[i].path);
+                        actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename, base_path: selectedFiles[i].base_path });
                     }
                     else if (selectedFiles[i].extension === '.csv' && ManipulationProperties.CSV === true) {
-                        actionFiles.push(selectedFiles[i].path);
+                        actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename, base_path: selectedFiles[i].base_path });
                     }
                     else if (selectedFiles[i].extension === '.ppj' && ManipulationProperties.PPJ === true) {
-                        actionFiles.push(selectedFiles[i].path);
+                        actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename, base_path: selectedFiles[i].base_path });
                     }
                     else if (selectedFiles[i].extension === ManipulationProperties.customText && ManipulationProperties.custom === true) {
-                        actionFiles.push(selectedFiles[i].path);
+                        actionFiles.push({ path: selectedFiles[i].path, name: selectedFiles[i].filename, base_path: selectedFiles[i].base_path });
                     }
                 }
             }
@@ -206,11 +234,25 @@ export default function FileManipulationMenu(props) {
             PPJCount: PPJCount,
             customCount: customCount,
             allFilesCount: files.length,
+            selectedCount: 0,
         })
     }
 
     // close dialog by -- switching open state in finalManipulationButton to false
     const handleClose = () => {
+        SetManipulationProperties({
+            ...ManipulationProperties,
+            thumbnailImages: false,
+            CR2: false,
+            TIF: false,
+            URW: false,
+            NTF: false,
+            JPG: false,
+            CSV: false,
+            PPJ: false,
+            allFiles: false,
+            custom: false,
+        })
         onClose();
     };
 
@@ -225,11 +267,11 @@ export default function FileManipulationMenu(props) {
     //sets the selected flag for file extension checkboxes
     const setFileTypes = async (field, value) => {
         let select = await getTotalSelectedCount(field, value);
-        SetManipulationProperties({
+        await SetManipulationProperties({
             ...ManipulationProperties,
             [field]: value,
         });
-        SetManipulationCount({
+        await SetManipulationCount({
             ...ManipulationCount,
             selectedCount: select
 
