@@ -3,8 +3,6 @@ const bodyParser = require("body-parser");
 var Parser = require('../FileParse/ppjParse');
 var ThumbnailUtility = require('../FileParse/ThumbnailUtility');
 
-// import { chopfilename, chopfilepath } from ('../FileParse/file-handler');
-
 function server(client_path) {
   const app = express();
 
@@ -107,10 +105,46 @@ function server(client_path) {
       fileQuery.push(getSelected[i].base_path);
     }
     // query filemodel with fileQuery array
-    var getFiles = await fileModel.find({ 'base_path': { $in: fileQuery } }, { _id: 0, extension: 1, path: 1, thumb: 1 });
+    var getFiles = await fileModel.find({ 'base_path': { $in: fileQuery } }, { _id: 0, extension: 1, path: 1, thumb: 1, filename: 1, base_path: 1 });
     res.json(getFiles);
   });
 
+  app.put('/api/v2/remBasePath', async function (req, res) {
+    let success = false;
+    let toRemove = req.body.remFiles;
+    let baseSet = new Set();  //used to filter out same base_paths
+    let remBase = []; // used to check for existance in filemodel
+    let remPath = []; // used to delete from fileModel
+    let remBaseFull = []; // used to delete from imageModel
+    try {
+      //seperate base_path and path, path into array, base_path into set
+      for (i = 0; i < toRemove.length; i++) {
+        baseSet.add(toRemove[i].base_path);
+        remPath.push(toRemove[i].path);
+      }
+      remBase = Array.from(baseSet);
+      // remove paths from fileModel
+      await fileModel.deleteMany({ path: { $in: remPath } });
+      // check if base_path in fileModel, if true then do nothing , if false remove from image model
+      for (i = 0; i < remBase.length; i++) {
+        let check = await fileModel.exists({ base_path: remBase[i] });
+        if (check) {
+          //partial remove, do nothing
+        }
+        else {
+          // full remove, add to remBaseFull
+          remBaseFull.push(remBase[i]);
+        }
+      }
+      // remove images from image model that no longer have a associated file in fileModel
+      await imageModel.deleteMany({ base_path: { $in: remBaseFull } });
+      success = true;
+    }
+    catch (e) {
+      success = false;
+    }
+    res.json(success);
+  });
 
   app.get('/api/v2/images/unique', async function (req, res) {
     let all = {};
