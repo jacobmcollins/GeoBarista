@@ -1,6 +1,7 @@
 var path = require('path');
 const imageModel = require('../server/models/image');
 const fileModel = require('../server/models/file');
+const mongoose = require('mongoose');
 var ppjParse = require('./ppjParse');
 var csvParse = require('./csvParse');
 //const runsync = require("runsync");
@@ -81,8 +82,56 @@ class fileHandler {
             }
             // TODO: Loop through all images, make sure any
             // that have thumbnail_bool == true and rgb == null
-            // get rgb values set to thumbnail values
-
+            // get rgb values set to thumbnail values, 
+            // thumbnail_only bool value set to true
+            var thumbNoRGB = await imageModel.find({
+                'thumbnail_bool': true, 
+                'rgb_data': null,
+            });
+            console.log("thumnails missing rgb: " + JSON.stringify(thumbNoRGB));
+            var agg = await imageModel.aggregate([
+                {$match: 
+                    {
+                    'thumbnail_bool': true, 
+                    'rgb_data': null,
+                    }
+                },
+                // Data to insert into record               
+                {$addFields: {
+                    // Referencing value of other fields with "$field"
+                    rgb_data: '$thumbnail_data._id',
+                    rgb_data_path: '$thumbnail_path',
+                    thumbnail_only: true}}
+            ]);
+            console.log("Aggregation: " + JSON.stringify(agg));
+            // var updated = await imageModel.updateMany(
+            //     // Search query
+            //     {'thumbnail_bool': true, 
+            //     'rgb_data': null,
+            //     'rgb_data_path': "Unknown"},
+            //     // Data to insert into record               
+            //     {$set: {
+            //         // Referencing value of other fields with "$field"
+            //         rgb_data: '$thumbnail_data',
+            //         rgb_data_path: '$thumbnail_path',
+            //         thumbnail_only: true}
+            //     },
+            //     // Insert options
+            //     {                    
+            //         // This option is required by system
+            //         useFindAndModify: false,
+            //         // Returns newly created object
+            //         new: true
+            //     },
+            //     // Error handling
+            //     async function (err) {
+            //         if (err) console.log("Error inserting to image model " + err);
+                    
+                    
+            //         return console.log("Updated rgb paths for thumbnails ");
+            //     }
+            // );
+            //console.log("records updated: " + JSON.stringify(updated));
         }
         console.log(JSON.stringify(Object.keys(extDic)));
     }
@@ -394,6 +443,7 @@ class fileHandler {
         // Handle .jpgs differently depending on whether they
         // are a thumbnail
         if (!(filenameData.thumbnail)) {
+            // If it's not a thumbnail...
             let base_name = this.chopfilename(filename);
             let base_path = this.chopfilename(filepath);
             var imgdbobj = {
@@ -407,6 +457,7 @@ class fileHandler {
             };
 
         } else {
+            // If it is a thumbnail...
             let base_name = this.chopfilename(filename).slice(0, -5);
             let base_path = this.chopfilename(filepath);
             let noThumb = this.chopfilethumb(base_path)
@@ -415,10 +466,11 @@ class fileHandler {
                 'base_path': noThumb,
                 'mission': folder,
                 'thumbnail_bool': true,
-                'rgb_data': fileInserted,
-                'rgb_data_path': filepath,
+                //'rgb_data': fileInserted,
+                //'rgb_data_path': filepath,
                 'thumbnail_path': filepath,
-                'thumbnail_extension': path.extname(filename)
+                'thumbnail_extension': path.extname(filename),
+                'thumbnail_data': fileInserted
             }
         }
         //console.log("imgobjdb: " + imgdbobj);
