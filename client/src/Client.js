@@ -26,18 +26,18 @@ async function fileManip(filter) {
   });
   return res;
 }
-/*
-async function fileManip(query) {
-  console.log("client query : ", query);
-  var toInsert = JSON.stringify(query);
+
+async function removeFilesByBasePath(remFiles) {
+  console.log("client query : ", remFiles);
+  var toInsert = JSON.stringify(remFiles);
   console.log("client toInsert: ", toInsert);
-  var res = await axios.put("/api/v2/fileManip", {
-    clientTest: 'sending from client'
+  var res = await axios.put("/api/v2/remBasePath", {
+    remFiles: remFiles
 
   });
   return res;
 }
-*/
+
 async function update(id, field, value) {
   var res = await axios.put("/api/v2/image", {
     _id: id,
@@ -69,5 +69,5 @@ async function generateThumbnail(command, imgext, imagePath){
   return res.data.newPath;
 }
 
-const Client = { load, update, get, get_unique_fields, fileManip, generateAllThumbnails, generateThumbnail };
+const Client = { load, update, get, get_unique_fields, fileManip, removeFilesByBasePath, generateAllThumbnails, generateThumbnail};
 export default Client;
