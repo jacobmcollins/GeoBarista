@@ -185,7 +185,10 @@ function Main() {
             });
         }
     }
-    const filterImages = async (newFilterParams) => {
+    const filterImages = async (images, newFilterParams) => {
+        for (const image of images) {
+            await Client.update(image._id, 'selected', false);
+        }
         let res = await Client.get(newFilterParams, sortParams);
         setImages(res.data);
         setFilterParams(newFilterParams);
