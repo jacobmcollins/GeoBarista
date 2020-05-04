@@ -4,7 +4,7 @@ const initExec = "initializedExecs"
 //Hard coded because these shouldn't change (much, if at all)
 //after being set
 //[task, command]
-const thumbnails = ["Thumbnails", "gdal_translate -ot Byte -of JPEG -scale 0 4095 0 255 -outsize 5% 5% {} {}"];
+const thumbnails = ["Thumbnails", "gdal_translate -ot Byte -of JPEG -scale 0 4095 0 255 -outsize 5% 5% %1 %2"];
 const imgEXT = ["imageExt", ".jpeg"];
 const externalViewer = ["externalViewer", "C:\\Program Files (x86)\\Windows Media Player"];
 

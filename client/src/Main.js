@@ -90,6 +90,15 @@ const useStyles = makeStyles((theme) => ({
     },
     optionsMenuSpacing: {
         paddingLeft: '6.5%'
+    },
+    contextMenuOptions: {
+        border: '1px dashed',
+        height: '75px',
+        padding: '10px',
+        position: 'relative',
+        textAlign: 'justify',
+        color: 'gray',
+        background: 'white'
     }
 }));
 
