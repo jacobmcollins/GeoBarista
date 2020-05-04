@@ -9,7 +9,8 @@ import IconButton from "@material-ui/core/IconButton";
 import ZoomInIcon from '@material-ui/icons/ZoomIn';
 
 export default function ImageTableRow(props) {
-    const { columns, image, updateThumbnail, selectImageById, setImageVisibleById, zoomToImage,toggleThumbnailDialogOpen } = props;
+    const { columns, image, updateThumbnail, selectImageById, setImageVisibleById, zoomToImage,  
+    handleContextClick } = props;
     return (
         <TableRow key={image._id} style={{ height: 33 }} >
             <TableCell padding="checkbox" >
@@ -45,7 +46,7 @@ export default function ImageTableRow(props) {
             { 
                 columns.map((column) => {
                     return (
-                        <TableCell component="th" scope="row" onDoubleClick={() => {updateThumbnail(image.thumbnail_path); toggleThumbnailDialogOpen(true);}}>
+                        <TableCell component="th" scope="row" onContextMenu={(event) => {updateThumbnail(image.thumbnail_path); handleContextClick(event); }}>
                             {image[column.id]}
                         </TableCell>
                     )
