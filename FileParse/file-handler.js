@@ -99,11 +99,38 @@ class fileHandler {
                 // Data to insert into record               
                 {$addFields: {
                     // Referencing value of other fields with "$field"
+                    // thumbnail_data "reconstitutes" into full record when referenced,
+                    // so must pass _id param of it to rgb_data
                     rgb_data: '$thumbnail_data._id',
                     rgb_data_path: '$thumbnail_path',
                     thumbnail_only: true}}
             ]);
             console.log("Aggregation: " + JSON.stringify(agg));
+            // Insert updated records back into Image model by _id
+            for (const record of agg) {
+                console.log("Updating thumbnail info for id " + record._id);
+                var updated = await imageModel.findByIdAndUpdate(
+                    // ID to update
+                    record._id,
+                    // Fields to update and values
+                    {rgb_data: record.rgb_data,
+                    rgb_data_path: record.rgb_data_path,
+                    thumbnail_only: true},
+                    // Options
+                    {// Creates record if not found
+                    upsert: false,
+                    // This option is required by system
+                    useFindAndModify: false,
+                    // Returns newly created object
+                    new: true},
+                    function (err) {
+                        if (err) console.log("Error updating image thumbnail data" + err);
+
+                        return console.log("Image model thumbnail data updated " + JSON.stringify(record._id));
+                    }
+                );
+                console.log("updated record for thumbnail info: " + JSON.stringify(updated));
+            }
             // var updated = await imageModel.updateMany(
             //     // Search query
             //     {'thumbnail_bool': true, 
@@ -150,6 +177,13 @@ class fileHandler {
             if (last5 && last5.includes('.')) {
                 filename = filename.substring(0, filename.lastIndexOf('.'));
             }
+            // console.log("last5: " + last5);
+            // If last 5 letters of the filename are "thumb",
+            // it's a thumbnail, slice "thumb" off
+            let last5thumb = filename.slice(-5, filename.length);
+            if (last5thumb && last5thumb == "thumb") {
+                filename = filename.slice(0, -5);                
+            }
             // Split filename by underscores
             let filenameParts = filename.split('_');
             // If filename has '_' and at least 3 parts, extract info
@@ -187,24 +221,21 @@ class fileHandler {
                     time: parsedstamp,
                     camera: camera,
                     thumbnail: false
-                }
-                // If last 5 letters of the filename are "thumb",
-                // it's a thumbnail
-                let last5 = filename.slice(-5, filename.length);
+                }                
                 // console.log("last5: " + last5);
-                if (last5 && last5 == "thumb") {
+                if (last5thumb && last5thumb == "thumb") {
                     dataitems.thumbnail = true;
                 }
                 // imgid does not exist in all filenames
-                if (filenameParts.length > 3) {
-                    let imgid = filenameParts[3];
-                    // If it's a thumbnail, slice off 'thumb' from id
-                    if (dataitems.thumbnail && imgid.length > 5) {
-                        dataitems['imgid'] = imgid.slice(0, imgid.length - 5);
-                    } else {
-                        dataitems['imgid'] = imgid;
-                    }
-                }
+                // if (filenameParts.length > 3) {
+                //     let imgid = filenameParts[3];
+                //     // If it's a thumbnail, slice off 'thumb' from id
+                //     if (dataitems.thumbnail && imgid.length > 5) {
+                //         dataitems['imgid'] = imgid.slice(0, imgid.length - 5);
+                //     } else {
+                //         dataitems['imgid'] = imgid;
+                //     }
+                // }
 
                 // console.log("dataitems: " + JSON.stringify(dataitems));
 
