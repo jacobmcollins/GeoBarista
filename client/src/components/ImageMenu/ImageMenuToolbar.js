@@ -35,7 +35,7 @@ class ImageMenuToolbar extends React.Component {
          let newThumbnailList = await Client.generateAllThumbnails(getLocStorage(thumbnails), getLocStorage(imgEXT));
        for (const image of this.props.images) {
            if (!(image._id in this.state.overlays)) {
-             var overlay = this.props.createOverlay(image.file_path, JSON.parse(image.points))      //The order of four points from DB: topLeft,topRight,bottomRight,bottomLeft
+             var overlay = this.props.createOverlay(image.thumbnail_path, JSON.parse(image.points))      //The order of four points from DB: topLeft,topRight,bottomRight,bottomLeft
              currentOverlays[image._id] = overlay
              this.setState({
                overlays: currentOverlays

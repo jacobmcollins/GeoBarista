@@ -265,7 +265,7 @@ function Main() {
             bottomleft = L.latLng(points[3][1], points[3][0]);
 
             //change file path to load thumbnail files from data folder
-            let url = file_path.slice(0,file_path.lastIndexOf(".")).replace(/\\/g,"\\\\")+"thumb.jpg"
+            let url = file_path.slice(0).replace(/\\/g,"\\\\");
            
             var overlay = L.imageOverlay.rotated(url, topleft, topright, bottomleft, {
                 opacity: 1,
