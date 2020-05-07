@@ -18,10 +18,11 @@ import fileManipulation from './FileManipulationActions';
 //
 
 export default function FileManipulationMenu(props) {
-    const inputFiles = props.inputFiles;
     const classes = props.classes;
     const open = props.open;
     const onClose = props.onClose;
+    const updateImages = props.updateImages;
+
     const [selectedFiles, setSelectedFiles] = React.useState();
     const { dialog } = window.require('electron').remote;
     const [ManipulationProperties, SetManipulationProperties] = React.useState({
@@ -125,8 +126,9 @@ export default function FileManipulationMenu(props) {
             }
         }
         if (!destExists && DBsuccess) {
-            alert(action + " Completed");
+            alert(action + " Initiated");
         }
+        await updateImages();
 
     }
 

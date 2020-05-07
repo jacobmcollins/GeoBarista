@@ -7,7 +7,7 @@ import ImageMenuFilterDialog from "./ImageMenuFilterDialog";
 import ImageMenuThumbnailDialog from './ImageMenuThumbnailDialog';
 
 export default function ImageMenu(props) {
-    const {classes, toggleImageMenu, open, images, openDialog, selectImageById, sortImages, setImageVisibleById, filterImages, createOverlay, addOverlayToMap, removeOverlayOffMap, zoomToImage, FileManipulationButton} = props;
+    const { classes, toggleImageMenu, open, images, openDialog, selectImageById, sortImages, setImageVisibleById, filterImages, createOverlay, addOverlayToMap, removeOverlayOffMap, zoomToImage, FileManipulationButton, updateImages } = props;
     const [filterDialogOpen, setFilterDialogOpen] = React.useState(false);
     const [thumbnailDialogOpen, setThumbnailDialogOpen] = React.useState(false);
     const [thumbnailPathState, setThumbnailPathState] = React.useState("");
@@ -67,14 +67,16 @@ export default function ImageMenu(props) {
                         <CancelIcon />
                     </IconButton >
                 </Toolbar>
-                <ImageMenuToolbar 
-                    images={images} 
-                    openDialog={openDialog} 
+                <ImageMenuToolbar
+                    images={images}
+                    openDialog={openDialog}
                     toggleFilterDialogOpen={toggleFilterDialogOpen}
                     createOverlay={createOverlay}
                     addOverlayToMap={addOverlayToMap}
                     removeOverlayOffMap={removeOverlayOffMap}
                     FileManipulationButton={FileManipulationButton}
+                    updateImages={updateImages}
+
                 />
                 <ImageTable
                     images={images}

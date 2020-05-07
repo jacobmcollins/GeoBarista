@@ -14,7 +14,7 @@ import MainMenu from './components/MainMenu';
 import ImageMenu from './components/ImageMenu/ImageMenu';
 import Client from './Client';
 import ComLineOptions from './components/ComLineOptions';
-import {setLocStorage, thumbnails, imgEXT, externalViewer} from './Tools/initLocStorage';
+import { setLocStorage, thumbnails, imgEXT, externalViewer } from './Tools/initLocStorage';
 import L from 'leaflet';
 import FileManipulationButton from './components/FileManipulationButton';
 
@@ -168,12 +168,13 @@ function Main() {
         }
     }
     const sortImages = async (field, direction, fieldSecondary, directionSecondary) => {
-        // if there is a secondary sort
+        // if there is a secondary sort (in this case is sort selected)
+        // sorts by secondary sort then primary sort
         if (directionSecondary) {
-            let res = await Client.get(filterParams, { [field]: direction, [fieldSecondary]: directionSecondary });
+            let res = await Client.get(filterParams, { [fieldSecondary]: directionSecondary, [field]: direction, });
             setImages(res.data);
             await setSortParams({
-                [field]: direction, [fieldSecondary]: directionSecondary
+                [fieldSecondary]: directionSecondary, [field]: direction
             });
         }
         // if there is only a primary sort
@@ -185,6 +186,10 @@ function Main() {
             });
         }
     }
+    const updateImages = async () => {
+        let res = await Client.get(filterParams, sortParams);
+        setImages(res.data);
+    }
     const filterImages = async (images, newFilterParams) => {
         for (const image of images) {
             await Client.update(image._id, 'selected', false);
@@ -194,11 +199,12 @@ function Main() {
         setFilterParams(newFilterParams);
     }
     const onChange = async (e) => {
+        console.log("on change");
         var files = fileRef.current.files;
         // console.log('files', files)
         var i;
         var fileObj = [];
-        for (i=0; i < files.length; i++) {
+        for (i = 0; i < files.length; i++) {
             // console.log('file', files[i])
             var name = files[i].name;
             var path = files[i].path;
@@ -258,20 +264,20 @@ function Main() {
             extViewer: e.target.value
         })
     }
-    const createOverlay = (file_path, points) =>{
+    const createOverlay = (file_path, points) => {
         //points format: Long, Lat instead of Lat, Long
-        let topleft    = L.latLng(points[0][1], points[0][0]),
-            topright   = L.latLng(points[1][1],points[1][0]),
+        let topleft = L.latLng(points[0][1], points[0][0]),
+            topright = L.latLng(points[1][1], points[1][0]),
             bottomleft = L.latLng(points[3][1], points[3][0]);
 
-            //change file path to load thumbnail files from data folder
-            let url = file_path.slice(0).replace(/\\/g,"\\\\");
-           
-            var overlay = L.imageOverlay.rotated(url, topleft, topright, bottomleft, {
-                opacity: 1,
-                interactive: true,
-            });
-            return overlay
+        //change file path to load thumbnail files from data folder
+        let url = file_path.slice(0).replace(/\\/g, "\\\\");
+
+        var overlay = L.imageOverlay.rotated(url, topleft, topright, bottomleft, {
+            opacity: 1,
+            interactive: true,
+        });
+        return overlay
     }
 
     const addOverlayToMap = (overlay) => {
@@ -295,11 +301,11 @@ function Main() {
         <div className={classes.root} >
             <CssBaseline />
             <Header classes={classes} toggleMainMenu={toggleMainMenu} toggleImageMenu={toggleImageMenu} />
-            <GeoBaristaMap 
+            <GeoBaristaMap
                 mapRef={mapRef}
                 geoJsonRef={geoJsonRef}
-                classes={classes} 
-                imageMenuOpen={state.imageMenuOpen} 
+                classes={classes}
+                imageMenuOpen={state.imageMenuOpen}
                 images={images}
                 selectImageById={selectImageById}
                 selectImagesById={selectImagesById}
@@ -311,7 +317,7 @@ function Main() {
                 openDialog={openDialog}
                 toggleOptionsMenu={toggleOptionsMenu}
             />
-            <ImageMenu 
+            <ImageMenu
                 classes={classes}
                 open={state.imageMenuOpen}
                 toggleImageMenu={toggleImageMenu}
@@ -326,6 +332,7 @@ function Main() {
                 removeOverlayOffMap={removeOverlayOffMap}
                 zoomToImage={zoomToImage}
                 FileManipulationButton={FileManipulationButton}
+                updateImages={updateImages}
             />
             <ComLineOptions
                 classes={classes}
