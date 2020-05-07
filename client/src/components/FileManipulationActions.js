@@ -37,6 +37,7 @@ const moveFile = (srcPath, destPath, destFileName) => {
             if (err) {
                 alert("An error ocurred moving the file" + err.message);
                 console.log(err);
+                return;
             }
             console.log("File succesfully moved");
         });

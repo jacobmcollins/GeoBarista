@@ -535,7 +535,6 @@ export default function FileManipulationMenu(props) {
                     disabled={ManipulationProperties.action === 'Delete' ? true : false} >
                     <PermMediaIcon />
                 </IconButton>
-
             </div>
             <div style={divStyle}>
                 <Checkbox
