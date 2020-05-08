@@ -84,7 +84,9 @@ function server(client_path) {
 
   app.post('/api/v2/image', async function (req, res) {
     let file_list = req.body.file_obj;
+    console.log("File List : ", file_list);
     let file_list_obj = JSON.parse(file_list);
+    console.log("File List OBj : ", file_list_obj);
     let fileHandlerObj = new fileHandler(file_list_obj);
     await fileHandlerObj.processList();
     // console.log(JSON.stringify(fileHandlerObj.file_list));
@@ -106,6 +108,9 @@ function server(client_path) {
     }
     // query filemodel with fileQuery array
     var getFiles = await fileModel.find({ 'base_path': { $in: fileQuery } }, { _id: 0, extension: 1, path: 1, thumb: 1, filename: 1, base_path: 1 });
+    var testDB = await fileModel.find({}, { filename: 1, extension: 1 });
+    console.log("ALL in filemodel", testDB);
+    console.log("server to file manip : ", getFiles);
     res.json(getFiles);
   });
 
@@ -115,7 +120,6 @@ function server(client_path) {
     let baseSet = new Set();  //used to filter out same base_paths
     let remBase = []; // used to check for existance in filemodel
     let remPath = []; // used to delete from fileModel
-    let remBaseFull = []; // used to delete from imageModel
     try {
       //seperate base_path and path, path into array, base_path into set
       for (i = 0; i < toRemove.length; i++) {
@@ -125,19 +129,8 @@ function server(client_path) {
       remBase = Array.from(baseSet);
       // remove paths from fileModel
       await fileModel.deleteMany({ path: { $in: remPath } });
-      // check if base_path in fileModel, if true then do nothing , if false remove from image model
-      for (i = 0; i < remBase.length; i++) {
-        let check = await fileModel.exists({ base_path: remBase[i] });
-        if (check) {
-          //partial remove, do nothing
-        }
-        else {
-          // full remove, add to remBaseFull
-          remBaseFull.push(remBase[i]);
-        }
-      }
-      // remove images from image model that no longer have a associated file in fileModel
-      await imageModel.deleteMany({ base_path: { $in: remBaseFull } });
+      // remove from image model
+      await imageModel.deleteMany({ base_path: { $in: remBase } });
       success = true;
     }
     catch (e) {
@@ -164,15 +157,15 @@ function server(client_path) {
   });
 
   //Thumbnail Generation calls
-  app.put('/api/v2/images/allThumbnails', async function(req, res){
+  app.put('/api/v2/images/allThumbnails', async function (req, res) {
     const command = req.body.thumbCommand;
     const imgext = req.body.extension;
     let newPaths, response;
     try {
       newPaths = await thumbnailGen.generateAllThumbnails(command, imgext, await imageModel.find({}).sort({}).exec());
-      if(newPaths !== null) {
+      if (newPaths !== null) {
         for (var key in newPaths) {
-          response = await imageModel.findByIdAndUpdate(key, {"thumbnail_path": newPaths[key]});
+          response = await imageModel.findByIdAndUpdate(key, { "thumbnail_path": newPaths[key] });
         }
       }
     }
@@ -185,7 +178,7 @@ function server(client_path) {
     });
   });
 
-  app.put('/api/v2/images/oneThumbnails', async function(req, res){
+  app.put('/api/v2/images/oneThumbnails', async function (req, res) {
     const command = req.body.thumbCommand;
     const imgext = req.body.extension;
     const imagePath = req.body.imgPath;
