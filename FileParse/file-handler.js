@@ -32,6 +32,7 @@ class fileHandler {
             }
             // Loop through each extension found in extDic
             // TODO: make these work with different character cases in ext
+            console.log("ExtDIC------------: ", extDic);
             for (const key in extDic) {
 
                 if (key.match(/\.(ppj)$/i)) {
@@ -43,40 +44,54 @@ class fileHandler {
                         await this.ppjinfo(element.path, element.name);
                     }
                 }
-                if (key.match(/\.(csv)$/i)) {
+                else if (key.match(/\.(cr2)$/i)) {
+                    console.log("Parsing all .cr2 files");
+                    for (const element of extDic[key]) {
+                        await this.ppjinfo(element.path, element.name);
+                    }
+                }
+                else if (key.match(/\.(csv)$/i)) {
                     // if(key == ".csv") {
                     console.log("Parsing all .csv files");
                     for (const element of extDic[key]) {
                         await this.csvinfo(element.path, element.name);
                     }
                 }
-                if (key.match(/\.(ntf)$/i)) {
+                else if (key.match(/\.(ntf)$/i)) {
                     // if(key == ".ntf") {
                     console.log("Parsing all .ntf files");
                     for (const element of extDic[key]) {
                         await this.ntfinfo(element.path, element.name);
                     }
                 }
-                if (key.match(/\.(jpeg|jpg)$/i)) {
+                else if (key.match(/\.(jpeg|jpg)$/i)) {
                     // if(key == ".jpg") {
                     console.log("Parsing all .jpg files");
                     for (const element of extDic[key]) {
                         await this.jpginfo(element.path, element.name);
                     }
                 }
-                if (key.match(/\.(tif|tiff)$/i)) {
+                else if (key.match(/\.(tif|tiff)$/i)) {
                     // if(key == ".tif") {
                     console.log("Parsing all .tif files");
                     for (const element of extDic[key]) {
                         await this.tiffinfo(element.path, element.name);
                     }
                 }
-                if (key.match(/\.(urw)$/i)) {
+                else if (key.match(/\.(urw)$/i)) {
                     // if(key == ".urw") {
                     console.log("Parsing all .urw files");
                     for (const element of extDic[key]) {
                         await this.urwinfo(element.path, element.name);
                     }
+                }
+                else {
+                    console.log("Parsing all ", key, " files");
+                    console.log(String(key));
+                    for (const element of extDic[key]) {
+                        await this.custominfo(element.path, element.name, key);
+                    }
+
                 }
             }
             // TODO: Loop through all images, make sure any
@@ -295,7 +310,7 @@ class fileHandler {
 
                 return console.log("image model saved, base_name " + imagedata.base_path);
             });
-        console.log("Image after update: " + imageDBObj);
+        // console.log("Image after update: " + imageDBObj);
 
     }
 
@@ -472,6 +487,33 @@ class fileHandler {
         //console.log("toinsert: " + JSON.stringify(toInsert));
         await this.addImageToDB(toInsert);
 
+    }
+    // Creates file and image model records in db for a .cr2 file
+    async cr2info(filepath, filename) {
+        let filenameData = this.parseFilename(filename);
+        let folder = path.dirname(filepath).split(path.sep).pop();
+        let fileInserted = await this.addFileToDB(filepath, ".cr2", filename, {});
+        let base_name = this.chopfilename(filename);
+        let base_path = this.chopfilename(filepath);
+        var imgdbobj = {
+            'base_name': base_name,
+            'base_path': base_path,
+            'mission': folder,
+            'rgb_data': fileInserted,
+            'rgb_data_path': filepath,
+            'cr2_data': fileInserted,
+            'cr2_data_path': filepath
+        };
+        //console.log("imgobjdb: " + imgdbobj);
+        let toInsert = this.addFilenameImage(imgdbobj, filenameData);
+        //console.log("toinsert: " + JSON.stringify(toInsert));
+        await this.addImageToDB(toInsert);
+    }
+    // Creates file model records in db for a custom file
+    async custominfo(filepath, filename, fileExt) {
+        let filenameData = this.parseFilename(filename);
+        let folder = path.dirname(filepath).split(path.sep).pop();
+        let fileInserted = await this.addFileToDB(filepath, fileExt, filename, {});
     }
     // Check last 5 chars of filename for an extension
     // Chop it off if found
