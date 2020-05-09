@@ -37,7 +37,8 @@ export default function FileManipulationMenu(props) {
         allFiles: false,
         custom: false,
         customText: '',
-        destinationDirectory: ''
+        destinationDirectory: '',
+        overwrite: false,
     });
     const [ManipulationCount, SetManipulationCount] = React.useState({
         thumbnailImagesCount: 0,
@@ -68,36 +69,63 @@ export default function FileManipulationMenu(props) {
     }
 
     // todo where the Actions calls to be executed will be called
-    const executeAction = async (action, actionDirectory, actionFiles) => {
+    const executeAction = async (action, actionDirectory, actionFiles, overwrite) => {
         console.log("Performing : ", action);
-        let success = false;
+        let destExists = false;
+        let DBsuccess = true;
         if (action != "Delete") {
             console.log("Destination :", actionDirectory);
         }
         console.log("On", actionFiles.length, " files");
         if (action === "Delete") {
-            success = await Client.removeFilesByBasePath(actionFiles);
-            if (success) {
+            DBsuccess = await Client.removeFilesByBasePath(actionFiles);
+            if (DBsuccess) {
                 for (var file in actionFiles) {
                     fileManipulation.deleteFile(actionFiles[file].path);
                 }
             }
         }
         else if (action === "Copy") {
-            for (var file in actionFiles) {
-                console.log("action name :", actionFiles[file].name);
-                fileManipulation.copyFile(actionFiles[file].path, actionDirectory, actionFiles[file].name);
-
+            console.log("OVERWRITE : ", overwrite);
+            if (!overwrite) {
+                for (var file in actionFiles) {
+                    destExists = fileManipulation.checkOverwrite(actionDirectory, actionFiles[file].name);
+                    console.log("dest exists : ", destExists);
+                    if (destExists === true) {
+                        alert("Canceling copy. A file already exsists at destination with the same name, check overwrite to force copy");
+                        break;
+                    }
+                }
+            }
+            if (!destExists) {
+                for (var file in actionFiles) {
+                    console.log("action name :", actionFiles[file].name);
+                    fileManipulation.copyFile(actionFiles[file].path, actionDirectory, actionFiles[file].name);
+                }
             }
         }
         else if (action === "Move") {
-            success = await Client.removeFilesByBasePath(actionFiles);
-            if (success) {
+            console.log("OVERWRITE : ", overwrite);
+            if (!overwrite) {
+                for (var file in actionFiles) {
+                    destExists = fileManipulation.checkOverwrite(actionDirectory, actionFiles[file].name);
+                    console.log("dest exists : ", destExists);
+                    if (destExists === true) {
+                        alert("Canceling move. A file already exsists at destination with the same name, check overwrite to force move");
+                        break;
+                    }
+                }
+            }
+            if (!destExists) {
                 for (var file in actionFiles) {
                     console.log("action name :", actionFiles[file].name);
                     fileManipulation.moveFile(actionFiles[file].path, actionDirectory, actionFiles[file].name);
                 }
+                DBsuccess = await Client.removeFilesByBasePath(actionFiles);
             }
+        }
+        if (!destExists && DBsuccess) {
+            alert(action + " Completed");
         }
 
     }
@@ -108,6 +136,7 @@ export default function FileManipulationMenu(props) {
         let action = ManipulationProperties.action;
         let actionDirectory = ManipulationProperties.destinationDirectory;
         let actionFiles = [];
+        let overwrite = ManipulationProperties.overwrite;
         if ((actionDirectory === "" || actionDirectory === undefined) && action != "Delete") {
             alert("A Destination Directory must be selected to perfom action");
         }
@@ -148,7 +177,7 @@ export default function FileManipulationMenu(props) {
                     }
                 }
             }
-            executeAction(action, actionDirectory, actionFiles);
+            executeAction(action, actionDirectory, actionFiles, overwrite);
             handleClose();
         }
     }
@@ -177,7 +206,8 @@ export default function FileManipulationMenu(props) {
     //TODO update file extension counts too 
     const handleOpen = async () => {
         const returnedFiles = await Client.fileManip();
-        await setSelectedFiles(returnedFiles.data);
+        setSelectedFiles(returnedFiles.data);
+        console.log(returnedFiles.data);
         await getCounts(returnedFiles.data);
     }
     const getCounts = async (files) => {
@@ -222,7 +252,7 @@ export default function FileManipulationMenu(props) {
                 }
             }
         }
-        await SetManipulationCount({
+        SetManipulationCount({
             ...ManipulationCount,
             thumbnailImagesCount: thumbnailImagesCount,
             CR2Count: CR2Count,
@@ -238,6 +268,8 @@ export default function FileManipulationMenu(props) {
         })
     }
 
+
+
     // close dialog by -- switching open state in finalManipulationButton to false
     const handleClose = () => {
         SetManipulationProperties({
@@ -252,6 +284,7 @@ export default function FileManipulationMenu(props) {
             PPJ: false,
             allFiles: false,
             custom: false,
+            overwrite: false,
         })
         onClose();
     };
@@ -263,15 +296,21 @@ export default function FileManipulationMenu(props) {
             action: setAction
         });
     }
-
-    //sets the selected flag for file extension checkboxes
-    const setFileTypes = async (field, value) => {
-        let select = await getTotalSelectedCount(field, value);
-        await SetManipulationProperties({
+    const setOverwrite = (field, value) => {
+        SetManipulationProperties({
             ...ManipulationProperties,
             [field]: value,
         });
-        await SetManipulationCount({
+    }
+
+    //sets the selected flag for file extension checkboxes
+    const setFileTypes = (field, value) => {
+        let select = getTotalSelectedCount(field, value);
+        SetManipulationProperties({
+            ...ManipulationProperties,
+            [field]: value,
+        });
+        SetManipulationCount({
             ...ManipulationCount,
             selectedCount: select
 
@@ -482,25 +521,38 @@ export default function FileManipulationMenu(props) {
 
     // directory selection section of dialog
     const ManipulationDirrectory = (
-        <div style={divStyle}>
-            <TextField
-                id="destinationDirectory"
-                label={"Destination Directory"}
-                value={ManipulationProperties.destinationDirectory}
-                onChange={(e) => handleDestinationDirectoryText(e)}
-                variant={ManipulationProperties.action === 'Delete' ? "filled" : "outlined"}
-                disabled={ManipulationProperties.action === 'Delete' ? true : false} />
-            <IconButton
-                onClick={openFolderDialog}
-                disabled={ManipulationProperties.action === 'Delete' ? true : false} >
-                <PermMediaIcon />
-            </IconButton>
-        </div>
+        <React.Fragment>
+            <div style={divStyle}>
+                <TextField
+                    id="destinationDirectory"
+                    label={"Destination Directory"}
+                    value={ManipulationProperties.destinationDirectory}
+                    onChange={(e) => handleDestinationDirectoryText(e)}
+                    variant={ManipulationProperties.action === 'Delete' ? "filled" : "outlined"}
+                    disabled={ManipulationProperties.action === 'Delete' ? true : false} />
+                <IconButton
+                    onClick={openFolderDialog}
+                    disabled={ManipulationProperties.action === 'Delete' ? true : false} >
+                    <PermMediaIcon />
+                </IconButton>
+            </div>
+            <div style={divStyle}>
+                <Checkbox
+                    color={'default'}
+                    disabled={ManipulationProperties.action === 'Delete' ? true : false}
+                    checked={ManipulationProperties.overwrite}
+                    onChange={((e) => {
+                        setOverwrite('overwrite', e.target.checked);
+                    })}
+                />
+                {ManipulationProperties.action === 'Delete' ? <del>overwrite existing files</del> : "overwrite existing files"}
+            </div>
+        </React.Fragment>
     )
 
     //Main dialog section
     return (
-        <Dialog onEnter={handleOpen} onClose={handleClose} aria-labelledby="File-manipulation-menus" open={open}>
+        <Dialog onEnter={async () => { await handleOpen() }} onClose={handleClose} aria-labelledby="File-manipulation-menus" open={open}>
             <DialogTitle style={divStyle} id="File-manipulation-menus">File-Manipulation-Menu</DialogTitle>
             <TableBody>
                 <TableRow>

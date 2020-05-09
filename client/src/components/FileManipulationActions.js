@@ -17,7 +17,6 @@ const deleteFile = (filepath) => {
 }
 const copyFile = (srcPath, destPath, destFileName) => {
     var dest = path.join(destPath, destFileName);
-    console.log("TEST :", dest);
     if (fs.existsSync(srcPath)) {
         fs.copyFile(srcPath, dest, (err) => {
             if (err) {
@@ -33,7 +32,6 @@ const copyFile = (srcPath, destPath, destFileName) => {
 }
 const moveFile = (srcPath, destPath, destFileName) => {
     var dest = path.join(destPath, destFileName);
-    console.log("TEST :", dest);
     if (fs.existsSync(srcPath)) {
         fs.rename(srcPath, dest, (err) => {
             if (err) {
@@ -47,5 +45,10 @@ const moveFile = (srcPath, destPath, destFileName) => {
         alert("This file doesn't exist, cannot move");
     }
 }
-const fileManipulation = { deleteFile, copyFile, moveFile };
+// returns true if the file exists at the destination 
+const checkOverwrite = (destPath, destFileName) => {
+    var dest = path.join(destPath, destFileName);
+    return fs.existsSync(dest);
+}
+const fileManipulation = { deleteFile, copyFile, moveFile, checkOverwrite };
 export default fileManipulation;
