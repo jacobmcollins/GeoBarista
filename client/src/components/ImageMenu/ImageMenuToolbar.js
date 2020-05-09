@@ -8,7 +8,7 @@ import Switch from '@material-ui/core/Switch';
 import FileManipulationButton from './../FileManipulationButton';
 
 import Client from '../../Client';
-import {getLocStorage, thumbnails, imgEXT} from '../../Tools/initLocStorage';
+import { getLocStorage, thumbnails, imgEXT } from '../../Tools/initLocStorage';
 
 
 const defaultToolbarStyles = {
@@ -27,33 +27,33 @@ class ImageMenuToolbar extends React.Component {
   }
 
   handleChange = async (event) => {
-     this.setState({checked: event.target.checked });
-     console.log("toggle: " + event.target.checked);
-    
-     let currentOverlays = this.state.overlays
-     if(event.target.checked){
-         let newThumbnailList = await Client.generateAllThumbnails(getLocStorage(thumbnails), getLocStorage(imgEXT));
-       for (const image of this.props.images) {
-           if (!(image._id in this.state.overlays)) {
-             var overlay = this.props.createOverlay(image.thumbnail_path, JSON.parse(image.points))      //The order of four points from DB: topLeft,topRight,bottomRight,bottomLeft
-             currentOverlays[image._id] = overlay
-             this.setState({
-               overlays: currentOverlays
-             })
-         }
-         this.props.addOverlayToMap(currentOverlays[image._id])
-       }
-     }
-     else {
-       for (let [key, value] of Object.entries(this.state.overlays)) {
-         this.props.removeOverlayOffMap(value)
+    this.setState({ checked: event.target.checked });
+    console.log("toggle: " + event.target.checked);
+
+    let currentOverlays = this.state.overlays
+    if (event.target.checked) {
+      let newThumbnailList = await Client.generateAllThumbnails(getLocStorage(thumbnails), getLocStorage(imgEXT));
+      for (const image of this.props.images) {
+        if (!(image._id in this.state.overlays)) {
+          var overlay = this.props.createOverlay(image.thumbnail_path, JSON.parse(image.points))      //The order of four points from DB: topLeft,topRight,bottomRight,bottomLeft
+          currentOverlays[image._id] = overlay
+          this.setState({
+            overlays: currentOverlays
+          })
         }
+        this.props.addOverlayToMap(currentOverlays[image._id])
+      }
     }
-    
+    else {
+      for (let [key, value] of Object.entries(this.state.overlays)) {
+        this.props.removeOverlayOffMap(value)
+      }
+    }
+
   }
 
   render() {
-    const { classes, openDialog, toggleFilterDialogOpen, toggleSortDialogOpen, FileManipulationButton } = this.props;
+    const { classes, openDialog, toggleFilterDialogOpen, toggleSortDialogOpen, FileManipulationButton, images, setImages, sortParams, filterParams, updateImages } = this.props;
 
     return (
       <React.Fragment>
@@ -75,7 +75,10 @@ class ImageMenuToolbar extends React.Component {
           name="toggleThumbnail"
           inputProps={{ 'aria-label': 'primary checkbox' }}
         />
-        <FileManipulationButton />
+        <FileManipulationButton
+          updateImages={updateImages}
+
+        />
       </React.Fragment>
     );
   }
