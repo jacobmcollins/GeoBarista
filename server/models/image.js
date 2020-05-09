@@ -4,24 +4,34 @@ const mongoose = require('mongoose');
  * image model schema.
  */
 const imageSchema = new mongoose.Schema({
-    //_id: { type: String, required: true }, 
-    base_name: { type: String, required: true },                // if BASE_NAME.ppj is the ppj read in, BASE_NAME.extension are any associated files, and BASE_NAME_thumb.jpeg is the thumbnail
-    base_path: { type: String, required: true },                // BASE_NAME.ppj
-    //file_extension: { type: String, required: true }, 
+    // Filename without extension
+    base_name: { type: String, required: true }, 
+    // Full path without extension
+    base_path: { type: String, required: true },                
+    // Whether or not this image has a thumbnail 
     thumbnail_bool: { type: Boolean, default: false },
-    thumbnail_path: { type: String, default: "Unknown" },       // BASE_NAME_thumb.jpeg
-    thumbnail_extension: { type: String, default: "Unknown" },  // TODO: figure out if this is always jpeg
-    mission: { type: String, default: "Unknown" },              // Directory that BASE_NAME.ppj is located in
+    // Whether or not this image is a thumbnail with no 'parent'
+    thumbnail_only: { type: Boolean, default: false},
+    // Path to thumnail file (if extant)
+    thumbnail_path: { type: String, default: "Unknown" }, 
+    // Thumbnail file extension      
+    thumbnail_extension: { type: String, default: "Unknown" },
+    // Folder name containing image  
+    mission: { type: String, default: "Unknown" }, 
+    // Values parsed from filename             
     camera: { type: String, default: "Unknown" },
+    time: { type: String, default: "Unknown" },
+    imgid: { type: String, default: "Unknown" }, 
+    // Values parsed from .csv files
     fov: { type: String, default: "Unknown" },
     lla: { type: String, default: "Unknown" },
     velocity: { type: String, default: "Unknown" },
-    time: { type: String, default: "Unknown" },
     gsd: { type: String, default: "Unknown" },
-    points: { type: String },                                    // TODO: change this to a Map/Json type
+    // Values parsed from .ppj files    
+    points: { type: String },   
+    // Front end state values                                 // TODO: change this to a Map/Json type
     selected: { type: Boolean, default: false },                  // Determines if the image is marked selected for some action (e.g. generate thumbnails)
-    visible: { type: Boolean, default: true },
-    imgid: { type: String, default: "Unknown" },                  // Unique camera id from filename
+    visible: { type: Boolean, default: true },                     
 
     rgb_data: {
         type: mongoose.Schema.Types.ObjectId,
