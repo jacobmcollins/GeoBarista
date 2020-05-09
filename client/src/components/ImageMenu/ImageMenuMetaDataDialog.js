@@ -18,14 +18,14 @@ export default function ImageMenuMetaDataDialog(props) {
   {
     imageInfo = (
       <DialogContentText>
-        Mission: {image.mission}
-        Camera: {image.camera}
-        Time: {image.time}
-        ImageID: {image.imgid}
-        FOV: {image.fov}
-        LLA: {image.lla}
-        Velocity {image.velocity}
-        GSD: {image.gsd}
+        Mission: {image.mission} | 
+        Camera: {image.camera} | 
+        Time: {image.time} | 
+        ImageID: {image.imgid} | 
+        FOV: {image.fov} | 
+        LLA: {image.lla} | 
+        Velocity {image.velocity} | 
+        GSD: {image.gsd} | 
       </DialogContentText>
     )
   }
@@ -42,7 +42,13 @@ export default function ImageMenuMetaDataDialog(props) {
 
     ppjInfo = (
       <DialogContentText>
-        Sensor Width: ppjData.sensorWidth
+        Sensor Width: {ppjData.sensorWidth} | 
+        Sensor Height: {ppjData.sensorHeight} | 
+        CI Row: {ppjData.ciRow} | 
+        CD Radial: {ppjData.cdRadial} | 
+        CD Tangential: {ppjData.cdTangential} | 
+        ECEF Row: {ppjData.ecefRow} | 
+        RMS Error: {ppjData.RMSerror} | 
       </DialogContentText>
     )
   }
@@ -52,8 +58,8 @@ export default function ImageMenuMetaDataDialog(props) {
       onClose={() => { toggleMetaDataDialogOpen(false) }}
     >
       <DialogContent>
-        TEST: {imageInfo}
-        
+        Base Image Info: {imageInfo}
+        PPJ Data: {ppjInfo}
         
       </DialogContent>
       <DialogActions>

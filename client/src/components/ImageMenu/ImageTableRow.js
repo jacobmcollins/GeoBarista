@@ -50,8 +50,9 @@ export default function ImageTableRow(props) {
                         <TableCell component="th" scope="row" onContextMenu={async (event) => {
                             updateThumbnail(image.thumbnail_path); 
                             handleContextClick(event); 
-                            await updateImage(image);
-                            image.ppjJsonData = await Client.get_meta_data(image.ppj_data)}}>
+                            //updateImage(image);
+                            image.ppjJsonData = await Client.get_meta_data(image.ppj_data);
+                            updateImage(image);}}>
                             {image[column.id]}
                         </TableCell>
                     )
