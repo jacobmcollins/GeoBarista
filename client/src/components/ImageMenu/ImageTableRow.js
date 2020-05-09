@@ -7,10 +7,11 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import ZoomInIcon from '@material-ui/icons/ZoomIn';
+import Client from '../../Client';
 
 export default function ImageTableRow(props) {
     const { columns, image, updateThumbnail, selectImageById, setImageVisibleById, zoomToImage,  
-    handleContextClick } = props;
+    handleContextClick, updateImage } = props;
     return (
         <TableRow key={image._id} style={{ height: 33 }} >
             <TableCell padding="checkbox" >
@@ -46,7 +47,10 @@ export default function ImageTableRow(props) {
             { 
                 columns.map((column) => {
                     return (
-                        <TableCell component="th" scope="row" onContextMenu={(event) => {updateThumbnail(image.thumbnail_path); handleContextClick(event); }}>
+                        <TableCell component="th" scope="row" onContextMenu={async (event) => {
+                            updateThumbnail(image.thumbnail_path); 
+                            handleContextClick(event); 
+                            await updateImage(image);}}>
                             {image[column.id]}
                         </TableCell>
                     )

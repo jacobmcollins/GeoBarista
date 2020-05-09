@@ -80,6 +80,10 @@ const imageSchema = new mongoose.Schema({
         ref: "File",
         default: null
     },
+
+    ppjJsonData: { type: String, default: "empty"},
+    csvJsonData: { type: String, default: "empty"},
+
 });
 
 module.exports = mongoose.model('Image', imageSchema);
