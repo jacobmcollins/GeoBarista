@@ -4,7 +4,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import { DialogContentText } from '@material-ui/core';
-import Client from '../../Client';
+
 
 export default function ImageMenuMetaDataDialog(props) {
   const { open, toggleMetaDataDialogOpen, image } = props;
@@ -38,7 +38,7 @@ export default function ImageMenuMetaDataDialog(props) {
   if(image !== undefined)
   {
     //image.ppjJsonData = Client.get_meta_data(image.ppj_data)
-    //var ppjData = JSON.parse(image.ppjJsonData)
+    var ppjData = JSON.parse(image.ppjJsonData)
 
     ppjInfo = (
       <DialogContentText>
