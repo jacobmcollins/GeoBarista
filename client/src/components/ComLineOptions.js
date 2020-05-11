@@ -28,44 +28,46 @@ export default function ComLineOptions(props) {
     const {classes, optionsMenuOpen, getTextToDisplay, toggleOptionsMenu, saveData, handleThumbnails, handleImgEXT, handleExtViewer, forceStateRefresh} = props;
 
     return (
-        <Dialog fullScreen={true} open={optionsMenuOpen} onClose={toggleOptionsMenu(false)}>
-<AppBar className={classes.appBarOptions}>
-        <Toolbar>
-        <IconButton edge="start" color="inherit" onClick={toggleOptionsMenu(false)}>
-<CloseIcon/>
-    </IconButton>
-    <Button id="reset" color="inherit" onClick={() => initLocStorage(true) && forceStateRefresh()}>
-    Reset Settings
-    </Button>
-    <div className={classes.grow}/>
-    <Button color="inherit" onClick={saveData}>
-        save
-        </Button>
-        </Toolbar>
-        </AppBar>
-        <List>
-        <ListItem>
-        <ListItemText primary={getTextToDisplay(thumbnails)}/>
-    </ListItem>
-    <ListItem>
-    <TextField id="thumbnails" fullWidth label={getLocStorage(thumbnails)} onChange={handleThumbnails} variant="filled"/>
-        </ListItem>
-        <div className={classes.optionsMenuSpacing}>
-        <ListItem>
-        <ListItemText primary={getTextToDisplay(imgEXT)}/>
-    </ListItem>
-    <ListItem>
-    <TextField id="imgExtension" label={getLocStorage(imgEXT)} onChange={handleImgEXT} variant="filled"/>
-        </ListItem>
+        <div>
+            <Dialog fullScreen={true} open={optionsMenuOpen} onClose={toggleOptionsMenu(false)}>
+                <AppBar className={classes.appBarOptions}>
+                    <Toolbar>
+                        <IconButton edge="start" color="inherit" onClick={toggleOptionsMenu(false)}>
+                            <CloseIcon/>
+                        </IconButton>
+                        <Button id="reset" color="inherit" onClick={() => initLocStorage(true) && forceStateRefresh()}>
+                            Reset Settings
+                        </Button>
+                        <div className={classes.grow}/>
+                        <Button color="inherit" onClick={saveData}>
+                            save
+                        </Button>
+                    </Toolbar>
+                </AppBar>
+                <List id="optionsList">
+                    <ListItem>
+                        <ListItemText primary={getTextToDisplay(thumbnails)} secondary="%1 = Image Path %2 = Thumbnail Path"/>
+                    </ListItem>
+                    <ListItem>
+                        <TextField id="thumbnails" fullWidth label={getLocStorage(thumbnails)} onChange={handleThumbnails} variant="filled"/>
+                    </ListItem>
+                    <div className={classes.optionsMenuSpacing}>
+                        <ListItem>
+                            <ListItemText primary={getTextToDisplay(imgEXT)}/>
+                        </ListItem>
+                        <ListItem>
+                            <TextField id="imgExtension" label={getLocStorage(imgEXT)} onChange={handleImgEXT} variant="filled"/>
+                        </ListItem>
+                    </div>
+                    <Divider/>
+                    <ListItem>
+                        <ListItemText primary={getTextToDisplay(externalViewer)}/>
+                    </ListItem>
+                    <ListItem>
+                        <TextField id="geojson" fullWidth label={getLocStorage(externalViewer)} onChange={handleExtViewer} variant="filled"/>
+                    </ListItem>
+                </List>
+            </Dialog>
         </div>
-        <Divider/>
-        <ListItem>
-        <ListItemText primary={getTextToDisplay(externalViewer)}/>
-    </ListItem>
-    <ListItem>
-    <TextField id="geojson" fullWidth label={getLocStorage(externalViewer)} onChange={handleExtViewer} variant="filled"/>
-        </ListItem>
-        </List>
-        </Dialog>
 )
 }

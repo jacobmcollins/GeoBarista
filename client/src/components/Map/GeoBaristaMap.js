@@ -9,6 +9,10 @@ import hash from 'object-hash';
 import L from 'leaflet';
 import 'leaflet-imageoverlay-rotated'
 
+import { LeafletConsumer } from 'react-leaflet';
+import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
+
+
 /*const mapRef = createRef();
 const geoJsonRef = createRef();*/
 
@@ -72,6 +76,9 @@ export default function GeoBaristaMap(props) {
         if(!mapRef.current) return;
         setMouse(e.latlng);
     }
+    const handleContextMenu = (e) => {
+        alert("You right-clicked inside the div!");
+    }
     const handleZoom = (e) => {
         if(!mapRef.current) return;
         setZoom(mapRef.current.leafletElement.getZoom());
@@ -131,28 +138,55 @@ export default function GeoBaristaMap(props) {
     }
 
     return (
-        <React.Fragment>
-            <main className={imageMenuOpen ? classes.mainShifted : classes.main}>
-                <Map 
-                    length={4}
-                    onmousemove={handleOnMouseMove}
-                    onzoomend={handleZoom}
-                    onclick={handleOnClick}
-                    ref={mapRef}
-                    style={{height: "100%", width: "100%", zindex: 0}}
-                    zoomControl={false}
-                    viewport={viewPort}
-                    onViewportChanged={onViewPortChanged}
-                >
-                    <TileLayer
-                    attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                    <GeoJSON key={hash(images)} ref={geoJsonRef} data={get_data(images)} style={get_style}/>
-                    <DrawTools selectByGeoJSON={selectByGeoJSON}/>
-                </Map>
-            </main>
-            <ZoomLatLngBox classes={classes} zoom={zoom} latlng={mouse}/>
-        </React.Fragment>
+        <div>
+        <ContextMenuTrigger id="same_unique_identifier" className={classes.contextMenuOptions}>
+                <React.Fragment>
+                    <main className={imageMenuOpen ? classes.mainShifted : classes.main}>
+                        <Map
+                            length={4}
+                            onmousemove={handleOnMouseMove}
+                            onzoomend={handleZoom}
+                            onclick={handleOnClick}
+                            contextMenu={true}
+                            contextmenuItems={[{
+                                text: 'Marker item',
+                                index: 0
+                            }, {
+                                separator: true,
+                                index: 1
+                            }]}
+
+                            ref={mapRef}
+                            style={{height: "100%", width: "100%", zindex: 0}}
+                            zoomControl={false}
+                            viewport={viewPort}
+                            onViewportChanged={onViewPortChanged}
+                        >
+                            <TileLayer
+                            attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                            />
+                            <GeoJSON key={hash(images)} ref={geoJsonRef} data={get_data(images)} style={get_style}/>
+                            <DrawTools selectByGeoJSON={selectByGeoJSON}/>
+                        </Map>
+                    </main>
+                    <ZoomLatLngBox classes={classes} zoom={zoom} latlng={mouse}/>
+                </React.Fragment>
+            </ContextMenuTrigger>
+            <ContextMenu id="same_unique_identifier" className={classes.contextMenuOptions}>
+                <MenuItem>
+                    ContextMenu Item 1
+                </MenuItem>
+                <MenuItem>
+                    ContextMenu Item 2
+                </MenuItem>
+                <MenuItem divider />
+                <MenuItem>
+                    ContextMenu Item 3
+                </MenuItem>
+            </ContextMenu>
+    </div>
     )
 };
+//<ContextMenuTrigger id="same_unique_identifier" className={classes.contextMenuOptions}>
+//

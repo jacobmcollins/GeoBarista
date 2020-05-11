@@ -20,8 +20,8 @@ class ThumbnailUtility{
             //However, will need to add +img ext to the imagePath where img ext is something like '.ntf'...
             thumbnailPath = imagePath.replace(path.extname(imagePath), 'thumb'+imageExt);
 
-            newCommand = command.replace('{}', imagePath);
-            newCommand = newCommand.replace('{}', thumbnailPath);
+            newCommand = command.replace('%1', imagePath);
+            newCommand = newCommand.replace('%2', thumbnailPath);
 
             try {
                 output = execSync(newCommand);
@@ -53,8 +53,8 @@ class ThumbnailUtility{
                     imagePath = imageList[i].base_path + '.ntf'; //.replace(path.extname(imageList[i].file_path), '.ntf');
                     thumbnailPath = imagePath.replace(path.extname(imagePath), 'thumb'+imageExt);
 
-                    newCommand = command.replace('{}', imagePath);
-                    newCommand = newCommand.replace('{}', thumbnailPath);
+                    newCommand = command.replace('%1', imagePath);
+                    newCommand = newCommand.replace('%2', thumbnailPath);
 
                     try {
                         output = execSync(newCommand);
