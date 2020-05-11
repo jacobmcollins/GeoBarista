@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 var Parser = require('../FileParse/ppjParse');
 var ThumbnailUtility = require('../FileParse/ThumbnailUtility');
+var ObjectID = require('mongodb').ObjectID
 
 function server(client_path) {
   const app = express();
@@ -193,6 +194,13 @@ function server(client_path) {
     res.json({
       newPath: newPath
     });
+  });
+  
+  app.get('/api/v2/images/metadataid', async function (req, res) {
+    var getFile = await fileModel.findById(ObjectID(req.query.file_id))
+    var data = getFile.JSONData
+    //data = JSON.parse(data)
+    res.json(data);
   });
 
   return s;

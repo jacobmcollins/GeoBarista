@@ -5,12 +5,15 @@ import ImageTable from "./ImageTable";
 import ImageMenuToolbar from "./ImageMenuToolbar";
 import ImageMenuFilterDialog from "./ImageMenuFilterDialog";
 import ImageMenuThumbnailDialog from './ImageMenuThumbnailDialog';
+import ImageMenuMetaDataDialog from './ImageMenuMetaDataDialog';
 
 export default function ImageMenu(props) {
     const { classes, toggleImageMenu, open, images, openDialog, selectImageById, sortImages, setImageVisibleById, filterImages, createOverlay, addOverlayToMap, removeOverlayOffMap, zoomToImage, FileManipulationButton, updateImages } = props;
     const [filterDialogOpen, setFilterDialogOpen] = React.useState(false);
     const [thumbnailDialogOpen, setThumbnailDialogOpen] = React.useState(false);
     const [thumbnailPathState, setThumbnailPathState] = React.useState("");
+    const [metaDataDialogOpen, setMetaDataDialogOpen] = React.useState(false);
+    const [imageState, setImageState] = React.useState()
 
     const toggleFilterDialogOpen = (open) => {
         setFilterDialogOpen(open);
@@ -22,6 +25,14 @@ export default function ImageMenu(props) {
 
     const updateThumbnail = (thumbPath) => {
         setThumbnailPathState(thumbPath);
+    }
+
+    const toggleMetaDataDialogOpen = (open) => {
+        setMetaDataDialogOpen(open);
+    }
+
+    const updateImage = (image) => {
+        setImageState(image);
     }
 
     const columns = [
@@ -84,16 +95,24 @@ export default function ImageMenu(props) {
                     selectImageById={selectImageById}
                     setImageVisibleById={setImageVisibleById}
                     toggleThumbnailDialogOpen={toggleThumbnailDialogOpen}
+                    toggleMetaDataDialogOpen={toggleMetaDataDialogOpen}
                     thumbPath={thumbnailPathState}
                     updateThumbnail={updateThumbnail}
                     openDialog={openDialog}
                     sortImages={sortImages}
                     zoomToImage={zoomToImage}
+                    updateImage={updateImage}
                 />
                 <ImageMenuThumbnailDialog
                     open={thumbnailDialogOpen}
                     toggleThumbnailDialogOpen={toggleThumbnailDialogOpen}
                     thumbPath={thumbnailPathState}
+                    //toggleMetaDataDialogOpen={toggleMetaDataDialogOpen}
+                />
+                <ImageMenuMetaDataDialog
+                    open={metaDataDialogOpen}
+                    toggleMetaDataDialogOpen={toggleMetaDataDialogOpen}
+                    image={imageState}
                 />
                 <ImageMenuFilterDialog
                     images={images}

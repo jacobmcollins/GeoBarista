@@ -69,5 +69,17 @@ async function generateThumbnail(command, imgext, imagePath){
   return res.data.newPath;
 }
 
-const Client = { load, update, get, get_unique_fields, fileManip, removeFilesByBasePath, generateAllThumbnails, generateThumbnail};
+async function get_meta_data(id) { //search by file schema by fileid and return metadata
+  var res = await axios.get("/api/v2/images/metadataid", {
+    params: {
+      file_id: id
+    }
+  });
+  //console.log(res.data)
+  //var data = JSON.parse(res)
+  //console.log(typeof(data))
+  return res.data;
+}
+
+const Client = { load, update, get, get_unique_fields, fileManip, removeFilesByBasePath, generateAllThumbnails, generateThumbnail, get_meta_data};
 export default Client;

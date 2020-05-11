@@ -13,7 +13,7 @@ const useStyles = makeStyles({
 });
 
 export default function ImageTable(props) {
-    const {images, columns, updateThumbnail, selectImageById, setImageVisibleById, openDialog, sortImages, toggleThumbnailDialogOpen, zoomToImage} = props;
+    const {images, columns, updateThumbnail, selectImageById, setImageVisibleById, openDialog, sortImages, toggleThumbnailDialogOpen, zoomToImage, updateImage, toggleMetaDataDialogOpen} = props;
     const classes = useStyles();
    
     return (
@@ -35,6 +35,8 @@ export default function ImageTable(props) {
                 toggleThumbnailDialogOpen={toggleThumbnailDialogOpen}
                 updateThumbnail={updateThumbnail}
                 zoomToImage={zoomToImage}
+                updateImage={updateImage}
+                toggleMetaDataDialogOpen={toggleMetaDataDialogOpen}
             />
         </Table>
     </TableContainer>

@@ -9,7 +9,7 @@ const initialContextState = {
 };
 
 export default function ImageTableBody(props) {
-    const {columns, images, updateThumbnail, selectImageById, setImageVisibleById, zoomToImage, toggleThumbnailDialogOpen} = props;
+    const {columns, images, updateThumbnail, selectImageById, setImageVisibleById, zoomToImage, toggleThumbnailDialogOpen, updateImage, toggleMetaDataDialogOpen} = props;
     const [state, setState] = React.useState(initialContextState);
 
     const handleContextClick = (event) => {
@@ -35,12 +35,14 @@ export default function ImageTableBody(props) {
                     setImageVisibleById={setImageVisibleById}
                     updateThumbnail={updateThumbnail}
                     zoomToImage={zoomToImage}
+                    updateImage={updateImage}
                 />
             ))}
             <ImageContextMenu
                     handleContextClose={handleContextClose}
                     state={state}
                     toggleThumbnailDialogOpen={toggleThumbnailDialogOpen}
+                    toggleMetaDataDialogOpen={toggleMetaDataDialogOpen}
             />
         </TableBody>
     )

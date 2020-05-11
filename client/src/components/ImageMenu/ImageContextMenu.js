@@ -5,7 +5,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 
   
 export default function ImageContextMenu(props) {
-  const{ handleContextClose, state, toggleThumbnailDialogOpen } = props;
+  const{ handleContextClose, state, toggleThumbnailDialogOpen, toggleMetaDataDialogOpen } = props;
   return (
     <div style={{ cursor: 'context-menu' }}>
       <Menu
@@ -20,7 +20,7 @@ export default function ImageContextMenu(props) {
         }
       >
         <MenuItem onClick={() => {toggleThumbnailDialogOpen(true); handleContextClose();}}>Display Thumbnail</MenuItem>
-        <MenuItem onClick={() => {handleContextClose()}}>Display Metadata</MenuItem>
+        <MenuItem onClick={() => {toggleMetaDataDialogOpen(true); handleContextClose()}}>Display Metadata</MenuItem>
       </Menu>
     </div>
   );
