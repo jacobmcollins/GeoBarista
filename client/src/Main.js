@@ -8,6 +8,7 @@ import fileDialog from 'file-dialog';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
+import LoadingMenu from './components/LoadingMenu';
 import GeoBaristaMap from './components/Map/GeoBaristaMap';
 import Header from './components/Header';
 import MainMenu from './components/MainMenu';
@@ -130,6 +131,7 @@ function Main() {
         imgExtension: '',
         extViewer: ''
     });
+    const [loadingMenuOpen, setLoadingMenuOpen] = React.useState(false);
     const toggleMainMenu = (open) => error => {
         setState({
             ...state,
@@ -224,7 +226,9 @@ function Main() {
             fileObj.push(fileData);
         }
         //var payload = JSON.stringify(fileObj);
+        setLoadingMenuOpen(true);
         var data = await Client.load(fileObj);
+        setLoadingMenuOpen(false);
         // let res = await Client.get(filterParams, sortParams);
         console.log('Client load: ');
         console.log(data);
@@ -355,6 +359,7 @@ function Main() {
                 forceStateRefresh={forceStateRefresh}
             />
             <input directory="" webkitdirectory="" multiple="" type="file" id="file" ref={fileRef} onChange={onChange} style={{ display: "none" }} />
+            <LoadingMenu open={loadingMenuOpen} />
         </div>
     )
 }
