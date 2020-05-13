@@ -128,7 +128,7 @@ export default function FileManipulationMenu(props) {
             }
         }
         if (!destExists && DBsuccess) {
-            alert(action + " Initiated");
+            // alert(action + " Initiated");
         }
         await updateImages();
         setProgressMenuOpen(false);
