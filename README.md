@@ -5,9 +5,7 @@ GeoBarista is a cross-platform application built on web technology to sort/filte
 
 ## How to use
 
-### Create distributable
-
-This will create a directory 'dist' with the setup executable.
+This will create the dist directory to be filled based on the current operating system.
 
 ```
 yarn dist
@@ -47,13 +45,6 @@ We currently have Express endpoint tests. The current tests expect you to have t
 yarn test
 ```
 
-## Deployment
-
-This will create the dist directory to be filled based on the current operating system.
-
-```
-yarn dist
-```
 
 ## Built With
 
@@ -63,6 +54,9 @@ yarn dist
 	- React
 	- Node
 - Electron
+- Material UI
+- Leaflet
+- Turf
 
 ## Authors
 
