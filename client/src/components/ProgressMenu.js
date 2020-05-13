@@ -4,13 +4,13 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
-export default function LoadingMenu(props) {
+export default function ProgressMenu(props) {
   return (
     <div>
       <Dialog
         open={props.open}
       >
-        <DialogTitle >{"Images are loading..."}</DialogTitle>
+        <DialogTitle >{props.msg}</DialogTitle>
         <DialogContent>
             <LinearProgress />
         </DialogContent>

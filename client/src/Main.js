@@ -8,7 +8,7 @@ import fileDialog from 'file-dialog';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
-import LoadingMenu from './components/LoadingMenu';
+import ProgressMenu from './components/ProgressMenu';
 import GeoBaristaMap from './components/Map/GeoBaristaMap';
 import Header from './components/Header';
 import MainMenu from './components/MainMenu';
@@ -359,7 +359,7 @@ function Main() {
                 forceStateRefresh={forceStateRefresh}
             />
             <input directory="" webkitdirectory="" multiple="" type="file" id="file" ref={fileRef} onChange={onChange} style={{ display: "none" }} />
-            <LoadingMenu open={loadingMenuOpen} />
+            <ProgressMenu msg={'Loading images...'} open={loadingMenuOpen} />
         </div>
     )
 }
