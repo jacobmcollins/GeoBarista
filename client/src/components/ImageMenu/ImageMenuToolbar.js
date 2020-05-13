@@ -5,6 +5,7 @@ import AddIcon from "@material-ui/icons/Add";
 import { withStyles } from "@material-ui/core/styles";
 import FilterListIcon from '@material-ui/icons/FilterList';
 import Switch from '@material-ui/core/Switch';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import FileManipulationButton from './../FileManipulationButton';
 
 import Client from '../../Client';
@@ -79,6 +80,11 @@ class ImageMenuToolbar extends React.Component {
           updateImages={updateImages}
 
         />
+        <Tooltip title={"remove images"}>
+          <IconButton className={classes.iconButton}>
+            <DeleteForeverIcon className={classes.deleteIcon} />
+          </IconButton>
+        </Tooltip>
       </React.Fragment>
     );
   }
