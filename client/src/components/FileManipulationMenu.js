@@ -7,8 +7,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 import PermMediaIcon from '@material-ui/icons/PermMedia';
 import Client from '../Client';
-import { destination } from '@turf/turf';
 import fileManipulation from './FileManipulationActions';
+import ProgressMenu from './ProgressMenu';
 
 
 // not yet implemented :
@@ -54,6 +54,7 @@ export default function FileManipulationMenu(props) {
         customCount: 0,
         selectedCount: 0,
     });
+    const [progressMenuOpen, setProgressMenuOpen] = React.useState(false);
 
 
     const boarderDivStyle = {
@@ -71,6 +72,7 @@ export default function FileManipulationMenu(props) {
 
     // todo where the Actions calls to be executed will be called
     const executeAction = async (action, actionDirectory, actionFiles, overwrite) => {
+        setProgressMenuOpen(true);
         console.log("Performing : ", action);
         let destExists = false;
         let DBsuccess = true;
@@ -126,9 +128,10 @@ export default function FileManipulationMenu(props) {
             }
         }
         if (!destExists && DBsuccess) {
-            alert(action + " Initiated");
+            // alert(action + " Initiated");
         }
         await updateImages();
+        setProgressMenuOpen(false);
 
     }
 
@@ -588,6 +591,7 @@ export default function FileManipulationMenu(props) {
                     </div>
                 </TableRow>
             </TableBody>
+            <ProgressMenu msg={'File Manipulation action in progress...'} open={progressMenuOpen} />
         </Dialog >
     );
 }
