@@ -1,8 +1,15 @@
 
-# GeoBarista v0.1.0
+# GeoBarista v1.0.0
 
 GeoBarista is a cross-platform application built on web technology to sort/filter/view/convert geo-referenced imagery on a map. 
-> NOTE: This is not quite GeoBarista v1.0.0, as this basic functionality is in progress.
+
+## How to use
+
+This will create the dist directory to be filled based on the current operating system.
+
+```
+yarn dist
+```
 
 ## Getting Started
 
@@ -38,13 +45,6 @@ We currently have Express endpoint tests. The current tests expect you to have t
 yarn test
 ```
 
-## Deployment
-
-This will create the dist directory to be filled based on the current operating system.
-
-```
-yarn dist
-```
 
 ## Built With
 
@@ -54,6 +54,9 @@ yarn dist
 	- React
 	- Node
 - Electron
+- Material UI
+- Leaflet
+- Turf
 
 ## Authors
 
