@@ -5,7 +5,9 @@ import AddIcon from "@material-ui/icons/Add";
 import { withStyles } from "@material-ui/core/styles";
 import FilterListIcon from '@material-ui/icons/FilterList';
 import Switch from '@material-ui/core/Switch';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import FileManipulationButton from './../FileManipulationButton';
+import fileManipulation from '../FileManipulationActions';
 
 import Client from '../../Client';
 import { getLocStorage, thumbnails, imgEXT } from '../../Tools/initLocStorage';
@@ -25,6 +27,7 @@ class ImageMenuToolbar extends React.Component {
       overlays: [],
     };
   }
+
 
   handleChange = async (event) => {
     this.setState({ checked: event.target.checked });
@@ -79,6 +82,26 @@ class ImageMenuToolbar extends React.Component {
           updateImages={updateImages}
 
         />
+        <Tooltip title={"remove images"}>
+          <IconButton className={classes.iconButton}>
+            <DeleteForeverIcon className={classes.deleteIcon} onClick={async () => {
+              var remFiles = []
+              for (var image of images) {
+                if(image.selected == true){
+                  //console.log(image)
+                  var removalObject = {
+                    path: image.thumbnail_path,
+                    name: image.thumbnail_path.split('/').pop(),
+                    base_path: image.base_path
+                  }
+                  remFiles.push(removalObject)
+                }
+              };
+              await Client.removeFilesByBasePath(remFiles);
+              await updateImages();
+            }}/>
+          </IconButton>
+        </Tooltip>
       </React.Fragment>
     );
   }
