@@ -23,10 +23,10 @@ export default function GeoBaristaMap(props) {
         lat: 45.51,
         lng: -122.505
     })
-    const [mouse, setMouse] = React.useState({
-        lat: 51.505,
-        lng: -0.09
-    })
+    // const [mouse, setMouse] = React.useState({
+    //     lat: 51.505,
+    //     lng: -0.09
+    // })
     const [viewPort, setViewPort] = React.useState({
         center: center,
         zoom: zoom
@@ -72,10 +72,10 @@ export default function GeoBaristaMap(props) {
             unselect: unselect
         });
     }
-    const handleOnMouseMove = (e) => {
-        if(!mapRef.current) return;
-        setMouse(e.latlng);
-    }
+    // const handleOnMouseMove = (e) => {
+    //     if(!mapRef.current) return;
+    //     setMouse(e.latlng);
+    // }
     const handleContextMenu = (e) => {
         alert("You right-clicked inside the div!");
     }
@@ -84,6 +84,14 @@ export default function GeoBaristaMap(props) {
         setZoom(mapRef.current.leafletElement.getZoom());
     }
     const onViewPortChanged = (viewport) => {
+        console.log(viewport)
+        setViewPort({
+            zoom: viewport.zoom,
+            center: {
+                lat: viewport.center[0],
+                lng: viewport.center[1]
+            }
+        });
     }
     // input  -> an image
     // output -> polygon in GeoJSON
@@ -144,7 +152,7 @@ export default function GeoBaristaMap(props) {
                     <main className={imageMenuOpen ? classes.mainShifted : classes.main}>
                         <Map
                             length={4}
-                            onmousemove={handleOnMouseMove}
+                            // onmousemove={handleOnMouseMove}
                             onzoomend={handleZoom}
                             onclick={handleOnClick}
                             contextMenu={true}
@@ -170,7 +178,7 @@ export default function GeoBaristaMap(props) {
                             <DrawTools selectByGeoJSON={selectByGeoJSON}/>
                         </Map>
                     </main>
-                    <ZoomLatLngBox classes={classes} zoom={zoom} latlng={mouse}/>
+                    <ZoomLatLngBox classes={classes} zoom={viewPort.zoom} latlng={viewPort.center}/>
                 </React.Fragment>
             </ContextMenuTrigger>
             <ContextMenu id="same_unique_identifier" className={classes.contextMenuOptions}>
