@@ -1,8 +1,17 @@
 
-# GeoBarista v0.1.0
+# GeoBarista v1.0.0
 
 GeoBarista is a cross-platform application built on web technology to sort/filter/view/convert geo-referenced imagery on a map. 
-> NOTE: This is not quite GeoBarista v1.0.0, as this basic functionality is in progress.
+
+## How to use
+
+### Create distributable
+
+This will create a directory 'dist' with the setup executable.
+
+```
+yarn dist
+```
 
 ## Getting Started
 
