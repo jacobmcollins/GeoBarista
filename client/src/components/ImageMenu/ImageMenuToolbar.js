@@ -86,9 +86,9 @@ class ImageMenuToolbar extends React.Component {
           <IconButton className={classes.iconButton}>
             <DeleteForeverIcon className={classes.deleteIcon} onClick={async () => {
               var remFiles = []
+              let currentOverlays = this.state.overlays
               for (var image of images) {
                 if(image.selected == true){
-                  //console.log(image)
                   var removalObject = {
                     path: image.thumbnail_path,
                     name: image.thumbnail_path.split('/').pop(),
@@ -96,9 +96,28 @@ class ImageMenuToolbar extends React.Component {
                   }
                   remFiles.push(removalObject)
                 }
+                var curOverlay = currentOverlays[image._id]
+                this.props.removeOverlayOffMap(curOverlay)
               };
               await Client.removeFilesByBasePath(remFiles);
               await updateImages();
+
+              //update thumbnails displayed on map after removal
+              if(this.state.checked) {
+                let newThumbnailList = await Client.generateAllThumbnails(getLocStorage(thumbnails), getLocStorage(imgEXT));
+                for (const image of this.props.images) {
+                  if (!(image._id in this.state.overlays)) {
+                    var overlay = this.props.createOverlay(image.thumbnail_path, JSON.parse(image.points))      //The order of four points from DB: topLeft,topRight,bottomRight,bottomLeft
+                    currentOverlays[image._id] = overlay
+                    this.setState({
+                      overlays: currentOverlays
+                    })
+                  }
+                  this.props.addOverlayToMap(currentOverlays[image._id])
+                }
+              }
+
+
             }}/>
           </IconButton>
         </Tooltip>
