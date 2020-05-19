@@ -1,0 +1,59 @@
+{
+  "name": "GeoBarista",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "atob": "^2.1.2",
+    "babel-core": "6.14.0",
+    "body-parser": "^1.19.0",
+    "csv": "^5.3.2",
+    "csv-parse": "^4.8.8",
+    "ecef-projector": "^1.0.1",
+    "express": "4.13.3",
+    "file-dialog": "0.0.8",
+    "fs": "0.0.2",
+    "mongodb": "^3.5.5",
+    "mongodb-memory-server": "^6.5.2",
+    "mongoose": "^5.9.9",
+    "react-contextmenu": "^2.13.0",
+    "sql.js": "0.3.2",
+    "util": "^0.12.2",
+    "xml2js": "^0.4.23"
+  },
+  "build": {
+    "appId": "GeoBarista",
+    "asar": false,
+    "win": {
+      "target": "nsis"
+    }
+  },
+  "scripts": {
+    "setup": "yarn install && cd client && yarn install && cd ..",
+    "build-client": "cd client && yarn build && cd ..",
+    "start-dev": "concurrently \"yarn server-dev\" \"cd client && yarn start\"",
+    "start-prod": "cross-env-shell NODE_ENV=production \"cd client && yarn build && cd .. && npm run server-prod\"",
+    "server-prod": "node start-server.js",
+    "server-dev": "nodemon start-server.js",
+    "start-electron": "cross-env-shell NODE_ENV=production \"cd client && yarn build && cd .. && electron index.js\"",
+    "dist": "yarn setup && cd client && yarn build && cd .. && electron-builder",
+    "test": "jest --runInBand ./test"
+  },
+  "devDependencies": {
+    "concurrently": "3.1.0",
+    "cross-env": "^7.0.2",
+    "electron": "^8.2.0",
+    "electron-builder": "^22.4.1",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb": "14.1.0",
+    "eslint-plugin-import": "2.2.0",
+    "eslint-plugin-jsx-a11y": "4.0.0",
+    "eslint-plugin-react": "6.9.0",
+    "jest": "^25.3.0",
+    "nodemon": "^2.0.2",
+    "react-context-menu": "^3.0.2",
+    "supertest": "^4.0.2"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  }
+}
